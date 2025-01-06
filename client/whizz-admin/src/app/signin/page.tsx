@@ -1,11 +1,14 @@
 'use client';
 
 import React, { FormEvent } from "react";
+import { useRouter } from "next/navigation"; // For navigation
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function SignIn() {
+  const router = useRouter();
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -14,6 +17,9 @@ export default function SignIn() {
 
     // Add your sign-in logic here
     console.log("Sign-In form submitted", { email, password });
+
+    // Redirect to dashboard
+    router.push("/dashboard");
   };
 
   return (
@@ -54,7 +60,7 @@ export default function SignIn() {
           <div>
             <Button
               type="submit"
-              className="w-full rounded "
+              className="w-full rounded"
             >
               Sign In
             </Button>
