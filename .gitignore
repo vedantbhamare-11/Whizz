@@ -1,0 +1,74 @@
+# Ignore macOS system files
+.DS_Store
+
+# Ignore log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore node_modules folder
+node_modules/
+
+# Ignore build output
+dist/
+build/
+out/
+
+# Ignore environment variable files
+.env
+.env.local
+.env.*.local
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.iml
+
+# Ignore OS-specific files
+Thumbs.db
+Desktop.ini
+
+# Ignore other common backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore Python files
+__pycache__/
+*.py[cod]
+
+# Ignore Java files
+*.class
+*.jar
+*.war
+
+# Ignore Go files
+*.exe
+*.test
+*.out
+
+# Ignore Rust files
+/target/
+
+# Ignore Ruby files
+*.gem
+*.rbc
+
+# Ignore archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.bz2
