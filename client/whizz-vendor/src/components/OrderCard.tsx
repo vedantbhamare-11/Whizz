@@ -82,7 +82,7 @@ export default function OrderCard({
 
       {/* Buttons for Order Queue */}
       {status === "orderQueue" && (
-        <div className="flex gap-4 mt-4">
+        <div className="flex items-center justify-around gap-4 mt-4">
           <Button
             variant="destructive"
             className="flex items-center gap-2 bg-[#FF2C2C] text-white hover:bg-red-600"

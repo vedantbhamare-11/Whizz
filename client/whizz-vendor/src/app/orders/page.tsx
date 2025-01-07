@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
 import OrderCard from "@/components/OrderCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Orders() {
   // Sample data for orders
@@ -61,87 +62,117 @@ export default function Orders() {
       <main className="flex-1">
         <Header />
         <div className="p-6">
-          <h1 className="text-3xl font-bold text-[#3CAE06]">Orders</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            {/* Order Queue */}
-            <div className="flex flex-col p-2 bg-[#F5F4F4] rounded-sm shadow-md">
-              <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
-                <span className="w-2 h-2 text-sm bg-red-600 rounded-full"></span>
-                Order Queue
-              </Badge>
-              <div className="mt-2 space-y-4">
-                {ordersData.queue.map((order, index) => (
-                  <OrderCard
-                    key={index}
-                    orderId={order.orderId}
-                    timeAgo={order.timeAgo}
-                    dishes={order.dishes}
-                    status="orderQueue"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* In Progress */}
-            <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md">
-              <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
-                <span className="w-2 h-2 bg-yellow-600 rounded-full"></span>
-                In Progress
-              </Badge>
-              <div className="mt-2 space-y-4">
-                {ordersData.inProgress.map((order, index) => (
-                  <OrderCard
-                    key={index}
-                    orderId={order.orderId}
-                    timeAgo={order.timeAgo}
-                    dishes={order.dishes}
-                    status="inProgress"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Ready for Pick Up */}
-            <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md">
-              <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
-                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                Ready for Pick Up
-              </Badge>
-              <div className="mt-2 space-y-4">
-                {ordersData.readyForPickup.map((order, index) => (
-                  <OrderCard
-                    key={index}
-                    orderId={order.orderId}
-                    timeAgo={order.timeAgo}
-                    dishes={order.dishes}
-                    status="readyForPickup"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Out for Delivery */}
-            <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md">
-              <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
-                <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                Out for Delivery
-              </Badge>
-              <div className="mt-2 space-y-4">
-                {ordersData.outForDelivery.map((order, index) => (
-                  <OrderCard
-                    key={index}
-                    orderId={order.orderId}
-                    timeAgo={order.timeAgo}
-                    dishes={order.dishes}
-                    status="outForDelivery"
-                    agentInfo={order.agentInfo} // Pass the agent info
-                  />
-                ))}
-              </div>
-            </div>
+          {/* Tabs Header */}
+          <div className="flex flex-row justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-[#3CAE06]">Orders</h1>
+            <Tabs defaultValue="currentOrders">
+              <TabsList>
+                <TabsTrigger value="currentOrders">Current Orders</TabsTrigger>
+                <TabsTrigger value="deliveredOrders">
+                  Delivered Orders
+                </TabsTrigger>
+                <TabsTrigger value="rejectedOrders">
+                  Rejected Orders
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
+
+          {/* Tabs Content */}
+          <Tabs defaultValue="currentOrders" className="w-full">
+            <TabsContent value="currentOrders">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+                {/* Order Queue */}
+                <div className="flex flex-col p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto">
+                  <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
+                    <span className="w-2 h-2 text-sm bg-red-600 rounded-full"></span>
+                    Order Queue
+                  </Badge>
+                  <div className="mt-2 space-y-4">
+                    {ordersData.queue.map((order, index) => (
+                      <OrderCard
+                        key={index}
+                        orderId={order.orderId}
+                        timeAgo={order.timeAgo}
+                        dishes={order.dishes}
+                        status="orderQueue"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* In Progress */}
+                <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto">
+                  <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
+                    <span className="w-2 h-2 bg-yellow-600 rounded-full"></span>
+                    In Progress
+                  </Badge>
+                  <div className="mt-2 space-y-4">
+                    {ordersData.inProgress.map((order, index) => (
+                      <OrderCard
+                        key={index}
+                        orderId={order.orderId}
+                        timeAgo={order.timeAgo}
+                        dishes={order.dishes}
+                        status="inProgress"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Ready for Pick Up */}
+                <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto">
+                  <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
+                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                    Ready for Pick Up
+                  </Badge>
+                  <div className="mt-2 space-y-4">
+                    {ordersData.readyForPickup.map((order, index) => (
+                      <OrderCard
+                        key={index}
+                        orderId={order.orderId}
+                        timeAgo={order.timeAgo}
+                        dishes={order.dishes}
+                        status="readyForPickup"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Out for Delivery */}
+                <div className="p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto">
+                  <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    Out for Delivery
+                  </Badge>
+                  <div className="mt-2 space-y-4">
+                    {ordersData.outForDelivery.map((order, index) => (
+                      <OrderCard
+                        key={index}
+                        orderId={order.orderId}
+                        timeAgo={order.timeAgo}
+                        dishes={order.dishes}
+                        status="outForDelivery"
+                        agentInfo={order.agentInfo} // Pass the agent info
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="deliveredOrders">
+              <h2 className="text-2xl font-bold">Delivered Orders</h2>
+            </TabsContent>
+
+            <TabsContent value="rejectedOrders">
+              <h2 className="text-2xl font-bold">Rejected Orders</h2>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
   );
 }
+
+
