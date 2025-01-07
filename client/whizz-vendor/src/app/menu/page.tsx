@@ -10,7 +10,7 @@ import AddItemModal from "@/components/AddItemModal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchMenuItems, addMenuItem } from "@/redux/menuSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Define the MenuItem type explicitly
 interface MenuItem {
@@ -31,6 +31,8 @@ export default function Menu() {
   const menuItems = useSelector((state: RootState) => state.menu.items);
   const menuStatus = useSelector((state: RootState) => state.menu.status);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
     if (menuStatus === "idle") {
       dispatch(fetchMenuItems());
@@ -40,6 +42,11 @@ export default function Menu() {
   const handleAddItem = (newItem: MenuItem) => {
     dispatch(addMenuItem(newItem));
   };
+
+  // Filter menu items based on search term
+  const filteredMenuItems = menuItems.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex">
@@ -54,6 +61,8 @@ export default function Menu() {
                 type="text"
                 placeholder="Search items..."
                 className="w-64"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Button className="flex items-center gap-2 bg-gray-100 text-black hover:bg-gray-200">
                 <SlidersHorizontal size={16} />
@@ -67,7 +76,9 @@ export default function Menu() {
           </div>
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
             {menuStatus === "loading" && <p>Loading menu items...</p>}
-            {menuStatus === "succeeded" && <MenuTable menuItems={menuItems} />}
+            {menuStatus === "succeeded" && (
+              <MenuTable menuItems={filteredMenuItems} />
+            )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}
           </div>
         </div>
