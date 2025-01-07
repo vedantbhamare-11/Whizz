@@ -1,5 +1,58 @@
+import mongoose from "mongoose";
 import { Dish, Order, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
+
+const getDashboardData = async (req, res, next) => {
+    // Extract vendorId
+    const vendorId = req.userId;
+
+    // Check if vendorId is provided
+    if (!vendorId) {
+        return errorResponse(res, 400, null, "Vendor ID is required");
+    };
+    try {
+        const vendor = await Vendor.findById(vendorId);
+
+        if (!vendor) {
+            return errorResponse(res, 404, null, "Vendor not found");
+        };
+
+        const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
+        const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
+
+        const [todayOrders, activeMenuItems, totalRevenue] = await Promise.all([
+            Order.countDocuments({
+                vendorId,
+                createdTime: {
+                    $gte: startOfDay,
+                    $lt: endOfDay
+                }
+            }),
+            Dish.countDocuments({
+                vendorId,
+                isAvailable: true
+            }),
+            Order.aggregate([
+                { $match: { vendorId: vendorObjectId } },
+                { $group: { _id: null, total: { $sum: "$totalPrice" } } }
+            ])
+        ]);
+
+        const dashboardData = {
+            todayOrders,
+            activeMenuItems,
+            totalRevenue: totalRevenue[0]?.total || 0
+        };
+
+        console.log(dashboardData);
+
+        return successResponse(res, 200, dashboardData, "Dashboard data fetched successfully");
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 // Manage open hours (Restaurant)
 const manageOpenHours = async (req, res, next) => {
@@ -66,9 +119,9 @@ const updateDish = async (req, res, next) => {
     // Extract dish details
     const { dishId, dishName, price, description, image, category, subcategory, startTime, endTime, availableDays } = req.body;
 
-   if (!dishId) {
-       return errorResponse(res, 400, null, "Dish ID is required");
-   };
+    if (!dishId) {
+        return errorResponse(res, 400, null, "Dish ID is required");
+    };
 
     try {
         // Prepare updated data
@@ -123,7 +176,7 @@ const manageDishAvailability = async (req, res, next) => {
             new: true,
             runValidators: true
         });
-        
+
         // Check if dish was updated
         if (!updatedDish) {
             return errorResponse(res, 404, null, "Dish not found");
@@ -163,7 +216,7 @@ const deleteDish = async (req, res, next) => {
         if (error.name === "CastError") {
             return errorResponse(res, 400, null, "Invalid dish ID");
         }
-        next(error); 
+        next(error);
     }
 };
 
@@ -178,7 +231,7 @@ const getDishes = async (req, res, next) => {
     try {
         // Build query object
         const query = { vendorId };
-        
+
         // Fetch dishes with offset and limit
         const dishes = await Dish.find(query)
             .sort(sort)
@@ -222,7 +275,7 @@ const getOrders = async (req, res, next) => {
             return errorResponse(res, 400, null, "Invalid vendor ID format");
         }
 
-        next(error); 
+        next(error);
     }
 };
 
@@ -238,7 +291,7 @@ const updateOrderStatus = async (req, res, next) => {
 
     try {
         // Update order status
-        const updatedOrder = await Order.findOneAndUpdate({whizzOrderId}, { status }, {
+        const updatedOrder = await Order.findOneAndUpdate({ whizzOrderId }, { status }, {
             new: true,
             runValidators: true
         });
@@ -286,6 +339,7 @@ const createOrder = async (req, res, next) => {
 }
 
 export {
+    getDashboardData,
     manageOpenHours,
     addDish,
     updateDish,
@@ -296,6 +350,6 @@ export {
     deleteDish,
 
     /* Temp controllers */
-    uploadImage, 
+    uploadImage,
     createOrder
 }
