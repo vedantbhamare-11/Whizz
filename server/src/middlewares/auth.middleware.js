@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 export const verifyToken = (req, res, next) => {
+    // Extract token
     const token = req.cookies.token;
+
     try {
         // Check token valid or not
         if(!token) return res.status(401).json({success: true, message: "Unauthorized - no token provided"});
@@ -16,6 +18,7 @@ export const verifyToken = (req, res, next) => {
         if(!decoded) return res.status(401).json({success: false, message: "Unauthorized - Invalid token"});
 
         req.userId = decoded.userId;
+    
         next();
     } catch (error) {
         res.status(500).json({success: false, message: "Server error"})

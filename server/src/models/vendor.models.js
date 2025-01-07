@@ -6,18 +6,42 @@ const vendorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    address: {
+        type: String,
+        required: true
+    },
+    restaurantType: {
+        type: String,
+        required: true
+    },
+    latitude: {
+        type: Number,
+        required: true
+    },
+    longitude: {
+        type: Number,
+        required: true
+    },
+    gst: {
+        type: String,
+        required: true
+    },
+    area: {
+        type: String,
+        required: true
+    },
     vendorEmail: {
         type: String,
-        required: true,
+        required: false,
         unique: true
     },
     vendorPassword: {
         type: String,
-        required: true
+        required: false
     },
     vendorPhone: {
         type: String,
-        required: true
+        required: false
     },
     role: {
         type: String,
@@ -53,6 +77,14 @@ const dishSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    category: {
+        type: String,
+        required: true,
+        enum: ["Veg", "Non Veg"],
+    },
+    subcategory: {
+        type: String,
+    },  
     startTime: {
         type: String,
         required: true
@@ -120,6 +152,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
+        default: "pending",
         enum: ["pending", "accepted", "rejected", "inProgress", "delivered"],
     },
 });
