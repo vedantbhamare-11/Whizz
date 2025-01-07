@@ -5,14 +5,17 @@ import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
 import OrderCard from "@/components/OrderCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useState } from "react";
 
 // Helper function to format status names
 const formatStatusName = (status: string) => {
   return status
-    .replace(/([A-Z])/g, " $1") // Add a space before uppercase letters
-    .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase());
 };
 
 // Map status to dot color
@@ -25,7 +28,48 @@ const statusDotColor: Record<string, string> = {
 
 export default function Orders() {
   const orders = useSelector((state: RootState) => state.orders.orders);
+  const [activeTab, setActiveTab] = useState("currentOrders");
 
+  // Sample data for delivered orders
+  const deliveredOrders = [
+    {
+      orderId: 101,
+      deliveryTime: "10:30 AM",
+      deliveredBy: "John Doe",
+    },
+    {
+      orderId: 102,
+      deliveryTime: "12:45 PM",
+      deliveredBy: "Jane Smith",
+    },
+    {
+      orderId: 103,
+      deliveryTime: "2:15 PM",
+      deliveredBy: "Alice Johnson",
+    },
+  ];
+
+  const heading =
+    activeTab === "currentOrders"
+      ? "Current Orders"
+      : activeTab === "deliveredOrders"
+      ? "Delivered Orders"
+      : "Rejected Orders";
+
+      const rejectedOrders = [
+        {
+          orderId: 201,
+          note: "Item not available",
+        },
+        {
+          orderId: 202,
+          note: "Delivery not possible to the location",
+        },
+        {
+          orderId: 203,
+          note: "Vendor canceled due to rush hours",
+        },
+      ];
   return (
     <div className="flex">
       <Sidebar />
@@ -33,8 +77,11 @@ export default function Orders() {
         <Header />
         <div className="p-6">
           <div className="flex flex-row justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[#3CAE06]">Orders</h1>
-            <Tabs defaultValue="currentOrders">
+            <h1 className="text-3xl font-bold text-[#3CAE06]">{heading}</h1>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value)}
+            >
               <TabsList>
                 <TabsTrigger value="currentOrders">Current Orders</TabsTrigger>
                 <TabsTrigger value="deliveredOrders">
@@ -47,7 +94,7 @@ export default function Orders() {
             </Tabs>
           </div>
 
-          <Tabs defaultValue="currentOrders" className="w-full">
+          <Tabs value={activeTab} className="w-full">
             <TabsContent value="currentOrders">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                 {Object.keys(orders).map((status, index) => (
@@ -82,12 +129,56 @@ export default function Orders() {
               </div>
             </TabsContent>
 
-            <TabsContent value="deliveredOrders">
-              <h2 className="text-2xl font-bold">Delivered Orders</h2>
+            <TabsContent value="deliveredOrders" className="border border-gray-200 rounded-md">
+              <Table className="mt-6">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Order Details</TableHead>
+                    <TableHead>Delivery Time</TableHead>
+                    <TableHead>Delivered By</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {deliveredOrders.map((order, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{order.orderId}</TableCell>
+                      <TableCell>
+                        <Button size="sm" variant="outline">
+                          View Details
+                        </Button>
+                      </TableCell>
+                      <TableCell>{order.deliveryTime}</TableCell>
+                      <TableCell>{order.deliveredBy}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </TabsContent>
 
-            <TabsContent value="rejectedOrders">
-              <h2 className="text-2xl font-bold">Rejected Orders</h2>
+            <TabsContent value="rejectedOrders" className="border border-gray-200 rounded-md">
+            <Table className="mt-6">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Order Details</TableHead>
+                    <TableHead>Note</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rejectedOrders.map((order, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{order.orderId}</TableCell>
+                      <TableCell>
+                        <Button size="sm" variant="outline">
+                          View Details
+                        </Button>
+                      </TableCell>
+                      <TableCell>{order.note}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </TabsContent>
           </Tabs>
         </div>
