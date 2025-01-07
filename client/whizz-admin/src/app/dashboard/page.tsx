@@ -17,20 +17,35 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store"; // RootState type from Redux store
 import { assignAgent } from "@/redux/orderSlice";
 import { updateAgentStatus } from "@/redux/agentSlice";
+import { useState } from "react";
 
 export default function Dashboard() {
-  const orders = useSelector((state) => state.orders.orders);
-  const agents = useSelector((state) => state.agents.agents);
+  // Access orders and agents from Redux store with proper types
+  const orders = useSelector((state: RootState) => state.orders.orders);
+  const agents = useSelector((state: RootState) => state.agents.agents);
   const dispatch = useDispatch();
 
-  const handleAssignAgent = (orderId, agentId) => {
-    // Assign agent to order
-    dispatch(assignAgent({ id: orderId, agent: agentId }));
+  const [selectedAgents, setSelectedAgents] = useState<{ [key: number]: string }>({});
 
-    // Update agent's status to "assigned"
-    dispatch(updateAgentStatus({ id: agentId, status: "assigned" }));
+  // Type the parameters for handleAssignAgent
+  const handleAssignAgent = (orderId: number, agentId: string) => {
+    // Dispatch assignAgent with type-safe payload
+    dispatch(assignAgent({ id: orderId, agent: Number(agentId) }));
+
+    // Dispatch updateAgentStatus with type-safe payload
+    dispatch(updateAgentStatus({ id: Number(agentId), status: "assigned" }));
+
+    // Update the local state for selected agents
+    const agent = agents.find((agent) => agent.id.toString() === agentId);
+    if (agent) {
+      setSelectedAgents((prevState) => ({
+        ...prevState,
+        [orderId]: agent.agent_name,
+      }));
+    }
   };
 
   return (
@@ -65,13 +80,18 @@ export default function Dashboard() {
                   onValueChange={(value) => handleAssignAgent(order.id, value)}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Agent" />
+                    <SelectValue
+                      placeholder="Select Agent"
+                      defaultValue={selectedAgents[order.id] || ""}
+                    >
+                      {selectedAgents[order.id] || "Select Agent"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {agents
                       .filter((agent) => agent.is_available) // Only available agents
                       .map((agent) => (
-                        <SelectItem key={agent.id} value={agent.id}>
+                        <SelectItem key={agent.id} value={agent.id.toString()}>
                           {agent.agent_name} ({agent.covered_area})
                         </SelectItem>
                       ))}
