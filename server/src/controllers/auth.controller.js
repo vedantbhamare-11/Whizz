@@ -6,11 +6,11 @@ import { Vendor } from "../models/vendor.models.js";
 // Signup controller
 const signUp = async (req, res, next) => {
     // Extract credentials
-    const { name, email, password, phone } = req.body;
-   
+    const {vendorEmail, vendorPassword} = req.body; 
+    const password = vendorPassword;
     try {
         // Check user existance
-        const isUserExist = await Vendor.findOne({ vendorEmail: email });
+        const isUserExist = await Vendor.findOne({ vendorEmail });
         if (isUserExist) {
             return errorResponse(res, 400, null, "User already exist");
         };
@@ -20,10 +20,8 @@ const signUp = async (req, res, next) => {
 
         // Create new user
         const newVendor = new Vendor({
-            vendorName: name,
-            vendorEmail: email,
+            ...req.body,
             vendorPassword: hashedPassword,
-            vendorPhone: phone
         });
 
         // Save new user
@@ -40,7 +38,7 @@ const signUp = async (req, res, next) => {
     } catch (error) {
         next(error);
     };
-};
+}; 
 
 // Signin controller
 const signIn = async (req, res, next) => {
