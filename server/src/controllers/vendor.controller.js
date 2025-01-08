@@ -4,7 +4,7 @@ import { errorResponse, successResponse } from "../utils/responseHandler.js";
 
 const getDashboardData = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = "677d2020f38d4599c7630ccb";
+    const vendorId = "677e6bedf9823a75597f9029";
     // const vendorId = req.userId;
 
     // Check if vendorId is provided
@@ -98,24 +98,34 @@ const manageOpenHours = async (req, res, next) => {
 // Add new dishes
 const addDish = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
+    // const vendorId = req.userId;
 
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     };
 
     try {
+        const image = req.fileRelativePath || null;
 
         // Create new dish
         const newDish = new Dish({
             vendorId,
+            image,
             ...req.body
         });
 
         // Save new dish
         await newDish.save();
 
-        return successResponse(res, 200, newDish, "Dish added successfully");
+        const imageUrl = image ? `${req.protocol}://${req.get("host")}/${newDish.image}` : null;
+
+        const dish = {
+            ...newDish._doc,
+            image: imageUrl
+        }
+
+        return successResponse(res, 200, dish, "Dish added successfully");
 
     } catch (error) {
         if (error.name === "CastError") {
@@ -186,12 +196,13 @@ const manageDishAvailability = async (req, res, next) => {
         const updatedDish = await Dish.findByIdAndUpdate(dishId, { isAvailable: availability }, {
             new: true,
             runValidators: true
-        });
+        }).select("isAvailable");
 
         // Check if dish was updated
         if (!updatedDish) {
             return errorResponse(res, 404, null, "Dish not found");
         };
+
 
         return successResponse(res, 200, updatedDish, "Dish availability updated successfully");
     } catch (error) {
@@ -201,6 +212,34 @@ const manageDishAvailability = async (req, res, next) => {
         next(error);
     }
 };
+
+const manageCategory = async (req, res, next) => {
+    const { dishId, category } = req.body;
+
+    // Check if dishId is provided
+    if (!dishId) {
+        return errorResponse(res, 400, null, "Dish ID is required");
+    };
+    try {
+        // Update dish
+        const updatedDish = await Dish.findByIdAndUpdate(dishId, { category }, {
+            new: true,
+            runValidators: true
+        }).select("category");
+
+        // Check if dish was updated
+        if (!updatedDish) {
+            return errorResponse(res, 404, null, "Dish not found");
+        };
+
+        return successResponse(res, 200, updatedDish, "Dish category updated successfully");
+    } catch (error) {
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid dish ID");
+        }
+        next(error);
+    }
+}
 
 // Delete dishe
 const deleteDish = async (req, res, next) => {
@@ -234,10 +273,11 @@ const deleteDish = async (req, res, next) => {
 
 // Get all dishes
 const getDishes = async (req, res, next) => {
-    const vendorId = req.userId;
+    // const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
 
     // Extract query parameters for offset-based fetching and sorting
-    const { offset = 0, limit = 10, sort = "-createdAt" } = req.query;
+    const { offset = 0, limit = 30, sort = "-createdAt" } = req.query;
 
     try {
         // Build query object
@@ -249,10 +289,15 @@ const getDishes = async (req, res, next) => {
             .skip(Number(offset))
             .limit(Number(limit))
 
+        const updatedDishes = dishes.map(dish => {
+            return {
+                ...dish._doc,
+                image: dish.image ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
+        }});
         // Count total dishes for client-side scroll optimization
         const totalDishes = await Dish.countDocuments(query);
 
-        return successResponse(res, 200, { dishes, totalDishes }, "Dishes fetched successfully");
+        return successResponse(res, 200, { dishes: updatedDishes, totalDishes }, "Dishes fetched successfully");
     } catch (error) {
         if (error.name === "CastError") {
             return errorResponse(res, 400, null, "Invalid vendor ID format");
@@ -355,6 +400,7 @@ export {
     addDish,
     updateDish,
     manageDishAvailability,
+    manageCategory,
     getDishes,
     getOrders,
     updateOrderStatus,

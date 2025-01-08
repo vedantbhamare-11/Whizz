@@ -1,9 +1,12 @@
 import axiosInstance from "../../lib/axiosInstance";
 
-const fetchDashboardCounts = async () => {
+// Function to fetch dashboard data
+const fetchDashboardCountsApi = async () => {
     try {
+        // Make API request
         const response = await axiosInstance.get('/vendor');
-        console.log(response.data.success)
+
+        // Handle response
         if (response.data.success){
             return response.data.data
         } else {
@@ -14,4 +17,4 @@ const fetchDashboardCounts = async () => {
     };
 };
 
-export { fetchDashboardCounts }
+export { fetchDashboardCountsApi };

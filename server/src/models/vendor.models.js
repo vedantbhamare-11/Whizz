@@ -80,7 +80,7 @@ const dishSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ["Veg", "Non Veg"],
+        enum: ["Veg", "Non-Veg"],
     },
     subcategory: {
         type: String,
@@ -95,7 +95,6 @@ const dishSchema = new mongoose.Schema({
     },
     availableDays: {
         type: [String],
-        enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         required: true,
     },

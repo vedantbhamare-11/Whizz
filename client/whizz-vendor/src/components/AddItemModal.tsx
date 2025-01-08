@@ -24,32 +24,32 @@ import Image from "next/image";
 
 interface AddItemModalProps {
   onAddItem: (newItem: {
-    id: number;
-    image: string;
-    name: string;
+    image: File | null;
+    dishName: string;
     price: number;
+    description: string;
     category: string;
-    subCategory: string;
+    subcategory: string;
     startTime: string;
     endTime: string;
-    daysAvailable: string[];
-    available: boolean;
+    availableDays: string[];
+    isAvailable: boolean;
   }) => void;
-  nextId: number;
 }
 
-export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
+export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   const [formValues, setFormValues] = useState({
     image: "",
-    name: "",
+    dishName: "",
     description: "",
     price: "",
     category: "Veg",
-    subCategory: "Main Course",
+    subcategory: "Main Course",
     startTime: "",
     endTime: "",
-    daysAvailable: [] as string[],
+    availableDays: [] as string[],
   });
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -65,21 +65,22 @@ export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
       setFormValues({ ...formValues, image: imageUrl });
+      setSelectedImage(file);
     }
   };
 
   const handleAddItem = () => {
     const newItem = {
-      id: nextId,
-      image: formValues.image || "https://via.placeholder.com/50",
-      name: formValues.name,
+      image: selectedImage ,
+      dishName: formValues.dishName,
       price: Number(formValues.price),
+      description: formValues.description,
       category: formValues.category,
-      subCategory: formValues.subCategory,
+      subcategory: formValues.subcategory,
       startTime: formValues.startTime,
       endTime: formValues.endTime,
-      daysAvailable: formValues.daysAvailable,
-      available: true,
+      availableDays: formValues.availableDays,
+      isAvailable: true,
     };
     onAddItem(newItem);
     handleClose();
@@ -88,24 +89,25 @@ export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
-      daysAvailable: prev.daysAvailable.includes(day)
-        ? prev.daysAvailable.filter((d) => d !== day)
-        : [...prev.daysAvailable, day],
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day],
     }));
   };
 
   const handleClose = () => {
     setFormValues({
       image: "",
-      name: "",
+      dishName: "",
       description: "",
       price: "",
       category: "Veg",
-      subCategory: "Main Course",
+      subcategory: "Main Course",
       startTime: "",
       endTime: "",
-      daysAvailable: [],
+      availableDays: [],
     });
+    setSelectedImage(null);
     setIsOpen(false);
   };
 
@@ -158,11 +160,11 @@ export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
           <div>
             <Label htmlFor="name">Item Name</Label>
             <Input
-              id="name"
-              name="name"
+              id="dishName"
+              name="dishName"
               type="text"
               placeholder="Eg: ”Chicken Biryani”"
-              value={formValues.name}
+              value={formValues.dishName}
               onChange={handleInputChange}
             />
           </div>
@@ -230,11 +232,11 @@ export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
           </div>
           {/* Sub Category */}
           <div>
-            <Label htmlFor="subCategory">Sub-Category</Label>
+            <Label htmlFor="subcategory">Sub-Category</Label>
             <Select
-              defaultValue={formValues.subCategory}
+              defaultValue={formValues.subcategory}
               onValueChange={(value) =>
-                setFormValues({ ...formValues, subCategory: value })
+                setFormValues({ ...formValues, subcategory: value })
               }
             >
               <SelectTrigger className="w-full">
@@ -287,7 +289,7 @@ export default function AddItemModal({ onAddItem, nextId }: AddItemModalProps) {
               ].map((day) => (
                 <div key={day} className="flex items-center gap-2">
                   <Checkbox
-                    checked={formValues.daysAvailable.includes(day)}
+                    checked={formValues.availableDays.includes(day)}
                     onCheckedChange={() => toggleDay(day)}
                   />
                   <span>{day}</span>

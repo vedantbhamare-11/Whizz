@@ -1,5 +1,5 @@
 import express from "express";
-import { addDish, createOrder, deleteDish, getDashboardData, getDishes, getOrders, manageDishAvailability, manageOpenHours, updateDish, updateOrderStatus, uploadImage } from "../controllers/vendor.controller.js";
+import { addDish, createOrder, deleteDish, getDashboardData, getDishes, getOrders, manageCategory, manageDishAvailability, manageOpenHours, updateDish, updateOrderStatus} from "../controllers/vendor.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import upload from "../config/multer.config.js";
 
@@ -25,16 +25,17 @@ const router = express.Router();
 // Temp Vendor routes
 router.get("/", getDashboardData);
 router.get("/dishes", getDishes);
-router.post("/add", addDish);
+router.post("/add", upload.single("image"), addDish);
 router.put("/update", updateDish);
 router.delete("/delete", deleteDish);
 router.put('/toggleDishAvailability', manageDishAvailability);
+router.put('/manageCategory', manageCategory);
 router.put('/toggleOpenHours', manageOpenHours);
 router.get("/orders", getOrders);
 router.put("/updateOrder", updateOrderStatus);
 
 // Temp route for test image upload
-router.post("/upload", upload.single("image"), uploadImage);
+// router.post("/upload", upload.single("image"), uploadImage);
 router.post("/create", createOrder);
 
 export default router;

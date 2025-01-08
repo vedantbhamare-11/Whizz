@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import  { fetchDashboardCounts }  from "../app/API/dashboard";
+import  { fetchDashboardCountsApi }  from "../app/API/dashboard";
 
 // Define the state structure
 interface DashboardState {
@@ -25,8 +25,8 @@ export const fetchDashboardData = createAsyncThunk(
   async () => {
     // Simulating a delay to mimic an API call
     try {
-      const dashboardData = await fetchDashboardCounts();
-      
+      const dashboardData = await fetchDashboardCountsApi();
+
       if (dashboardData) {
         return dashboardData;
       }
