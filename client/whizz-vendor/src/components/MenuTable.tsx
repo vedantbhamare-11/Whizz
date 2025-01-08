@@ -35,7 +35,7 @@ interface MenuTableProps {
 
 export default function MenuTable({ menuItems }: MenuTableProps) {
   return (
-    <Table>
+    <Table className="w-full z-0">
       <TableHeader>
         <TableRow>
           <TableHead>Image</TableHead>
