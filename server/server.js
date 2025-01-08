@@ -6,6 +6,7 @@ import cors from "cors";
 // Import local modules
 import connectDB from "./config/connectDB.js";
 import authRoute from "./routes/auth.routes.js";
+import apiRoute from "./routes/api.routes.js";
 import { errorHandler } from "./utils/errorHandler.js";
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.json());
 
 // primary routes
 app.use("/auth", authRoute);
+app.use("/api", apiRoute);
 // app.use()
 
 app.use(errorHandler);
