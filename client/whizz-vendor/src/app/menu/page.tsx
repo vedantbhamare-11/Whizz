@@ -53,7 +53,7 @@ export default function Menu() {
       <Sidebar />
       <main className="flex-1">
         <Header />
-        <div className="p-6">
+        <div className="p-6 ml-48 mt-16">
           <div className="flex flex-row justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-[#3CAE06]">Menu</h1>
             <div className="flex items-center gap-4">

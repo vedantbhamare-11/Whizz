@@ -4,7 +4,7 @@ import { ChartLine, NotepadText, LayoutList, User } from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <aside className="flex flex-col justify-between w-48 h-screen bg-gray-100">
+    <aside className="flex flex-col justify-between w-48 h-screen bg-gray-100 fixed z-50">
       <div>
         <div className="p-6 flex justify-center">
           <Image

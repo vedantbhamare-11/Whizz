@@ -26,7 +26,7 @@ export default function Dashboard() {
       <Sidebar />
       <main className="flex-1">
         <Header />
-        <div className="p-6">
+        <div className="p-6 ml-48 mt-16">
           <h1 className="text-3xl font-bold text-[#3CAE06]">Dashboard</h1>
           <div className="grid grid-cols-3 gap-6 mt-6">
             <Card className="relative p-6">
