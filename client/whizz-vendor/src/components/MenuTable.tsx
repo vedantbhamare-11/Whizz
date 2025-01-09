@@ -18,22 +18,25 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
+import { on } from "events";
 
 interface MenuItem {
-  id: number;
+  _id: string;
   image: string;
-  name: string;
+  dishName: string;
   price: number;
   category: string;
-  subCategory: string;
-  available: boolean;
+  subcategory: string;
+  isAvailable: boolean;
 }
 
 interface MenuTableProps {
   menuItems: MenuItem[];
+  onToggleAvailability: (id: string, isAvailable: boolean) => void;
+  onChangeCategory: (id: string, category: string) => void;
 }
 
-export default function MenuTable({ menuItems }: MenuTableProps) {
+export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory }: MenuTableProps) {
   return (
     <Table className="w-full z-0">
       <TableHeader>
@@ -49,20 +52,20 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
       </TableHeader>
       <TableBody>
         {menuItems.map((item) => (
-          <TableRow key={item.id}>
+          <TableRow key={item._id}>
             <TableCell>
               <Image
-                src={item.image}
-                alt={item.name}
+                src={item.image ? item.image : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDI1fHx8ZW58MHx8fHx8"}
+                alt={item.dishName}
                 width={50}
                 height={50}
                 className="rounded-md"
               />
             </TableCell>
-            <TableCell className="font-medium">{item.name}</TableCell>
+            <TableCell className="font-medium">{item.dishName}</TableCell>
             <TableCell>{item.price}</TableCell>
             <TableCell>
-              <Select defaultValue={item.category}>
+              <Select defaultValue={item.category} onValueChange={(value) => onChangeCategory(item._id, value)}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
@@ -93,7 +96,7 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
               </Select>
             </TableCell>
             <TableCell>
-              <Select defaultValue={item.subCategory}>
+              <Select defaultValue={item.subcategory}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Select Sub-Category" />
                 </SelectTrigger>
@@ -106,7 +109,8 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
             </TableCell>
             <TableCell>
               <Switch
-                defaultChecked={item.available}
+                defaultChecked={item.isAvailable}
+                onCheckedChange={(checked) => onToggleAvailability(item._id, checked)}
                 className="data-[state=checked]:bg-[#3CAE06]"
               />
             </TableCell>

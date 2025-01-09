@@ -4,24 +4,28 @@ import { errorResponse, successResponse } from "../utils/responseHandler.js";
 
 const getDashboardData = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
+    // const vendorId = req.userId;
 
     // Check if vendorId is provided
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     };
     try {
+        // Check if the vendor exists
         const vendor = await Vendor.findById(vendorId);
-
         if (!vendor) {
             return errorResponse(res, 404, null, "Vendor not found");
         };
 
+        // Set start and end of day
         const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
         const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
         const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
 
+        // Fetch dashboard data
         const [todayOrders, activeMenuItems, totalRevenue] = await Promise.all([
+            // Count today's orders
             Order.countDocuments({
                 vendorId,
                 createdTime: {
@@ -29,23 +33,24 @@ const getDashboardData = async (req, res, next) => {
                     $lt: endOfDay
                 }
             }),
+            // Count active menu items
             Dish.countDocuments({
                 vendorId,
                 isAvailable: true
             }),
+            // Calculate total revenue
             Order.aggregate([
                 { $match: { vendorId: vendorObjectId } },
                 { $group: { _id: null, total: { $sum: "$totalPrice" } } }
             ])
         ]);
 
+        // Construct dashboard data
         const dashboardData = {
             todayOrders,
             activeMenuItems,
-            totalRevenue: totalRevenue[0]?.total || 0
+            revenue: totalRevenue[0]?.total || 0
         };
-
-        console.log(dashboardData);
 
         return successResponse(res, 200, dashboardData, "Dashboard data fetched successfully");
 
@@ -56,20 +61,25 @@ const getDashboardData = async (req, res, next) => {
 
 // Manage open hours (Restaurant)
 const manageOpenHours = async (req, res, next) => {
+    // Extract vendorId
     const vendorId = req.userId;
+
+    // Extract availability
     const { availability } = req.body;
 
+    // Check if vendorId is provided
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     }
 
     try {
+        // Check if the vendor exists
         const vendor = await Vendor.findById(vendorId);
-
         if (!vendor) {
             return errorResponse(res, 404, null, "Vendor not found");
         };
 
+        // Update vendor
         const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, { isOpen: availability }, {
             new: true,
             runValidators: true
@@ -77,6 +87,7 @@ const manageOpenHours = async (req, res, next) => {
 
         return successResponse(res, 200, updatedVendor, "Availability updated successfully");
     } catch (error) {
+        // Check if the error is a CastError
         if (error.name === "CastError") {
             return errorResponse(res, 400, null, "Invalid vendor ID");
         }
@@ -87,24 +98,34 @@ const manageOpenHours = async (req, res, next) => {
 // Add new dishes
 const addDish = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
+    // const vendorId = req.userId;
 
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     };
 
     try {
+        const image = req.fileRelativePath || null;
 
         // Create new dish
         const newDish = new Dish({
             vendorId,
+            image,
             ...req.body
         });
 
         // Save new dish
         await newDish.save();
 
-        return successResponse(res, 200, newDish, "Dish added successfully");
+        const imageUrl = image ? `${req.protocol}://${req.get("host")}/${newDish.image}` : null;
+
+        const dish = {
+            ...newDish._doc,
+            image: imageUrl
+        }
+
+        return successResponse(res, 200, dish, "Dish added successfully");
 
     } catch (error) {
         if (error.name === "CastError") {
@@ -175,12 +196,13 @@ const manageDishAvailability = async (req, res, next) => {
         const updatedDish = await Dish.findByIdAndUpdate(dishId, { isAvailable: availability }, {
             new: true,
             runValidators: true
-        });
+        }).select("isAvailable");
 
         // Check if dish was updated
         if (!updatedDish) {
             return errorResponse(res, 404, null, "Dish not found");
         };
+
 
         return successResponse(res, 200, updatedDish, "Dish availability updated successfully");
     } catch (error) {
@@ -190,6 +212,34 @@ const manageDishAvailability = async (req, res, next) => {
         next(error);
     }
 };
+
+const manageCategory = async (req, res, next) => {
+    const { dishId, category } = req.body;
+
+    // Check if dishId is provided
+    if (!dishId) {
+        return errorResponse(res, 400, null, "Dish ID is required");
+    };
+    try {
+        // Update dish
+        const updatedDish = await Dish.findByIdAndUpdate(dishId, { category }, {
+            new: true,
+            runValidators: true
+        }).select("category");
+
+        // Check if dish was updated
+        if (!updatedDish) {
+            return errorResponse(res, 404, null, "Dish not found");
+        };
+
+        return successResponse(res, 200, updatedDish, "Dish category updated successfully");
+    } catch (error) {
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid dish ID");
+        }
+        next(error);
+    }
+}
 
 // Delete dishe
 const deleteDish = async (req, res, next) => {
@@ -223,10 +273,11 @@ const deleteDish = async (req, res, next) => {
 
 // Get all dishes
 const getDishes = async (req, res, next) => {
-    const vendorId = req.userId;
+    // const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
 
     // Extract query parameters for offset-based fetching and sorting
-    const { offset = 0, limit = 10, sort = "-createdAt" } = req.query;
+    const { offset = 0, limit = 30, sort = "-createdAt" } = req.query;
 
     try {
         // Build query object
@@ -238,10 +289,15 @@ const getDishes = async (req, res, next) => {
             .skip(Number(offset))
             .limit(Number(limit))
 
+        const updatedDishes = dishes.map(dish => {
+            return {
+                ...dish._doc,
+                image: dish.image ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
+        }});
         // Count total dishes for client-side scroll optimization
         const totalDishes = await Dish.countDocuments(query);
 
-        return successResponse(res, 200, { dishes, totalDishes }, "Dishes fetched successfully");
+        return successResponse(res, 200, { dishes: updatedDishes, totalDishes }, "Dishes fetched successfully");
     } catch (error) {
         if (error.name === "CastError") {
             return errorResponse(res, 400, null, "Invalid vendor ID format");
@@ -344,6 +400,7 @@ export {
     addDish,
     updateDish,
     manageDishAvailability,
+    manageCategory,
     getDishes,
     getOrders,
     updateOrderStatus,

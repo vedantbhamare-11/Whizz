@@ -9,22 +9,23 @@ import MenuTable from "@/components/MenuTable";
 import AddItemModal from "@/components/AddItemModal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { fetchMenuItems, addMenuItem } from "@/redux/menuSlice";
+import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
+import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
 
 // Define the MenuItem type explicitly
-interface MenuItem {
-  id: number;
-  image: string;
-  name: string;
-  price: number;
-  category: string;
-  subCategory: string;
-  startTime?: string;
-  endTime?: string;
-  daysAvailable?: string[];
-  available: boolean;
-}
+// interface MenuItem {
+//   _id: string;
+//   image: string;
+//   dishName: string;
+//   price: number;
+//   category: string;
+//   subcategory: string;
+//   startTime?: string;
+//   endTime?: string;
+//   availableDays?: string[];
+//   isAvailable: boolean;
+// }
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,13 +40,45 @@ export default function Menu() {
     }
   }, [dispatch, menuStatus]);
 
-  const handleAddItem = (newItem: MenuItem) => {
-    dispatch(addMenuItem(newItem));
+  // Handle adding a new menu item
+  const handleAddItem = async (newItem: any) => {
+    try {
+      const response = await addDishApi(newItem);
+      if (response) {
+        dispatch(addMenuItem(response));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle toggling dish availability
+  const handleToggleAvailability = async (id: string, isAvailable: boolean) => {
+    try {
+      const response = await toggleDishAvailabilityApi(id, isAvailable);
+      if (response){
+        dispatch(toggleAvailability({id, isAvailable}));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle changing dish category
+  const handleManageCategory = async (id: string, category: string) => {
+    try {
+      const response = await manageCategory(id, category);
+      if (response){
+        dispatch(changeCategory({id, category}));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Filter menu items based on search term
   const filteredMenuItems = menuItems.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -70,14 +103,17 @@ export default function Menu() {
               </Button>
               <AddItemModal
                 onAddItem={handleAddItem}
-                nextId={menuItems.length + 1}
               />
             </div>
           </div>
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
             {menuStatus === "loading" && <p>Loading menu items...</p>}
             {menuStatus === "succeeded" && (
-              <MenuTable menuItems={filteredMenuItems} />
+              <MenuTable 
+                menuItems={filteredMenuItems} 
+                onToggleAvailability={handleToggleAvailability} 
+                onChangeCategory={handleManageCategory}
+              />
             )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}
           </div>

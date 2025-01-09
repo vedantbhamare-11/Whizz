@@ -22,13 +22,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Enable CORS for cross-origin requests
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,}));
 
 // Parse cookies
 app.use(cookieParser());
 
 // Parse JSON request bodies
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files (save images)
 app.use('/dishImages', express.static(path.join(__dirname, 'src', 'dishImages')));

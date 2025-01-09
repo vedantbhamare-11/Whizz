@@ -22,7 +22,9 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         // Define how the uploaded file should be named
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const filename = uniqueSuffix + path.basename(file.originalname);
+        cb(null, filename);
+        req.fileRelativePath = `dishImages/${filename}`;
     }
 });
 
