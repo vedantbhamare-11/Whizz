@@ -6,7 +6,7 @@ import { successResponse } from "../utils/responseHandler.js";
 const getDashboardData = async (req, res, next) => {
   try {
     // Count dashboard data
-    const [totalVendors, totalAgents, totalCustomers, activeOrders] =
+    const [totalVendors, deliveryPersonnel, totalCustomers, activeOrders] =
       await Promise.all([
         // Vendor count
         Vendor.countDocuments(),
@@ -24,7 +24,7 @@ const getDashboardData = async (req, res, next) => {
     // Set dashboard data
     const dashboardData = {
       totalVendors,
-      totalAgents,
+      deliveryPersonnel,
       totalCustomers,
       activeOrders,
     };

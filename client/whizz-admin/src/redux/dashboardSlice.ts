@@ -8,10 +8,10 @@ interface DashboardState {
 }
 
 const initialState: DashboardState = {
-    totalVendors: 224,
-    deliveryPersonnel: 20,
-    totalCustomers: 1120,
-    activeOrders: 110,
+    totalVendors: 0,
+    deliveryPersonnel: 0,
+    totalCustomers: 0,
+    activeOrders: 0,
   };
   
 

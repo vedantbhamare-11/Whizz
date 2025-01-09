@@ -4,12 +4,35 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Store, Bike, User, NotepadText } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useEffect } from "react";
+import { fetchDashboardApi } from "../API/dashboard";
+import { setDashboardData } from "@/redux/dashboardSlice";
 
 export default function Dashboard() {
+
+  const dispatch = useDispatch();
+
   const { totalVendors, deliveryPersonnel, totalCustomers, activeOrders } =
     useSelector((state: RootState) => state.dashboard);
+
+   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Api call
+        const response = await fetchDashboardApi();
+
+        if (response){
+          dispatch(setDashboardData(response));
+        };
+      } catch (error) {
+        console.log(error);
+      };
+    };
+
+    fetchDashboardData();
+   },[]);
 
   return (
     <div className="flex">
