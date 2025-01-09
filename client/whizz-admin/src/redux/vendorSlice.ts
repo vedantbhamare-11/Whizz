@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Vendor {
+export interface Vendor {
   id: number;
   logo: string;
   name: string;
@@ -18,7 +18,7 @@ const initialState: VendorState = {
   vendors: [
     {
       id: 1,
-      logo: "/images/logo1.png", // Replace with actual image URLs
+      logo: "https://via.placeholder.com/40", // Replace with actual image URLs
       name: "Green Leaf",
       location: "Nungambakkam",
       category: "Veg",
@@ -27,7 +27,7 @@ const initialState: VendorState = {
     },
     {
       id: 2,
-      logo: "/images/logo2.png",
+      logo: "https://via.placeholder.com/40",
       name: "Spicy Grill",
       location: "Anna Nagar",
       category: "Non-Veg",
@@ -49,8 +49,16 @@ const vendorSlice = createSlice({
         state.vendors[index] = action.payload;
       }
     },
+    addVendor(state, action: PayloadAction<Vendor>) {
+      state.vendors.push(action.payload);
+    },
+    deleteVendor(state, action: PayloadAction<number>) {
+      state.vendors = state.vendors.filter(
+        (vendor) => vendor.id !== action.payload
+      );
+    },
   },
 });
 
-export const { updateVendor } = vendorSlice.actions;
+export const { updateVendor, addVendor, deleteVendor } = vendorSlice.actions;
 export default vendorSlice.reducer;
