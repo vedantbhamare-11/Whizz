@@ -59,7 +59,7 @@ export default function Orders() {
           // Add timeAgo property
           const orderTimeUpdated = order.map((order: any) => ({
             ...order,
-            timeAgo: convertTime(order.updatedA)
+            timeAgo: convertTime(order.updatedAt)
           }))
 
           // Filter orders by status

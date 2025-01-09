@@ -23,4 +23,56 @@ const adminSchema = new mongoose.Schema({
     },
 }, {timestamps: true});
 
-export default mongoose.model("Admin", adminSchema);
+// Customer model
+const customerSchema = new mongoose.Schema({
+    mobile: {
+        type: String,
+        required: true,
+        unique: true
+    },
+});   
+
+// Agent model
+const agentSchema = new mongoose.Schema({
+    agentName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    mobile: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    coveredArea: {
+        type: String,
+        required: true
+    },
+    isAvailable: {
+        type: Boolean,
+        required: true
+    },
+    currentStatus: {
+        type: String,   
+        enum: ["unassigned", "assigned"],
+        default: "unassigned"
+    },
+    profilePic: {
+        type: String,
+    },
+    password: {
+        type: String,
+        required: true
+    },
+}, {timestamps: true});
+
+const Admin = mongoose.model("Admin", adminSchema);
+const Customer = mongoose.model("Customer", customerSchema);
+const Agent = mongoose.model("Agent", agentSchema);
+
+export { Admin, Customer, Agent };
+

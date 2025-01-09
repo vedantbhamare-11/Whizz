@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./src/config/connectDB.js";
 import authRoute from "./src/routes/auth.routes.js";
 import vendorRoute from "./src/routes/vendor.routes.js";
+import adminRoute from "./src/routes/admin.routes.js";
 import { errorHandler } from "./src/utils/errorHandler.js";
 
 dotenv.config();
@@ -40,8 +41,9 @@ app.use('/dishImages', express.static(path.join(__dirname, 'src', 'dishImages'))
 // primary routes
 app.use("/auth", authRoute);
 app.use("/vendor", vendorRoute);
+app.use("/admin", adminRoute);
 
-app.use(errorHandler); 
+app.use(errorHandler);  
 
 // start the server
 app.listen(PORT, () => {
