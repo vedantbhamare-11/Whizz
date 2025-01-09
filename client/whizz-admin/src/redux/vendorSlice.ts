@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Vendor {
-  id: number;
+  _id: string;
   logo: string;
-  name: string;
-  location: string;
-  category: string;
+  vendorName: string;
+  area: string;
+  restaurantType: string;
   dishes: number;
-  status: boolean;
+  isOpen: boolean;
 }
 
 interface VendorState {
@@ -15,50 +15,36 @@ interface VendorState {
 }
 
 const initialState: VendorState = {
-  vendors: [
-    {
-      id: 1,
-      logo: "https://via.placeholder.com/40", // Replace with actual image URLs
-      name: "Green Leaf",
-      location: "Nungambakkam",
-      category: "Veg",
-      dishes: 25,
-      status: true,
-    },
-    {
-      id: 2,
-      logo: "https://via.placeholder.com/40",
-      name: "Spicy Grill",
-      location: "Anna Nagar",
-      category: "Non-Veg",
-      dishes: 40,
-      status: false,
-    },
-  ],
+  vendors: [],
 };
 
 const vendorSlice = createSlice({
   name: "vendors",
   initialState,
   reducers: {
-    updateVendor(state, action: PayloadAction<Vendor>) {
-      const index = state.vendors.findIndex(
-        (vendor) => vendor.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.vendors[index] = action.payload;
+    setVendor(state, action: PayloadAction<Vendor[]>) {
+      state.vendors = action.payload;
+    },
+    updateVendor(state, action: PayloadAction<{
+      vendorId: string,
+      isOpen: boolean
+    }>) {
+      const { vendorId, isOpen } = action.payload;
+      const vendor = state.vendors.find((vendor) => vendor._id === vendorId);
+      if (vendor){
+        vendor.isOpen = isOpen;
       }
     },
     addVendor(state, action: PayloadAction<Vendor>) {
       state.vendors.push(action.payload);
     },
-    deleteVendor(state, action: PayloadAction<number>) {
+    deleteVendor(state, action: PayloadAction<string>) {
       state.vendors = state.vendors.filter(
-        (vendor) => vendor.id !== action.payload
+        (vendor) => vendor._id !== action.payload
       );
     },
   },
 });
 
-export const { updateVendor, addVendor, deleteVendor } = vendorSlice.actions;
+export const { setVendor, updateVendor, addVendor, deleteVendor } = vendorSlice.actions;
 export default vendorSlice.reducer;

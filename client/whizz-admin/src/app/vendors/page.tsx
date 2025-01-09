@@ -3,14 +3,51 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import VendorTable from "@/components/VendorTable"; // Import the new table component
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SlidersHorizontal, Plus } from "lucide-react";
+import { useEffect } from "react";
+import { setVendor, updateVendor } from "@/redux/vendorSlice";
+import { fetchVendorsApi, manageOpening } from "../API/vendor";
 
 export default function VendorsPage() {
+
+  const dispatch = useDispatch();
+
   const vendors = useSelector((state: RootState) => state.vendors.vendors);
+
+  // Get fetch vendor data
+  useEffect(() => {
+    const fetchVendorData = async () => {
+      try {
+        // Api call
+        const response = await fetchVendorsApi();
+
+        if(response) {
+          dispatch(setVendor(response));
+        };
+      } catch (error) {
+        console.log(error);
+      };
+    };
+
+    fetchVendorData();
+  },[]);
+
+  // Manage openings 
+  const handleOpeningToggle = async (vendorId: string, isOpen: boolean) => {
+    try {
+      const response = await manageOpening(vendorId, isOpen);
+
+      if(response) {
+         dispatch(updateVendor({ vendorId, isOpen }));
+      }
+    } catch (error) {
+      console.log(error);
+    };
+  };
 
   return (
     <div className="flex">
@@ -36,10 +73,10 @@ export default function VendorsPage() {
             </div>
           </div>
           <div className="mt-8">
-            <VendorTable vendors={vendors} />
+            <VendorTable vendors={vendors} onToggleOpen={handleOpeningToggle} />
           </div>
         </div>
       </main>
     </div>
   );
-}
+};

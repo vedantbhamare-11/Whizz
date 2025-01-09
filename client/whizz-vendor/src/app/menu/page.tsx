@@ -13,20 +13,6 @@ import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory } from 
 import { useEffect, useState } from "react";
 import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
 
-// Define the MenuItem type explicitly
-// interface MenuItem {
-//   _id: string;
-//   image: string;
-//   dishName: string;
-//   price: number;
-//   category: string;
-//   subcategory: string;
-//   startTime?: string;
-//   endTime?: string;
-//   availableDays?: string[];
-//   isAvailable: boolean;
-// }
-
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
   const menuItems = useSelector((state: RootState) => state.menu.items);

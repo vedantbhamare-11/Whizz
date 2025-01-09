@@ -4,7 +4,7 @@ import axiosInstance from "@/lib/axiosInstance";
 const fetchDashboardApi = async () => {
     try {
         const response = await axiosInstance.get('/admin');
-
+        
         if(response.data.success) {
             return response.data.data
         } else {

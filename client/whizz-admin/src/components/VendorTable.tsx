@@ -25,24 +25,18 @@ import { updateVendor } from "@/redux/vendorSlice";
 
 interface VendorTableProps {
   vendors: Vendor[];
+  onToggleOpen: ( vendorId: string, isOpen: boolean) => void;
 }
 
-const VendorTable: React.FC<VendorTableProps> = ({ vendors }) => {
-  const dispatch = useDispatch();
+const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen }) => {
 
-  const handleCategoryChange = (id: number, newCategory: string) => {
-    const vendor = vendors.find((vendor) => vendor.id === id);
-    if (vendor) {
-      dispatch(updateVendor({ ...vendor, category: newCategory }));
-    }
-  };
+  // const handleCategoryChange = (id: string, newCategory: string) => {
+  //   const vendor = vendors.find((vendor) => vendor._id === id);
+  //   if (vendor) {
+  //     dispatch(updateVendor({ ...vendor, restaurantType: newCategory }));
+  //   }
+  // };
 
-  const handleStatusChange = (id: number, status: boolean) => {
-    const vendor = vendors.find((vendor) => vendor.id === id);
-    if (vendor) {
-      dispatch(updateVendor({ ...vendor, status }));
-    }
-  };
 
   return (
     <Table>
@@ -59,22 +53,22 @@ const VendorTable: React.FC<VendorTableProps> = ({ vendors }) => {
       </TableHeader>
       <TableBody>
         {vendors.map((vendor) => (
-          <TableRow key={vendor.id}>
+          <TableRow key={vendor._id}>
             <TableCell>
               <Image
-                src={vendor.logo}
-                alt={vendor.name}
+                src={vendor.logo || "https://via.placeholder.com/40"}
+                alt={vendor.vendorName}
                 width={40}
                 height={40}
                 className="w-10 h-10 rounded-full object-cover"
               />
             </TableCell>
-            <TableCell className="font-medium">{vendor.name}</TableCell>
-            <TableCell>{vendor.location}</TableCell>
+            <TableCell className="font-medium">{vendor.vendorName}</TableCell>
+            <TableCell>{vendor.area}</TableCell>
             <TableCell>
               <Select
-                defaultValue={vendor.category}
-                onValueChange={(value) => handleCategoryChange(vendor.id, value)}
+                defaultValue={vendor.restaurantType}
+                // onValueChange={(value) => handleCategoryChange(vendor._id, value)}
               >
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Category" />
@@ -110,9 +104,9 @@ const VendorTable: React.FC<VendorTableProps> = ({ vendors }) => {
             <TableCell>{vendor.dishes}</TableCell>
             <TableCell>
               <Switch
-                checked={vendor.status}
+                checked={vendor.isOpen}
                 onCheckedChange={(checked) =>
-                  handleStatusChange(vendor.id, checked)
+                  onToggleOpen(vendor._id, checked)
                 }
                 className="data-[state=checked]:bg-[#3CAE06]"
               />
