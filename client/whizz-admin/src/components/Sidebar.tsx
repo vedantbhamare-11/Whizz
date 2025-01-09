@@ -1,44 +1,57 @@
-'use client';
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { JSX } from "react";
+import Image from "next/image";
+import { ChartLine, NotepadText, Store, User, Bike } from "lucide-react";
 
-export default function Sidebar(): JSX.Element {
-  const pathname = usePathname();
-
-  const links = [
-    { href: "/dashboard", label: "Dashboard" },
-  ];
-
+export default function Sidebar() {
   return (
-    <aside
-      className="flex h-screen bordder border-r-black bg-gray-100 w-48 flex-col items-start py-6 "
-    >
-      <div className="flex items-center justify-center w-full">
-      <h1 className="text-2xl font-semibold">
-        Whizz
-      </h1>
+    <aside className="flex flex-col justify-between w-48 h-screen bg-gray-100 fixed z-50">
+      <div>
+        <div className="p-6 flex justify-center">
+          <Image
+            src="/logo.png" // Replace with your logo path
+            alt="Logo"
+            width={100}
+            height={100}
+          />
+        </div>
+        <nav className="flex flex-col space-y-2 gap-4 p-2">
+          <Link
+            href="/dashboard"
+            className="p-2 flex items-center font-semibold gap-3 text-black hover:bg-gray-200 rounded-md"
+          >
+            <ChartLine size={20} />
+            <span>Dashboard</span>
+          </Link>
+          <Link
+            href="/orders"
+            className="p-2 flex items-center font-semibold gap-3 text-black hover:bg-gray-200 rounded-md"
+          >
+            <NotepadText size={20} />
+            <span>Orders</span>
+          </Link>
+          <Link
+            href="/vendors"
+            className="p-2 flex items-center font-semibold gap-3 text-black hover:bg-gray-200 rounded-md"
+          >
+            <Store size={20} />
+            <span>Vendors</span>
+          </Link>
+          <Link
+            href="/delivery"
+            className="p-2 flex items-center font-semibold gap-3 text-black hover:bg-gray-200 rounded-md"
+          >
+            <Bike size={20} />
+            <span>Delivery</span>
+          </Link>
+        </nav>
       </div>
-      
-      <nav className="w-full mt-6 flex flex-col justify-center">
-        <ul className="space-y-4 p-2">
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={`w-full flex items-center justify-center block py-4 rounded-md  font-medium ${
-                  pathname === link.href
-                    ? "bg-[#333] text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="p-4 flex justify-center">
+        <Link href="/profile">
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded-lg hover:bg-gray-400">
+            <User size={24} className="text-gray-700" />
+          </div>
+        </Link>
+      </div>
     </aside>
   );
 }
