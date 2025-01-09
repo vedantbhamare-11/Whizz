@@ -1,9 +1,14 @@
-import { JSX } from "react";
+"use client";
 
-export default function Header(): JSX.Element {
+import { HelpCircle } from "lucide-react";
+
+export default function Header() {
   return (
-    <header className="flex items-center p-5 h-16 bg-[#333] text-white">
-      
+    <header className="p-2 bg-[#fff] border-b border-[#e5e7eb] flex justify-end items-center gap-4 fixed z-40 top-0 left-0 right-0">
+      {/* Help Icon */}
+      <button className="p-2 rounded-md hover:bg-gray-100">
+        <HelpCircle size={24} className="text-gray-600" />
+      </button>
     </header>
   );
 }

@@ -1,12 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import orderReducer from "./orderSlice";
 import agentReducer from "./agentSlice";
+import dashboardReducer from "./dashboardSlice";
+import vendorReducer from "./vendorSlice";
+import deliveryReducer from "./deliverySlice";
 
 // Configure the store
 const store = configureStore({
   reducer: {
     orders: orderReducer,
     agents: agentReducer,
+    dashboard: dashboardReducer,
+    vendors: vendorReducer,
+    delivery: deliveryReducer,
+
   },
 });
 
