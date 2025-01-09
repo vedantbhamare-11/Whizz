@@ -3,7 +3,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -19,41 +18,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Ghost, MoreVertical, Plus, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { MoreVertical, Plus, SlidersHorizontal } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-
-const mockVendors = [
-  {
-    id: 1,
-    logo: "/images/logo1.png", // Replace with actual image URLs
-    name: "Green Leaf",
-    location: "Nungambakkam",
-    category: "Veg",
-    dishes: 25,
-    status: true,
-  },
-  {
-    id: 2,
-    logo: "/images/logo2.png",
-    name: "Spicy Grill",
-    location: "Anna Nagar",
-    category: "Non-Veg",
-    dishes: 40,
-    status: false,
-  },
-];
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
+import { updateVendor } from "@/redux/vendorSlice";
+import Image from "next/image";
 
 export default function VendorsPage() {
-  const [vendors, setVendors] = useState(mockVendors);
+  const dispatch = useDispatch();
+  const vendors = useSelector((state: RootState) => state.vendors.vendors);
 
   const handleCategoryChange = (id: number, newCategory: string) => {
-    setVendors((prev) =>
-      prev.map((vendor) =>
-        vendor.id === id ? { ...vendor, category: newCategory } : vendor
-      )
-    );
+    const vendor = vendors.find((vendor) => vendor.id === id);
+    if (vendor) {
+      dispatch(updateVendor({ ...vendor, category: newCategory }));
+    }
+  };
+
+  const handleStatusChange = (id: number, status: boolean) => {
+    const vendor = vendors.find((vendor) => vendor.id === id);
+    if (vendor) {
+      dispatch(updateVendor({ ...vendor, status }));
+    }
   };
 
   return (
@@ -96,7 +84,7 @@ export default function VendorsPage() {
                 {vendors.map((vendor) => (
                   <TableRow key={vendor.id}>
                     <TableCell>
-                      <img
+                      <Image
                         src={vendor.logo}
                         alt={vendor.name}
                         className="w-10 h-10 rounded-full object-cover"
@@ -117,7 +105,7 @@ export default function VendorsPage() {
                         <SelectContent>
                           <SelectItem value="Veg">
                             <div className="flex items-center gap-2">
-                              <img
+                              <Image
                                 src="./veg.png"
                                 alt="Veg"
                                 className="w-4 h-4"
@@ -127,7 +115,7 @@ export default function VendorsPage() {
                           </SelectItem>
                           <SelectItem value="Non-Veg">
                             <div className="flex items-center gap-2">
-                              <img
+                              <Image
                                 src="./non-veg.png"
                                 alt="Non-Veg"
                                 className="w-4 h-4"
@@ -143,20 +131,15 @@ export default function VendorsPage() {
                       <Switch
                         checked={vendor.status}
                         onCheckedChange={(checked) =>
-                          setVendors((prev) =>
-                            prev.map((v) =>
-                              v.id === vendor.id ? { ...v, status: checked } : v
-                            )
-                          )
+                          handleStatusChange(vendor.id, checked)
                         }
                         className="data-[state=checked]:bg-[#3CAE06]"
                       />
                     </TableCell>
                     <TableCell>
-                        <Button variant="ghost">
+                      <Button variant="ghost">
                         <MoreVertical size={20} />
-
-                        </Button>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
