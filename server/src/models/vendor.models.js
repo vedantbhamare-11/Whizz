@@ -117,14 +117,22 @@ const orderSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    dishName: {
-        type: String,
-        required: true
-    },
-    quantity: {
-        type: Number,
-        required: true
-    },
+    dishes: [
+        {
+            dishName: {
+                type: String,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
     totalPrice: {
         type: Number,
         required: true
@@ -142,7 +150,10 @@ const orderSchema = new mongoose.Schema({
     acceptOrRejectTime: {
         type: Date,
     },
-    pickupTime: {
+    readyForPickupTime: {
+        type: Date,
+    },
+    outForDelivery: {
         type: Date,
     },
     deliveredTime: {
@@ -151,10 +162,10 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: "pending",
-        enum: ["pending", "accepted", "rejected", "inProgress", "delivered"],
+        default: "orderQueue",
+        enum: ["orderQueue", "inProgress", "rejected", "readyForPickup", "outForDelivery", "delivered"],
     },
-});
+}, {timestamps: true});
 
 // Creating models
 const Vendor = mongoose.model("Vendor", vendorSchema);

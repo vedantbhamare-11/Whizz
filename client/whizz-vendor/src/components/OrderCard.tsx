@@ -10,7 +10,7 @@ const CustomSeparator = () => {
 };
 
 interface Dish {
-  name: string;
+  dishName: string;
   price: number;
   quantity: number;
 }
@@ -25,8 +25,9 @@ interface OrderCardProps {
   orderId: string;
   timeAgo: string;
   dishes: Dish[];
-  status: "orderQueue" | "inProgress" | "readyForPickup" | "outForDelivery";
-  agentInfo?: DeliveryAgent; // Optional for 'outForDelivery'
+  status: "orderQueue" | "inProgress" | "readyForPickup" | "outForDelivery" | "delivered" | "rejected";
+  agentInfo?: DeliveryAgent; // Optional for 'outForDelivery',
+  onStatusChange: (orderId: string, newStatus: string) => void;
 }
 
 export default function OrderCard({
@@ -35,6 +36,7 @@ export default function OrderCard({
   dishes,
   status,
   agentInfo,
+  onStatusChange,
 }: OrderCardProps) {
   // Calculate total price
   const totalPrice = dishes.reduce(
@@ -58,7 +60,7 @@ export default function OrderCard({
         {dishes.map((dish, index) => (
           <div key={index} className="flex justify-between items-center">
             <div>
-              <p className="text-base text-black">{dish.name}</p>
+              <p className="text-base text-black">{dish.dishName}</p>
               <p className="text-sm text-gray-500">Rs {dish.price}</p>
             </div>
             <div className="w-8 h-8 flex items-center justify-center bg-white rounded-md border border-gray-300">
@@ -86,6 +88,7 @@ export default function OrderCard({
           <Button
             variant="destructive"
             className="flex items-center gap-2 bg-[#FF2C2C] text-white hover:bg-red-600"
+            onClick={() => onStatusChange(orderId, "rejected")}
           >
             <X size={16} />
             Reject
@@ -93,6 +96,7 @@ export default function OrderCard({
           <Button
             variant="default"
             className="flex items-center gap-2 bg-[#3CAE06] text-white hover:bg-green-600"
+            onClick={() => onStatusChange(orderId, "inProgress")}
           >
             <Check size={16} />
             Accept
@@ -105,6 +109,7 @@ export default function OrderCard({
         <div className="mt-4">
           <Button
             className="flex w-full items-center gap-2 bg-[#3CAE06] text-white hover:bg-[#32c207]"
+            onClick={() => onStatusChange(orderId, "readyForPickup")}
           >
             <ShoppingBag size={16} />
             Ready to Pickup

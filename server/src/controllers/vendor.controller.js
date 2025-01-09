@@ -292,8 +292,9 @@ const getDishes = async (req, res, next) => {
         const updatedDishes = dishes.map(dish => {
             return {
                 ...dish._doc,
-                image: dish.image ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
-        }});
+                image: dish.image !== 'null' ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
+            }
+        });
         // Count total dishes for client-side scroll optimization
         const totalDishes = await Dish.countDocuments(query);
 
@@ -309,7 +310,8 @@ const getDishes = async (req, res, next) => {
 // Get all orders
 const getOrders = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = req.userId;
+    // const vendorId = req.userId;
+    const vendorId = "677e6bedf9823a75597f9029";
 
     // Check if vendorId is provided
     if (!vendorId) {
@@ -318,7 +320,8 @@ const getOrders = async (req, res, next) => {
 
     try {
         // Fetch orders for the vendor
-        const orders = await Order.find({ vendorId });
+        const orders = await Order.find({ vendorId }).sort({ createdAt: -1 });
+
 
         // Check if there are no orders
         if (orders.length === 0) {
@@ -347,22 +350,33 @@ const updateOrderStatus = async (req, res, next) => {
 
     try {
         // Update order status
-        const updatedOrder = await Order.findOneAndUpdate({ whizzOrderId }, { status }, {
-            new: true,
-            runValidators: true
-        });
+        const order = await Order.findOneAndUpdate(
+            { whizzOrderId },
+            {
+                status,
+                ...(status === "inProgress" || status === "rejected"
+                    ? { acceptOrRejectTime: new Date() }
+                    : {}),
+                ...(status === "readyForPickup" ? { readyForPickupTime: new Date() } : {}),
+                ...(status === "outForDelivery" ? { outForDeliveryTime: new Date() } : {}),
+                ...(status === "delivered" ? { deliveredTime: new Date() } : {}),
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
 
         // Check if order was updated
-        if (!updatedOrder) {
+        if (!order) {
             return errorResponse(res, 404, null, "Order not found");
         };
 
-        return successResponse(res, 200, updatedOrder, "Order status updated successfully");
+        return successResponse(res, 200, order, "Order status updated successfully");
     } catch (error) {
         next(error);
     }
 };
-
 
 
 // Temp controller to check image uploads
