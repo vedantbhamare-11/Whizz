@@ -7,9 +7,11 @@ import OrderCard from "@/components/OrderCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { convertTime, fetchOrdersApi, updateOrder } from "../API/order";
+import { setOrders, updateOrderStatus } from "@/redux/orderSlice";
 
 // Helper function to format status names
 const formatStatusName = (status: string) => {
@@ -27,49 +29,87 @@ const statusDotColor: Record<string, string> = {
 };
 
 export default function Orders() {
+
+  const dispatch = useDispatch();
+
   const orders = useSelector((state: RootState) => state.orders.orders);
   const [activeTab, setActiveTab] = useState("currentOrders");
-
-  // Sample data for delivered orders
-  const deliveredOrders = [
-    {
-      orderId: 101,
-      deliveryTime: "10:30 AM",
-      deliveredBy: "John Doe",
-    },
-    {
-      orderId: 102,
-      deliveryTime: "12:45 PM",
-      deliveredBy: "Jane Smith",
-    },
-    {
-      orderId: 103,
-      deliveryTime: "2:15 PM",
-      deliveredBy: "Alice Johnson",
-    },
-  ];
+  const [orderQueue, setOrderQueue] = useState(orders.orderQueue);
+  const [inProgress, setInProgress] = useState(orders.inProgress);
+  const [readyForPickup, setReadyForPickup] = useState(orders.readyForPickup);
+  const [outForDelivery, setOutForDelivery] = useState(orders.outForDelivery);
+  const [delivered, setDelivered] = useState(orders.delivered);
+  const [rejected, setRejected] = useState(orders.rejected);
 
   const heading =
     activeTab === "currentOrders"
       ? "Current Orders"
       : activeTab === "deliveredOrders"
-      ? "Delivered Orders"
-      : "Rejected Orders";
+        ? "Delivered Orders"
+        : "Rejected Orders";
 
-      const rejectedOrders = [
-        {
-          orderId: 201,
-          note: "Item not available",
-        },
-        {
-          orderId: 202,
-          note: "Delivery not possible to the location",
-        },
-        {
-          orderId: 203,
-          note: "Vendor canceled due to rush hours",
-        },
-      ];
+  // Fetch orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const order = await fetchOrdersApi();
+
+        if (orders) {
+
+          // Add timeAgo property
+          const orderTimeUpdated = order.map((order: any) => ({
+            ...order,
+            timeAgo: convertTime(order.updatedA)
+          }))
+
+          // Filter orders by status
+          const orderQueue = orderTimeUpdated.filter((order: any) => order.status === "orderQueue");
+          const inProgress = orderTimeUpdated.filter((order: any) => order.status === "inProgress");
+          const readyForPickup = orderTimeUpdated.filter((order: any) => order.status === "readyForPickup");
+          const outForDelivery = orderTimeUpdated.filter((order: any) => order.status === "outForDelivery");
+          const delivered = orderTimeUpdated.filter((order: any) => order.status === "delivered");
+          const rejected = orderTimeUpdated.filter((order: any) => order.status === "rejected");
+
+          setOrderQueue(orderQueue);
+          setInProgress(inProgress);
+          setReadyForPickup(readyForPickup);
+          setOutForDelivery(outForDelivery);
+          setDelivered(delivered);
+          setRejected(rejected);
+
+          const orderData = {
+            orderQueue,
+            inProgress,
+            readyForPickup,
+            outForDelivery,
+            delivered,
+            rejected
+          };
+
+          dispatch(setOrders(orderData));
+        }
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchOrders();
+  }, []);
+
+  // Handle accepting order logic here
+  const handleOrderStatus = (orderId: string, newStatus: any) => {
+    console.log("id", orderId, "newStatus", newStatus);
+
+    try {
+      const response = updateOrder(orderId, newStatus);
+
+      dispatch(updateOrderStatus({ orderId, newStatus }));
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="flex">
       <Sidebar />
@@ -97,29 +137,29 @@ export default function Orders() {
           <Tabs value={activeTab} className="w-full">
             <TabsContent value="currentOrders">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-                {Object.keys(orders).map((status, index) => (
+                {Object.keys(orders).filter((status) => status !== 'delivered' && status !== 'rejected').map((status, index) => (
                   <div
                     key={index}
                     className="flex flex-col p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto"
                   >
                     <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
                       <span
-                        className={`w-2 h-2 rounded-full ${
-                          statusDotColor[status] || "bg-gray-400"
-                        }`}
+                        className={`w-2 h-2 rounded-full ${statusDotColor[status] || "bg-gray-400"
+                          }`}
                       ></span>
                       {formatStatusName(status)}
                     </Badge>
                     <div className="mt-2 space-y-4">
-                      {orders[status as keyof typeof orders].map(
+                      {orders[status as keyof typeof orders]?.map(
                         (order, index) => (
                           <OrderCard
                             key={index}
-                            orderId={order.orderId}
-                            timeAgo={order.timeAgo}
+                            orderId={order.whizzOrderId}
+                            timeAgo={order.timeAgo ?? ""}
                             dishes={order.dishes}
                             status={order.status}
                             agentInfo={order.agentInfo}
+                            onStatusChange={handleOrderStatus}
                           />
                         )
                       )}
@@ -140,16 +180,16 @@ export default function Orders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {deliveredOrders.map((order, index) => (
+                  {delivered.map((order, index) => (
                     <TableRow key={index}>
-                      <TableCell>{order.orderId}</TableCell>
+                      <TableCell>{order.whizzOrderId}</TableCell>
                       <TableCell>
                         <Button size="sm" variant="outline">
                           View Details
                         </Button>
                       </TableCell>
-                      <TableCell>{order.deliveryTime}</TableCell>
-                      <TableCell>{order.deliveredBy}</TableCell>
+                      <TableCell>{order.deliveredTime}</TableCell>
+                      <TableCell>{"Unknown"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -157,7 +197,7 @@ export default function Orders() {
             </TabsContent>
 
             <TabsContent value="rejectedOrders" className="border border-gray-200 rounded-md">
-            <Table className="mt-6">
+              <Table className="mt-6">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
@@ -166,15 +206,15 @@ export default function Orders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rejectedOrders.map((order, index) => (
+                  {rejected.map((order, index) => (
                     <TableRow key={index}>
-                      <TableCell>{order.orderId}</TableCell>
+                      <TableCell>{order.whizzOrderId}</TableCell>
                       <TableCell>
                         <Button size="sm" variant="outline">
                           View Details
                         </Button>
                       </TableCell>
-                      <TableCell>{order.note}</TableCell>
+                      <TableCell>{order.status}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
