@@ -1,61 +1,16 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { MoreVertical, Plus, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import Image from "next/image";
-
-const mockDeliveryPersonnel = [
-  {
-    id: 1,
-    photo: "https://via.placeholder.com/40", // Dummy image URL
-    name: "John Doe",
-    employeeId: "WHIZZ001",
-    region: "Nungambakkam",
-    ordersDelivered: 120,
-    status: "On delivery", // Can be "On delivery", "Active", "Inactive"
-  },
-  {
-    id: 2,
-    photo: "https://via.placeholder.com/40", // Dummy image URL
-    name: "Jane Smith",
-    employeeId: "WHIZZ002",
-    region: "Anna Nagar",
-    ordersDelivered: 95,
-    status: "Active",
-  },
-  {
-    id: 3,
-    photo: "https://via.placeholder.com/40", // Dummy image URL
-    name: "Richard Roe",
-    employeeId: "WHIZZ003",
-    region: "Anna Nagar",
-    ordersDelivered: 60,
-    status: "Inactive",
-  },
-];
-
-const statusVariants: Record<string, string> = {
-  "On delivery": "bg-[#FFF1CB] text-[#FDA400]",
-  Active: "bg-[#E0FFD1] text-[#3CAE06]",
-  Inactive: "bg-[#FFE3E3] text-[#DC2626]",
-
-};
+import { SlidersHorizontal, Plus } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import DeliveryTable from "@/components/DeliveryTable";
 
 export default function DeliveryPage() {
-  const [personnel] = useState(mockDeliveryPersonnel);
+  const personnel = useSelector((state: RootState) => state.delivery.personnel);
 
   return (
     <div className="flex">
@@ -81,46 +36,7 @@ export default function DeliveryPage() {
             </div>
           </div>
           <div className="mt-8">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Photo</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Employee ID</TableHead>
-                  <TableHead>Region</TableHead>
-                  <TableHead>Orders Delivered</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {personnel.map((person) => (
-                  <TableRow key={person.id}>
-                    <TableCell>
-                      <Image
-                        src={person.photo}
-                        alt={person.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{person.name}</TableCell>
-                    <TableCell>{person.employeeId}</TableCell>
-                    <TableCell>{person.region}</TableCell>
-                    <TableCell>{person.ordersDelivered}</TableCell>
-                    <TableCell>
-                      <Badge className={statusVariants[person.status] } >
-                        {person.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="ghost">
-                        <MoreVertical size={20} />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <DeliveryTable personnel={personnel} />
           </div>
         </div>
       </main>
