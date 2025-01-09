@@ -13,14 +13,12 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body style={{ display: "flex", margin: 0 }}>
-        <Sidebar />
-        <div style={{ flex: 1 }}>
-          <Header />
+      <body >
+        
           <Provider store={store}>
             {children}
           </Provider>
-        </div>
+        
       </body>
     </html>
   );
