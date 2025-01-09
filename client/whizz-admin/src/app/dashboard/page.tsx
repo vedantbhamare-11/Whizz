@@ -1,110 +1,63 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store"; // RootState type from Redux store
-import { assignAgent } from "@/redux/orderSlice";
-import { updateAgentStatus } from "@/redux/agentSlice";
-import { useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
+import { Card } from "@/components/ui/card";
+import { Store, Bike, User, NotepadText } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function Dashboard() {
-  // Access orders and agents from Redux store with proper types
-  const orders = useSelector((state: RootState) => state.orders.orders);
-  const agents = useSelector((state: RootState) => state.agents.agents);
-  const dispatch = useDispatch();
-
-  const [selectedAgents, setSelectedAgents] = useState<{ [key: number]: string }>({});
-
-  // Type the parameters for handleAssignAgent
-  const handleAssignAgent = (orderId: number, agentId: string) => {
-    // Dispatch assignAgent with type-safe payload
-    dispatch(assignAgent({ id: orderId, agent: Number(agentId) }));
-
-    // Dispatch updateAgentStatus with type-safe payload
-    dispatch(updateAgentStatus({ id: Number(agentId), status: "assigned" }));
-
-    // Update the local state for selected agents
-    const agent = agents.find((agent) => agent.id.toString() === agentId);
-    if (agent) {
-      setSelectedAgents((prevState) => ({
-        ...prevState,
-        [orderId]: agent.agent_name,
-      }));
-    }
-  };
+  const { totalVendors, deliveryPersonnel, totalCustomers, activeOrders } =
+    useSelector((state: RootState) => state.dashboard);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Order Info</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Order ID</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Customer Number</TableHead>
-            <TableHead>Pickup</TableHead>
-            <TableHead>Delivery</TableHead>
-            <TableHead>Order Details</TableHead>
-            <TableHead>Assigned Agent</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell className="font-medium">{order.id}</TableCell>
-              <TableCell>{order.customerName}</TableCell>
-              <TableCell>{order.customerNumber}</TableCell>
-              <TableCell>{order.pickup}</TableCell>
-              <TableCell>{order.delivery}</TableCell>
-              <TableCell>
-                <Button variant="outline">View Details</Button>
-              </TableCell>
-              <TableCell>
-                <Select
-                  onValueChange={(value) => handleAssignAgent(order.id, value)}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue
-                      placeholder="Select Agent"
-                      defaultValue={selectedAgents[order.id] || ""}
-                    >
-                      {selectedAgents[order.id] || "Select Agent"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {agents
-                      .filter((agent) => agent.is_available) // Only available agents
-                      .map((agent) => (
-                        <SelectItem key={agent.id} value={agent.id.toString()}>
-                          {agent.agent_name} ({agent.covered_area})
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </TableCell>
-              <TableCell>
-                <Button variant="outline">Assign</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="flex">
+      <Sidebar />
+      <main className="flex-1">
+        <Header />
+        <div className="p-6 ml-48 mt-16">
+          <h1 className="text-3xl font-bold text-[#3CAE06]">Dashboard</h1>
+          <div className="grid grid-cols-4 gap-6 mt-6">
+            <Card className="relative p-6">
+              <div className="absolute top-4 right-4">
+                <Store size={18} />
+              </div>
+              <h2 className="text-lg font-semibold">Total Vendors</h2>
+              <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
+                {totalVendors}
+              </p>
+            </Card>
+            <Card className="relative p-6">
+              <div className="absolute top-4 right-4">
+                <Bike size={18} />
+              </div>
+              <h2 className="text-lg font-semibold">Delivery Personnel</h2>
+              <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
+                {deliveryPersonnel}
+              </p>
+            </Card>
+            <Card className="relative p-6">
+              <div className="absolute top-4 right-4">
+                <User size={18} />
+              </div>
+              <h2 className="text-lg font-semibold">Total Customers</h2>
+              <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
+                {totalCustomers}
+              </p>
+            </Card>
+            <Card className="relative p-6">
+              <div className="absolute top-4 right-4">
+                <NotepadText size={18} />
+              </div>
+              <h2 className="text-lg font-semibold">Active Orders</h2>
+              <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
+                {activeOrders}
+              </p>
+            </Card>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
