@@ -15,6 +15,7 @@ import { MoreVertical, Plus, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import Image from "next/image";
 
 const mockDeliveryPersonnel = [
   {
@@ -54,7 +55,7 @@ const statusVariants: Record<string, string> = {
 };
 
 export default function DeliveryPage() {
-  const [personnel, setPersonnel] = useState(mockDeliveryPersonnel);
+  const [personnel] = useState(mockDeliveryPersonnel);
 
   return (
     <div className="flex">
@@ -96,7 +97,7 @@ export default function DeliveryPage() {
                 {personnel.map((person) => (
                   <TableRow key={person.id}>
                     <TableCell>
-                      <img
+                      <Image
                         src={person.photo}
                         alt={person.name}
                         className="w-10 h-10 rounded-full object-cover"

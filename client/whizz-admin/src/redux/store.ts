@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import orderReducer from "./orderSlice";
 import agentReducer from "./agentSlice";
 import dashboardReducer from "./dashboardSlice";
+import vendorReducer from "./vendorSlice";
 
 // Configure the store
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     orders: orderReducer,
     agents: agentReducer,
     dashboard: dashboardReducer,
+    vendors: vendorReducer,
 
   },
 });

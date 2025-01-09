@@ -1,6 +1,5 @@
 "use client";
 
-import { Switch } from "@/components/ui/switch";
 import { HelpCircle } from "lucide-react";
 
 export default function Header() {
