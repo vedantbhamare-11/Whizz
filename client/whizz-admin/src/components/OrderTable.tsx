@@ -18,19 +18,19 @@ import {
   import { useState } from "react";
   
   interface Order {
-    id: number;
+    _id: string;
     customerName: string;
     customerNumber: string;
     location: string;
-    vendorId: number;
+    vendorId: string;
     deliveryPersonnel: string;
     dishes?: { name: string; quantity: number; price: number }[];
   }
   
   interface Vendor {
-    id: number;
-    name: string;
-    location: string;
+    _id: string;
+    vendorName: string;
+    area: string;
   }
   
   interface DeliveryPersonnel {
@@ -42,7 +42,7 @@ import {
     orders: Order[];
     vendors: Vendor[];
     deliveryPersonnel: DeliveryPersonnel[];
-    onAssign: (id: number, personnel: string) => void;
+    onAssign: (id: string, personnel: string) => void;
     isAssignedTab?: boolean;
   }
   
@@ -54,7 +54,7 @@ import {
     isAssignedTab = false,
   }) => {
     // Local state to temporarily store selected personnel for each order
-    const [selectedPersonnel, setSelectedPersonnel] = useState<Record<number, string>>({});
+    const [selectedPersonnel, setSelectedPersonnel] = useState<Record<string, string>>({});
   
     return (
       <Table>
@@ -72,25 +72,25 @@ import {
         </TableHeader>
         <TableBody>
           {orders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
+            <TableRow key={order._id}>
+              <TableCell>{order._id}</TableCell>
               <TableCell>{order.customerName}</TableCell>
               <TableCell>{order.customerNumber}</TableCell>
               <TableCell>{order.location}</TableCell>
               <TableCell>
-                {vendors.find((vendor) => vendor.id === order.vendorId)?.name ||
+                {vendors.find((vendor) => vendor._id === order.vendorId)?.vendorName ||
                   "Unknown"}
               </TableCell>
               <TableCell>
                 <OrderDetailsDialog
-                  orderId={order.id}
+                  orderId={order._id}
                   vendorName={
-                    vendors.find((vendor) => vendor.id === order.vendorId)?.name ||
+                    vendors.find((vendor) => vendor._id === order.vendorId)?.vendorName ||
                     "Unknown"
                   }
                   vendorLocation={
-                    vendors.find((vendor) => vendor.id === order.vendorId)
-                      ?.location || "Unknown"
+                    vendors.find((vendor) => vendor._id === order.vendorId)
+                      ?.area || "Unknown"
                   }
                   dishes={order.dishes || []}
                   totalPrice={
@@ -106,11 +106,11 @@ import {
                   order.deliveryPersonnel
                 ) : (
                   <Select
-                    defaultValue={selectedPersonnel[order.id] || "Unassigned"}
+                    defaultValue={selectedPersonnel[order._id] || "Unassigned"}
                     onValueChange={(value) =>
                       setSelectedPersonnel((prev) => ({
                         ...prev,
-                        [order.id]: value,
+                        [order._id]: value,
                       }))
                     }
                   >
@@ -132,7 +132,7 @@ import {
                   <Button
                     variant="default"
                     onClick={() =>
-                      onAssign(order.id, selectedPersonnel[order.id] || "Unassigned")
+                      onAssign(order._id, selectedPersonnel[order._id] || "Unassigned")
                     }
                     className="bg-[#3CAE06] text-white hover:bg-[#36A205]"
                   >

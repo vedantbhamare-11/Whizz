@@ -21,17 +21,17 @@ export default function OrdersPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleAssign = (id: number, personnel: string) => {
+  const handleAssign = (id: string, personnel: string) => {
     dispatch(assignDeliveryPersonnel({ orderId: id, personnel })); // Update Redux state
   };
 
   // Filter orders based on search query
   const filteredOrders = orders.filter((order) => {
     const vendorName =
-      vendors.find((vendor) => vendor.id === order.vendorId)?.name || "Unknown";
+      vendors.find((vendor) => vendor._id === order.vendorId)?.vendorName || "Unknown";
 
     return (
-      order.id.toString().includes(searchQuery) ||
+      order._id.toString().includes(searchQuery) ||
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vendorName.toLowerCase().includes(searchQuery.toLowerCase())

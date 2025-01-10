@@ -17,7 +17,7 @@ interface Dish {
 }
 
 interface OrderDetailsDialogProps {
-  orderId: number;
+  orderId: string;
   vendorName: string;
   vendorLocation: string;
   dishes: Dish[];
