@@ -1,36 +1,66 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define the structure for an Order
+interface Dish {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 interface Order {
   id: number;
   customerName: string;
   customerNumber: string;
-  pickup: string;
-  delivery: string;
-  assignedAgent?: string; // Optional field for the assigned agent
+  location: string;
+  vendorId: number;
+  deliveryPersonnel: string;
+  dishes: Dish[];
+  totalAmount: number;
 }
 
-// Define the structure for the slice's state
 interface OrderState {
   orders: Order[];
 }
 
-// Initial state adhering to the OrderState type
 const initialState: OrderState = {
   orders: [
     {
       id: 1,
       customerName: "John Doe",
-      customerNumber: "+123456789",
-      pickup: "123 Main St",
-      delivery: "456 Elm St",
+      customerNumber: "+91-9876543210",
+      location: "Nungambakkam",
+      vendorId: 1,
+      deliveryPersonnel: "Unassigned",
+      dishes: [
+        { name: "Paneer Butter Masala", quantity: 2, price: 200 },
+        { name: "Butter Naan", quantity: 4, price: 50 },
+      ],
+      totalAmount: 500,
     },
     {
       id: 2,
       customerName: "Jane Smith",
-      customerNumber: "+987654321",
-      pickup: "789 Oak St",
-      delivery: "321 Pine St",
+      customerNumber: "+91-9876543220",
+      location: "Anna Nagar",
+      vendorId: 2,
+      deliveryPersonnel: "Unassigned",
+      dishes: [
+        { name: "Chicken Biryani", quantity: 1, price: 300 },
+        { name: "Raita", quantity: 1, price: 50 },
+      ],
+      totalAmount: 350,
+    },
+    {
+      id: 3,
+      customerName: "Alice Brown",
+      customerNumber: "+91-9876543230",
+      location: "Nungambakkam",
+      vendorId: 1,
+      deliveryPersonnel: "Unassigned",
+      dishes: [
+        { name: "Veg Pulao", quantity: 2, price: 150 },
+        { name: "Papad", quantity: 2, price: 20 },
+      ],
+      totalAmount: 340,
     },
   ],
 };
@@ -39,38 +69,36 @@ const orderSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
-    // Add a new order
-    addOrder: (state, action: PayloadAction<Order>) => {
-      state.orders.push(action.payload);
-    },
-
-    // Update an existing order
-    updateOrder: (
+    assignDeliveryPersonnel(
       state,
-      action: PayloadAction<{ id: number; updatedData: Partial<Order> }>
-    ) => {
-      const { id, updatedData } = action.payload;
-      const index = state.orders.findIndex((order) => order.id === id);
-      if (index !== -1) {
-        state.orders[index] = { ...state.orders[index], ...updatedData };
+      action: PayloadAction<{ orderId: number; personnel: string }>
+    ) {
+      const { orderId, personnel } = action.payload;
+      const order = state.orders.find((order) => order.id === orderId);
+      if (order) {
+        order.deliveryPersonnel = personnel;
       }
     },
-
-    // Assign an agent to an order
-   // Update the type of `agent` in the assignAgent action payload
-assignAgent: (
-  state,
-  action: PayloadAction<{ id: number; agent: number }>
-) => {
-  const { id, agent } = action.payload;
-  const index = state.orders.findIndex((order) => order.id === id);
-  if (index !== -1) {
-    state.orders[index].assignedAgent = agent.toString(); // Convert to string if needed
-  }
-},
-
+    addOrder(state, action: PayloadAction<Order>) {
+      state.orders.push(action.payload);
+    },
+    updateOrder(state, action: PayloadAction<Order>) {
+      const index = state.orders.findIndex((order) => order.id === action.payload.id);
+      if (index !== -1) {
+        state.orders[index] = action.payload;
+      }
+    },
+    deleteOrder(state, action: PayloadAction<number>) {
+      state.orders = state.orders.filter((order) => order.id !== action.payload);
+    },
   },
 });
 
-export const { addOrder, updateOrder, assignAgent } = orderSlice.actions;
+export const {
+  assignDeliveryPersonnel,
+  addOrder,
+  updateOrder,
+  deleteOrder,
+} = orderSlice.actions;
+
 export default orderSlice.reducer;
