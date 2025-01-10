@@ -8,9 +8,18 @@ import { RootState } from "@/redux/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SlidersHorizontal, Plus } from "lucide-react";
+import { useState } from "react";
 
 export default function VendorsPage() {
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const vendors = useSelector((state: RootState) => state.vendors.vendors);
+
+  // Filter vendors based on search query
+  const filteredVendors = vendors.filter(
+    (vendor) =>
+      vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendor.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex">
@@ -21,7 +30,12 @@ export default function VendorsPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-[#3CAE06]">Vendors</h1>
             <div className="flex items-center gap-4">
-              <Input placeholder="Search vendors..." className="w-60" />
+              <Input
+                placeholder="Search vendors..."
+                className="w-60"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+              />
               <Button variant="outline" className="flex items-center gap-2">
                 <SlidersHorizontal size={18} />
                 View
@@ -36,7 +50,7 @@ export default function VendorsPage() {
             </div>
           </div>
           <div className="mt-8">
-            <VendorTable vendors={vendors} />
+            <VendorTable vendors={filteredVendors} /> {/* Pass filtered vendors */}
           </div>
         </div>
       </main>
