@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { assignDeliveryPersonnel } from "@/redux/orderSlice";
 import OrderTable from "@/components/OrderTable";
+import { useState } from "react";
 
 export default function OrdersPage() {
   const orders = useSelector((state: RootState) => state.orders.orders); // Use Redux state
@@ -18,9 +19,24 @@ export default function OrdersPage() {
 
   const dispatch = useDispatch();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handleAssign = (id: number, personnel: string) => {
     dispatch(assignDeliveryPersonnel({ orderId: id, personnel })); // Update Redux state
   };
+
+  // Filter orders based on search query
+  const filteredOrders = orders.filter((order) => {
+    const vendorName =
+      vendors.find((vendor) => vendor.id === order.vendorId)?.name || "Unknown";
+
+    return (
+      order.id.toString().includes(searchQuery) ||
+      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendorName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="flex">
@@ -31,7 +47,12 @@ export default function OrdersPage() {
           {/* Page Heading */}
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-[#3CAE06]">Orders</h1>
-            <Input placeholder="Search orders..." className="w-60" />
+            <Input
+              placeholder="Search orders..."
+              className="w-60"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
           {/* Tabs */}
@@ -44,7 +65,7 @@ export default function OrdersPage() {
             {/* Unassigned Orders */}
             <TabsContent value="unassigned">
               <OrderTable
-                orders={orders.filter(
+                orders={filteredOrders.filter(
                   (order) => order.deliveryPersonnel === "Unassigned"
                 )}
                 vendors={vendors}
@@ -56,7 +77,7 @@ export default function OrdersPage() {
             {/* Assigned Orders */}
             <TabsContent value="assigned">
               <OrderTable
-                orders={orders.filter(
+                orders={filteredOrders.filter(
                   (order) => order.deliveryPersonnel !== "Unassigned"
                 )}
                 vendors={vendors}
