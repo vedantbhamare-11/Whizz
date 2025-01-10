@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Dish {
-  name: string;
+  dishName: string;
   quantity: number;
   price: number;
 }
@@ -31,8 +31,8 @@ const initialState: OrderState = {
       vendorId: "1",
       deliveryPersonnel: "Unassigned",
       dishes: [
-        { name: "Paneer Butter Masala", quantity: 2, price: 200 },
-        { name: "Butter Naan", quantity: 4, price: 50 },
+        { dishName: "Paneer Butter Masala", quantity: 2, price: 200 },
+        { dishName: "Butter Naan", quantity: 4, price: 50 },
       ],
       totalAmount: 500,
     },
@@ -44,8 +44,8 @@ const initialState: OrderState = {
       vendorId: "2",
       deliveryPersonnel: "Unassigned",
       dishes: [
-        { name: "Chicken Biryani", quantity: 1, price: 300 },
-        { name: "Raita", quantity: 1, price: 50 },
+        { dishName: "Chicken Biryani", quantity: 1, price: 300 },
+        { dishName: "Raita", quantity: 1, price: 50 },
       ],
       totalAmount: 350,
     },
@@ -57,8 +57,8 @@ const initialState: OrderState = {
       vendorId: "1",
       deliveryPersonnel: "Unassigned",
       dishes: [
-        { name: "Veg Pulao", quantity: 2, price: 150 },
-        { name: "Papad", quantity: 2, price: 20 },
+        { dishName: "Veg Pulao", quantity: 2, price: 150 },
+        { dishName: "Papad", quantity: 2, price: 20 },
       ],
       totalAmount: 340,
     },

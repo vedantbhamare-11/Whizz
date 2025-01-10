@@ -24,7 +24,7 @@ import {
     location: string;
     vendorId: string;
     deliveryPersonnel: string;
-    dishes?: { name: string; quantity: number; price: number }[];
+    dishes?: { dishName: string; quantity: number; price: number }[];
   }
   
   interface Vendor {
