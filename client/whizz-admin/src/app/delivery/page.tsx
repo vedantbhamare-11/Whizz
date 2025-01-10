@@ -8,9 +8,20 @@ import { SlidersHorizontal, Plus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import DeliveryTable from "@/components/DeliveryTable";
+import { useState } from "react";
 
 export default function DeliveryPage() {
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const personnel = useSelector((state: RootState) => state.delivery.personnel);
+
+  // Filter personnel based on search query
+  const filteredPersonnel = personnel.filter(
+    (person) =>
+      person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      person.employeeId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      person.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      person.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex">
@@ -21,7 +32,12 @@ export default function DeliveryPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-[#3CAE06]">Delivery</h1>
             <div className="flex items-center gap-4">
-              <Input placeholder="Search personnel..." className="w-60" />
+              <Input
+                placeholder="Search personnel..."
+                className="w-60"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+              />
               <Button variant="outline" className="flex items-center gap-2">
                 <SlidersHorizontal size={18} />
                 View
@@ -36,7 +52,7 @@ export default function DeliveryPage() {
             </div>
           </div>
           <div className="mt-8">
-            <DeliveryTable personnel={personnel} />
+            <DeliveryTable personnel={filteredPersonnel} /> {/* Pass filtered personnel */}
           </div>
         </div>
       </main>
