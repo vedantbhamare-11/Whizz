@@ -62,6 +62,7 @@ export default function VendorsPage() {
     }
   };
 
+
   return (
     <div className="flex">
       <Sidebar />
@@ -71,7 +72,10 @@ export default function VendorsPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-[#3CAE06]">Vendors</h1>
             <div className="flex items-center gap-4">
-              <Input placeholder="Search vendors..." className="w-60" />
+              <Input
+                placeholder="Search vendors..."
+                className="w-60"
+              />
               <Button variant="outline" className="flex items-center gap-2">
                 <SlidersHorizontal size={18} />
                 View
