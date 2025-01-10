@@ -20,15 +20,14 @@ import {
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { Vendor } from "@/redux/vendorSlice"; // Assuming this type is defined
-import { useDispatch } from "react-redux";
-import { updateVendor } from "@/redux/vendorSlice";
 
 interface VendorTableProps {
   vendors: Vendor[];
   onToggleOpen: ( vendorId: string, isOpen: boolean) => void;
+  onChangeCategory: (vendorId: string, category: string) => void;
 }
 
-const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen }) => {
+const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen, onChangeCategory }) => {
 
   // const handleCategoryChange = (id: string, newCategory: string) => {
   //   const vendor = vendors.find((vendor) => vendor._id === id);
@@ -68,13 +67,13 @@ const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen }) => {
             <TableCell>
               <Select
                 defaultValue={vendor.restaurantType}
-                // onValueChange={(value) => handleCategoryChange(vendor._id, value)}
+                onValueChange={(value) => onChangeCategory(vendor._id, value)}
               >
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Veg">
+                  <SelectItem value="VEG">
                     <div className="flex items-center gap-2">
                       <Image
                         src="/veg.png"
@@ -86,7 +85,7 @@ const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen }) => {
                       Veg
                     </div>
                   </SelectItem>
-                  <SelectItem value="Non-Veg">
+                  <SelectItem value="NON-VEG">
                     <div className="flex items-center gap-2">
                       <Image
                         src="/non-veg.png"
@@ -96,6 +95,30 @@ const VendorTable: React.FC<VendorTableProps> = ({ vendors, onToggleOpen }) => {
                         className="w-4 h-4"
                       />
                       Non-Veg
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="CAFE">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src="/cafe.png"
+                        alt="Cafe"
+                        width={20}
+                        height={20}
+                        className="w-4 h-4"
+                      />
+                      Cafe
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="MC">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src="/mc.png"
+                        alt="Multi Cuisine"
+                        width={20}
+                        height={20}
+                        className="w-4 h-4"
+                      />
+                      Multi Cuisine
                     </div>
                   </SelectItem>
                 </SelectContent>

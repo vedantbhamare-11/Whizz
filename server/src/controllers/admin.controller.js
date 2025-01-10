@@ -144,6 +144,31 @@ const getVendors = async (req, res, next) => {
           next(error);
       }
   };
+
+  // Change vendor category
+  const changeCategory = async (req, res, next) => {
+    const { vendorId, category } = req.body;
+
+    // Check if vendorId is provided
+    if (!vendorId) {
+        return errorResponse(res, 400, null, "Vendor ID is required");
+    };
+    try {
+        // Update vendor
+        const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, { restaurantType: category }, {
+            new: true,
+            runValidators: true
+        });
+
+        return successResponse(res, 200, updatedVendor, "Category updated successfully");
+    } catch (error) {
+        // Check if the error is a CastError
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid vendor ID");
+        }
+        next(error);
+    }
+  };
   
   
-export { getDashboardData, getOrders, getDeliveryAgents, getVendors, manageOpenings };
+export { getDashboardData, getOrders, getDeliveryAgents, getVendors, manageOpenings, changeCategory };

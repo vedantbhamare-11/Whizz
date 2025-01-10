@@ -25,7 +25,7 @@ const vendorSlice = createSlice({
     setVendor(state, action: PayloadAction<Vendor[]>) {
       state.vendors = action.payload;
     },
-    updateVendor(state, action: PayloadAction<{
+    updateVendorOpen(state, action: PayloadAction<{
       vendorId: string,
       isOpen: boolean
     }>) {
@@ -33,6 +33,16 @@ const vendorSlice = createSlice({
       const vendor = state.vendors.find((vendor) => vendor._id === vendorId);
       if (vendor){
         vendor.isOpen = isOpen;
+      }
+    },
+    updateVendorCategory(state, action: PayloadAction<{
+      vendorId: string,
+      category: string,
+    }>) {
+      const { vendorId, category } = action.payload;
+      const vendor = state.vendors.find((vendor) => vendor._id === vendorId);
+      if (vendor){
+        vendor.restaurantType = category;
       }
     },
     addVendor(state, action: PayloadAction<Vendor>) {
@@ -46,5 +56,5 @@ const vendorSlice = createSlice({
   },
 });
 
-export const { setVendor, updateVendor, addVendor, deleteVendor } = vendorSlice.actions;
+export const { setVendor, updateVendorOpen, addVendor, deleteVendor, updateVendorCategory } = vendorSlice.actions;
 export default vendorSlice.reducer;

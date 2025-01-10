@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SlidersHorizontal, Plus } from "lucide-react";
 import { useEffect } from "react";
-import { setVendor, updateVendor } from "@/redux/vendorSlice";
-import { fetchVendorsApi, manageOpening } from "../API/vendor";
+import { setVendor, updateVendorCategory, updateVendorOpen } from "@/redux/vendorSlice";
+import { changeCategory, fetchVendorsApi, manageOpening } from "../API/vendor";
 
 export default function VendorsPage() {
 
@@ -42,11 +42,24 @@ export default function VendorsPage() {
       const response = await manageOpening(vendorId, isOpen);
 
       if(response) {
-         dispatch(updateVendor({ vendorId, isOpen }));
+         dispatch(updateVendorOpen({ vendorId, isOpen }));
       }
     } catch (error) {
       console.log(error);
     };
+  };
+
+  // Manage category
+  const handleCategoryChange = async (vendorId: string, category: string) => {
+    try {
+      const response = await changeCategory(vendorId, category);
+      console.log(response);
+      if(response) {
+        dispatch(updateVendorCategory({ vendorId, category }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -73,7 +86,7 @@ export default function VendorsPage() {
             </div>
           </div>
           <div className="mt-8">
-            <VendorTable vendors={vendors} onToggleOpen={handleOpeningToggle} />
+            <VendorTable vendors={vendors} onToggleOpen={handleOpeningToggle} onChangeCategory={handleCategoryChange} />
           </div>
         </div>
       </main>
