@@ -100,7 +100,7 @@ export default function Orders() {
                 {Object.keys(orders).map((status, index) => (
                   <div
                     key={index}
-                    className="flex flex-col p-2 bg-[#F5F4F4] rounded-sm shadow-md h-[750px] overflow-y-auto"
+                    className="flex flex-col p-2 bg-[#F5F4F4] rounded-sm shadow-md h-screen overflow-y-auto"
                   >
                     <Badge className="flex items-center rounded-full w-fit gap-2 bg-white text-black">
                       <span

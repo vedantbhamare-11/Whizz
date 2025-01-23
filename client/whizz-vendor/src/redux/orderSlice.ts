@@ -39,6 +39,42 @@ const initialState: OrdersState = {
         ],
         status: "orderQueue",
       },
+      {
+        orderId: "Order #101",
+        timeAgo: "5 min ago",
+        dishes: [
+          { name: "Zahoor Special Biriyani", price: 200, quantity: 2 },
+          { name: "Paneer Butter Masala", price: 250, quantity: 1 },
+        ],
+        status: "orderQueue",
+      },
+      {
+        orderId: "Order #101",
+        timeAgo: "5 min ago",
+        dishes: [
+          { name: "Zahoor Special Biriyani", price: 200, quantity: 2 },
+          { name: "Paneer Butter Masala", price: 250, quantity: 1 },
+        ],
+        status: "orderQueue",
+      },
+      {
+        orderId: "Order #101",
+        timeAgo: "5 min ago",
+        dishes: [
+          { name: "Zahoor Special Biriyani", price: 200, quantity: 2 },
+          { name: "Paneer Butter Masala", price: 250, quantity: 1 },
+        ],
+        status: "orderQueue",
+      },
+      {
+        orderId: "Order #101",
+        timeAgo: "5 min ago",
+        dishes: [
+          { name: "Zahoor Special Biriyani", price: 200, quantity: 2 },
+          { name: "Paneer Butter Masala", price: 250, quantity: 1 },
+        ],
+        status: "orderQueue",
+      },
     ],
     inProgress: [
       {

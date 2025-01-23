@@ -64,10 +64,7 @@ export default function Menu() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button className="flex items-center gap-2 bg-gray-100 text-black hover:bg-gray-200">
-                <SlidersHorizontal size={16} />
-                View
-              </Button>
+              
               <AddItemModal
                 onAddItem={handleAddItem}
                 nextId={menuItems.length + 1}
