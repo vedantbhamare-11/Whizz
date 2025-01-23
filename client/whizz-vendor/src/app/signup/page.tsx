@@ -61,8 +61,10 @@ export default function SignUp() {
             />
           </div>
           {/* Submit Button */}
-          <Button type="submit" className="w-full bg-[#3CAE06]">
+          <Button type="submit"  className="w-full bg-[#3CAE06]">
+            <Link href="/complete-profile">
             Sign Up
+            </Link>
           </Button>
         </form>
         {/* Sign-up Link */}
