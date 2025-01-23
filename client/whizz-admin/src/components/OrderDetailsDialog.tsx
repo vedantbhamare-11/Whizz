@@ -11,13 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface Dish {
-  name: string;
+  dishName: string;
   quantity: number;
   price: number;
 }
 
 interface OrderDetailsDialogProps {
-  orderId: number;
+  orderId: string;
   vendorName: string;
   vendorLocation: string;
   dishes: Dish[];
@@ -52,7 +52,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                 className="flex justify-between items-center border-b pb-2 border-gray-200"
               >
                 <div className="flex flex-col">
-                  <span className="font-medium">{dish.name}</span>
+                  <span className="font-medium">{dish.dishName}</span>
                   <span className="text-sm text-gray-500">₹{dish.price}</span>
                 </div>
                 <div className="flex items-center">

@@ -4,42 +4,46 @@ import mongoose from "mongoose";
 const vendorSchema = new mongoose.Schema({
     vendorName: {
         type: String,
-        required: true
+        required: false
     },
     address: {
         type: String,
-        required: true
+        required: false
     },
     restaurantType: {
         type: String,
-        required: true
+        required: false
     },
     latitude: {
         type: Number,
-        required: true
+        required: false
     },
     longitude: {
         type: Number,
-        required: true
+        required: false
     },
     gst: {
         type: String,
-        required: true
+        required: false
     },
     area: {
         type: String,
-        required: true
+        required: false
     },
     vendorEmail: {
         type: String,
-        required: false,
+        required: true, //TODO: Change to true
         unique: true
     },
     vendorPassword: {
         type: String,
-        required: false
+        required: true
     },
     vendorPhone: {
+        type: String,
+        required: false
+    },
+    vendorLogo: {
         type: String,
         required: false
     },
