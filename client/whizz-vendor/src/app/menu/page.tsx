@@ -3,8 +3,6 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { SlidersHorizontal } from "lucide-react";
 import MenuTable from "@/components/MenuTable";
 import AddItemModal from "@/components/AddItemModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -83,10 +81,7 @@ export default function Menu() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button className="flex items-center gap-2 bg-gray-100 text-black hover:bg-gray-200">
-                <SlidersHorizontal size={16} />
-                View
-              </Button>
+              
               <AddItemModal
                 onAddItem={handleAddItem}
               />
