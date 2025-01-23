@@ -26,7 +26,7 @@ export default function SignIn() {
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="font-semibold">Email</Label>
             <Input
               type="email"
               id="email"
@@ -37,7 +37,7 @@ export default function SignIn() {
           {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="font-semibold">Password</Label>
               <Link href="/forgot-password" className="text-sm hover:underline">
                 Forgot Password?
               </Link>
