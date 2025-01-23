@@ -124,10 +124,12 @@ export default function ProfileSetup() {
               >
                 <div className="border-2 p-2  bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
-                    <img
+                    <Image
                       src={uploadedImage}
                       alt="Uploaded"
                       className="object-contain h-full max-h-[220px] rounded-md"
+                      width={220}
+                      height={220}
                     />
                   ) : (
                     <div className="flex justify-center flex-row gap-2 h-[220px] items-center">
