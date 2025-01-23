@@ -14,7 +14,8 @@ const completeProfile = async (req, res, next) => {
 
     // Extract vendor details
     const { vendorName, address, restaurantType, gst, area, vendorPhone, startTime, endTime, availableDays } = req.body;
-    if (!vendorName || !address || !restaurantType || !gst || !area || !vendorPhone || !startTime || !endTime ) {
+    
+    if (!vendorName || !address || !restaurantType || !area || !vendorPhone || !startTime || !endTime ) {
         return errorResponse(res, 400, null, "All fields are required");
     };
 
