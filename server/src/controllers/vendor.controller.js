@@ -1,6 +1,53 @@
 import mongoose from "mongoose";
 import { Dish, Order, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
+import { log } from "console";
+
+// Complete Profile 
+const completeProfile = async (req, res, next) => {
+    // Check if vendorId is provided
+    // const vendorId = req.userId;
+    const vendorId = "6792277cfff48a74453c1a77";
+     if (!vendorId) {
+        return errorResponse(res, 400, null, "Vendor ID is required");
+    };
+
+    // Extract vendor details
+    const { vendorName, address, restaurantType, gst, area, vendorPhone, startTime, endTime, availableDays } = req.body;
+    if (!vendorName || !address || !restaurantType || !gst || !area || !vendorPhone || !startTime || !endTime ) {
+        return errorResponse(res, 400, null, "All fields are required");
+    };
+
+    try {
+        // Extract vendor logo
+        const vendorLogo = req.fileRelativePath || null;
+
+        // Update vendor
+        const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, {
+            ...req.body,
+            ...(vendorLogo && { vendorLogo })
+        }, {
+            new: true,
+            runValidators: true
+        });
+
+        // Create the url for the locally stored image
+        const logoUrl = vendorLogo ? `${req.protocol}://${req.get("host")}/${updatedVendor.vendorLogo}` : null;
+
+        // Update vendor with the image url
+        const vendor = {
+            ...updatedVendor._doc,
+            ...( logoUrl !== null && {vendorLogo: logoUrl})
+        };
+
+        return successResponse(res, 200, vendor, "Profile completed successfully");
+    } catch (error) {
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid vendor ID");
+        }
+        next(error);
+    };
+};
 
 const getDashboardData = async (req, res, next) => {
     // Extract vendorId
@@ -118,8 +165,10 @@ const addDish = async (req, res, next) => {
         // Save new dish
         await newDish.save();
 
+        // Create url for the locally stored image
         const imageUrl = image ? `${req.protocol}://${req.get("host")}/${newDish.image}` : null;
 
+        // Construct dish
         const dish = {
             ...newDish._doc,
             image: imageUrl
@@ -409,6 +458,7 @@ const createOrder = async (req, res, next) => {
 }
 
 export {
+    completeProfile,
     getDashboardData,
     manageOpenHours,
     addDish,

@@ -20,7 +20,7 @@ const signUp = async (req, res, next) => {
 
         // Create new user
         const newVendor = new Vendor({
-            ...req.body,
+            vendorEmail,
             vendorPassword: hashedPassword,
         });
 
