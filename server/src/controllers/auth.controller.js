@@ -7,6 +7,7 @@ import { Vendor } from "../models/vendor.models.js";
 const signUp = async (req, res, next) => {
     // Extract credentials
     const {vendorEmail, vendorPassword} = req.body; 
+
     const password = vendorPassword;
     try {
         // Check user existance
