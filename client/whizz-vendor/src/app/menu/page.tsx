@@ -65,6 +65,21 @@ export default function Menu() {
     }
   };
 
+  const handleEdit = (id: number) => {
+    console.log(`Edit menu item with ID: ${id}`);
+    // Add edit functionality here
+  };
+
+  const handleDelete = (id: number) => {
+    console.log(`Delete menu item with ID: ${id}`);
+    // Add delete functionality here
+  };
+
+  const handleShowDetails = (id: number) => {
+    console.log(`Show details for menu item with ID: ${id}`);
+    // Add show details functionality here
+  };
+
   // Filter menu items based on search term
   const filteredMenuItems = menuItems.filter((item: any) =>
     item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -86,7 +101,7 @@ export default function Menu() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              
+
               <AddItemModal
                 onAddItem={handleAddItem}
               />
@@ -99,6 +114,9 @@ export default function Menu() {
                 menuItems={filteredMenuItems} 
                 onToggleAvailability={handleToggleAvailability} 
                 onChangeCategory={handleManageCategory}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onShowDetails={handleShowDetails}
               />
             )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}

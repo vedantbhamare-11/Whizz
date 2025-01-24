@@ -68,6 +68,25 @@ export default function ProfileSetup() {
     }
   };
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formValues.vendorName) newErrors.vendorName = "Restaurant name is required.";
+    if (!formValues.address) newErrors.address = "Address is required.";
+    if (!formValues.vendorPhone) newErrors.vendorPhone = "Phone number is required.";
+    else if (!/^\d{10}$/.test(formValues.vendorPhone)) newErrors.vendorPhone = "Phone number must be 10 digits.";
+    if (!formValues.area) newErrors.area = "Area is required.";
+    if (!formValues.restaurantType) newErrors.restaurantType = "Restaurant type is required.";
+    if (!formValues.startTime) newErrors.startTime = "Opening time is required.";
+    if (!formValues.endTime) newErrors.endTime = "Closing time is required.";
+    if (formValues.availableDays.length === 0) newErrors.availableDays = "Select at least one day.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
@@ -83,10 +102,7 @@ export default function ProfileSetup() {
         <h1 className="text-2xl font-bold text-center text-gray-800">
           Profile Setup
         </h1>
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-2 gap-5 mt-6"
-        >
+        <form className="grid grid-cols-2 gap-5 mt-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="grid gap-1.5">
@@ -100,6 +116,7 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
+              {errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="address">Address</Label>
@@ -112,6 +129,7 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
+              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="phoneNumber">Phone Number</Label>
@@ -140,8 +158,8 @@ export default function ProfileSetup() {
                   <SelectItem value="nungambakkam">Nungambakkam</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.area && <p className="text-red-500 text-sm">{errors.area}</p>}
             </div>
-
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
               <Select
@@ -160,9 +178,8 @@ export default function ProfileSetup() {
                   <SelectItem value="multicuisine">Multicuisine</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.restaurantType && <p className="text-red-500 text-sm">{errors.restaurantType}</p>}
             </div>
-
-            {/* Opens At and Closes At */}
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
@@ -195,7 +212,7 @@ export default function ProfileSetup() {
                 htmlFor="logoInput"
                 className="border border-gray-300 rounded-lg p-2 cursor-pointer"
               >
-                <div className="border-2 p-2  bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
+                <div className="border-2 p-2 bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
                     <Image
                       src={formValues.vendorLogo}
@@ -247,7 +264,8 @@ export default function ProfileSetup() {
           </div>
           <div className="flex justify-center mt-8 col-span-2">
           <Button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
           >
             Submit
@@ -255,29 +273,6 @@ export default function ProfileSetup() {
         </div>
         </form>
         
-      </div>
-
-      {/* Logo and Text */}
-      <div className="mt-6 text-center">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          width={100}
-          height={100}
-          className="mx-auto"
-        />
-        <p className="text-sm text-gray-500 mt-4">
-          By clicking continue, you agree to our{" "}
-          <br />
-          <a href="/terms" className="hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="/privacy" className="hover:underline">
-            Privacy Policy
-          </a>
-          .
-        </p>
       </div>
     </div>
   );
