@@ -15,9 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface MenuItem {
   id: number;
@@ -34,6 +36,14 @@ interface MenuTableProps {
 }
 
 export default function MenuTable({ menuItems }: MenuTableProps) {
+  const [subCategories, setSubCategories] = useState<string[]>(["Main Course", "Rice", "Dessert"]);
+
+  const addCustomSubCategory = (value: string) => {
+    if (value && !subCategories.includes(value)) {
+      setSubCategories((prev) => [...prev, value]);
+    }
+  };
+
   return (
     <Table className="w-full z-0">
       <TableHeader>
@@ -98,9 +108,23 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
                   <SelectValue placeholder="Select Sub-Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Main Course">Main Course</SelectItem>
-                  <SelectItem value="Rice">Rice</SelectItem>
-                  <SelectItem value="Dessert">Dessert</SelectItem>
+                  {subCategories.map((subCategory, index) => (
+                    <SelectItem key={index} value={subCategory}>
+                      {subCategory}
+                    </SelectItem>
+                  ))}
+                  <div className="p-2 border-t border-gray-200">
+                    <Input
+                      placeholder="Add sub-category"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addCustomSubCategory(e.currentTarget.value);
+                          e.currentTarget.value = "";
+                        }
+                      }}
+                      className="text-sm"
+                    />
+                  </div>
                 </SelectContent>
               </Select>
             </TableCell>
