@@ -37,7 +37,7 @@ const fileFilter = (req, file, cb) => {
         cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.'));
     }
 };
-
+    
 // Set up multer upload middleware
 const upload = multer({
     storage: storage,
