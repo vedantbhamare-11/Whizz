@@ -108,12 +108,12 @@ const getDashboardData = async (req, res, next) => {
 };
 
 // Manage open hours (Restaurant)
-const manageOpenHours = async (req, res, next) => {
+const manageOpening = async (req, res, next) => {
     // Extract vendorId
     const vendorId = req.userId;
 
     // Extract availability
-    const { availability } = req.body;
+    const { isOpen } = req.body;
 
     // Check if vendorId is provided
     if (!vendorId) {
@@ -128,10 +128,10 @@ const manageOpenHours = async (req, res, next) => {
         };
 
         // Update vendor
-        const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, { isOpen: availability }, {
+        const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, { isOpen }, {
             new: true,
             runValidators: true
-        });
+        }).select("isOpen");
 
         return successResponse(res, 200, updatedVendor, "Availability updated successfully");
     } catch (error) {
@@ -148,6 +148,7 @@ const addDish = async (req, res, next) => {
     // Extract vendorId
     const vendorId = req.userId;
 
+    // Check if vendorId is provided
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     };
@@ -228,7 +229,7 @@ const updateDish = async (req, res, next) => {
             return errorResponse(res, 400, null, "Invalid dish ID format");
         }
         next(error);
-    }
+    };
 };
 
 // Manage dish availability
@@ -458,7 +459,7 @@ const createOrder = async (req, res, next) => {
 export {
     completeProfile,
     getDashboardData,
-    manageOpenHours,
+    manageOpening,
     addDish,
     updateDish,
     manageDishAvailability,

@@ -18,12 +18,12 @@ interface Vendor {
   longitude: number;
 }
 
-interface UserState {
-  user: Vendor;
+interface vendorState {
+  vendor: Vendor;
 }
 
-const initialState: UserState = {
-  user: { 
+const initialState: vendorState = {
+  vendor: { 
     _id: "",
     vendorEmail: "",
     vendorName: "",
@@ -43,17 +43,20 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: "vendor",
   initialState,
   reducers: {
     setVendor: (state, action: PayloadAction<Vendor>) => {
-      state.user = action.payload;
+      state.vendor = action.payload;
     },
     updateVendor: (state, action: PayloadAction<Partial<Vendor>>) => {
-      state.user = { ...state.user, ...action.payload };
+      state.vendor = { ...state.vendor, ...action.payload };
     },
+    toggleOpening: (state, action: PayloadAction<boolean>) => {
+      state.vendor.isOpen = action.payload; 
+    }
   },
 });
 
-export const { setVendor, updateVendor } = userSlice.actions;
+export const { setVendor, updateVendor, toggleOpening } = userSlice.actions;
 export default userSlice.reducer;

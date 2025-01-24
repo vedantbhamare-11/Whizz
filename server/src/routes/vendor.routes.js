@@ -1,5 +1,5 @@
 import express from "express";
-import { addDish, completeProfile, createOrder, deleteDish, getDashboardData, getDishes, getOrders, manageCategory, manageDishAvailability, manageOpenHours, updateDish, updateOrderStatus} from "../controllers/vendor.controller.js";
+import { addDish, completeProfile, createOrder, deleteDish, getDashboardData, getDishes, getOrders, manageCategory, manageDishAvailability, manageOpening, updateDish, updateOrderStatus} from "../controllers/vendor.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import upload from "../config/multer.config.js";
 
@@ -15,7 +15,7 @@ router.put("/update", verifyToken, updateDish);
 router.delete("/delete", verifyToken, deleteDish);
 router.put('/toggleDishAvailability', verifyToken, manageDishAvailability);
 router.put('/manageCategory', verifyToken, manageCategory);
-router.put('/toggleOpenHours', verifyToken, manageOpenHours);
+router.put('/toggleOpening', verifyToken, manageOpening);
 router.get("/orders", verifyToken, getOrders);
 router.put("/updateOrder", verifyToken, updateOrderStatus);
 
