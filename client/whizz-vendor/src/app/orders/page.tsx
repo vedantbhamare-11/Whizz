@@ -3,10 +3,18 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
+import DeliveredOrderDetailsDialog from "@/components/DeliveredOrderDetailsDialog";
 import OrderCard from "@/components/OrderCard";
+import RejectedOrderDetailsDialog from "@/components/RejectedOrderDetailsDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useState } from "react";
@@ -28,26 +36,14 @@ const statusDotColor: Record<string, string> = {
 
 export default function Orders() {
   const orders = useSelector((state: RootState) => state.orders.orders);
+  const deliveredOrders = useSelector(
+    (state: RootState) => state.deliveredOrders.deliveredOrders
+  );
   const [activeTab, setActiveTab] = useState("currentOrders");
 
-  // Sample data for delivered orders
-  const deliveredOrders = [
-    {
-      orderId: 101,
-      deliveryTime: "10:30 AM",
-      deliveredBy: "John Doe",
-    },
-    {
-      orderId: 102,
-      deliveryTime: "12:45 PM",
-      deliveredBy: "Jane Smith",
-    },
-    {
-      orderId: 103,
-      deliveryTime: "2:15 PM",
-      deliveredBy: "Alice Johnson",
-    },
-  ];
+  const rejectedOrders = useSelector(
+    (state: RootState) => state.rejectedOrders.rejectedOrders
+  );
 
   const heading =
     activeTab === "currentOrders"
@@ -56,20 +52,6 @@ export default function Orders() {
       ? "Delivered Orders"
       : "Rejected Orders";
 
-      const rejectedOrders = [
-        {
-          orderId: 201,
-          note: "Item not available",
-        },
-        {
-          orderId: 202,
-          note: "Delivery not possible to the location",
-        },
-        {
-          orderId: 203,
-          note: "Vendor canceled due to rush hours",
-        },
-      ];
   return (
     <div className="flex">
       <Sidebar />
@@ -129,7 +111,10 @@ export default function Orders() {
               </div>
             </TabsContent>
 
-            <TabsContent value="deliveredOrders" className="border border-gray-200 rounded-md">
+            <TabsContent
+              value="deliveredOrders"
+              className="border border-gray-200 rounded-md"
+            >
               <Table className="mt-6">
                 <TableHeader>
                   <TableRow>
@@ -140,29 +125,30 @@ export default function Orders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {deliveredOrders.map((order, index) => (
+                  {deliveredOrders?.map((order, index) => (
                     <TableRow key={index}>
                       <TableCell>{order.orderId}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                        <DeliveredOrderDetailsDialog order={order} />
                       </TableCell>
                       <TableCell>{order.deliveryTime}</TableCell>
-                      <TableCell>{order.deliveredBy}</TableCell>
+                      <TableCell>{order.deliveredBy.name}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TabsContent>
-
-            <TabsContent value="rejectedOrders" className="border border-gray-200 rounded-md">
-            <Table className="mt-6">
+            <TabsContent
+              value="rejectedOrders"
+              className="border border-gray-200 rounded-md"
+            >
+              {/* Rejected Orders */}
+              <Table className="mt-6">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
                     <TableHead>Order Details</TableHead>
-                    <TableHead>Note</TableHead>
+                    <TableHead>Reason</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -170,11 +156,9 @@ export default function Orders() {
                     <TableRow key={index}>
                       <TableCell>{order.orderId}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                        <RejectedOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.note}</TableCell>
+                      <TableCell>{order.rejectionReason}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

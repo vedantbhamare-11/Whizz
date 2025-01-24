@@ -103,9 +103,7 @@ export default function OrderCard({
       {/* Button for In Progress */}
       {status === "inProgress" && (
         <div className="mt-4">
-          <Button
-            className="flex w-full items-center gap-2 bg-[#3CAE06] text-white hover:bg-[#32c207]"
-          >
+          <Button className="flex w-full items-center gap-2 bg-[#3CAE06] text-white hover:bg-[#32c207]">
             <ShoppingBag size={16} />
             Ready to Pickup
           </Button>
