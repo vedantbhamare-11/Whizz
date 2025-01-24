@@ -4,19 +4,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image"; // Import Image component
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignIn() {
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
 
-    // Add your authentication logic here (e.g., API call)
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // On successful authentication, redirect to the dashboard
-    router.push("/dashboard");
+  // Validation function
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Email validation
+    if (!formValues.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+      newErrors.email = "Enter a valid email address.";
+    }
+
+    // Password validation
+    if (!formValues.password) {
+      newErrors.password = "Password is required.";
+    } else if (formValues.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      console.log("Form submitted successfully:", formValues);
+      // On successful authentication, redirect to the dashboard
+      router.push("/dashboard");
+    } else {
+      console.log("Validation failed:", errors);
+    }
   };
 
   return (
@@ -26,18 +57,25 @@ export default function SignIn() {
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="font-semibold">Email</Label>
+            <Label htmlFor="email" className="font-semibold">
+              Email
+            </Label>
             <Input
               type="email"
               id="email"
               placeholder="Enter your email"
+              value={formValues.email}
+              onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
               required
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
           {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="password" className="font-semibold">Password</Label>
+              <Label htmlFor="password" className="font-semibold">
+                Password
+              </Label>
               <Link href="/forgot-password" className="text-sm hover:underline">
                 Forgot Password?
               </Link>
@@ -46,11 +84,18 @@ export default function SignIn() {
               type="password"
               id="password"
               placeholder="Enter your password"
+              value={formValues.password}
+              onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
               required
             />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
           {/* Submit Button */}
-          <Button type="submit" className="w-full bg-[#3CAE06]">
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            className="w-full bg-[#3CAE06] hover:bg-[#36A205] text-white"
+          >
             Login
           </Button>
         </form>
@@ -74,12 +119,12 @@ export default function SignIn() {
           className="mx-auto"
         />
         <p className="text-sm text-gray-500 mt-6">
-          By clicking continue, you agree to our{" "}<br />
-          <Link href="/terms" className=" hover:underline">
+          By clicking continue, you agree to our{" "}
+          <Link href="/terms" className="hover:underline">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className=" hover:underline">
+          <Link href="/privacy" className="hover:underline">
             Privacy Policy
           </Link>
           .
