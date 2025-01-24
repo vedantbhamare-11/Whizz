@@ -17,9 +17,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import MenuTablePopover from "./MenuTablePopover"; // Importing the new component
 
 interface MenuItem {
   id: number;
@@ -33,10 +33,22 @@ interface MenuItem {
 
 interface MenuTableProps {
   menuItems: MenuItem[];
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+  onShowDetails: (id: number) => void;
 }
 
-export default function MenuTable({ menuItems }: MenuTableProps) {
-  const [subCategories, setSubCategories] = useState<string[]>(["Main Course", "Rice", "Dessert"]);
+export default function MenuTable({
+  menuItems,
+  onEdit,
+  onDelete,
+  onShowDetails,
+}: MenuTableProps) {
+  const [subCategories, setSubCategories] = useState<string[]>([
+    "Main Course",
+    "Rice",
+    "Dessert",
+  ]);
 
   const addCustomSubCategory = (value: string) => {
     if (value && !subCategories.includes(value)) {
@@ -135,9 +147,12 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
               />
             </TableCell>
             <TableCell>
-              <button className="p-2 rounded-md hover:bg-gray-100">
-                <MoreVertical size={16} />
-              </button>
+              <MenuTablePopover
+                itemId={item.id}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onShowDetails={onShowDetails}
+              />
             </TableCell>
           </TableRow>
         ))}
