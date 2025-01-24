@@ -24,8 +24,10 @@ export default function SignIn() {
     try {
       const response = await signinApi(formValues.email, formValues.password);
       
-      if (response){
+      if (response.address){
         router.push("/dashboard");
+      } else {
+        router.push("/complete-profile");
       };
 
     } catch (error) {

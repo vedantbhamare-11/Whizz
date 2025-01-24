@@ -18,7 +18,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
-import { on } from "events";
+
 
 interface MenuItem {
   _id: string;
@@ -55,7 +55,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
           <TableRow key={item._id}>
             <TableCell>
               <Image
-                src={item.image ? item.image : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDI1fHx8ZW58MHx8fHx8"}
+                src={item.image ? item.image : "/placeholder.png"}
                 alt={item.dishName}
                 width={50}
                 height={50}
