@@ -9,9 +9,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {signinApi} from "@/app/API/auth";
+import { useDispatch } from "react-redux";
+import { setVendor } from "@/redux/vendorSlice";
 
 export default function SignIn() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
  const [formValues, setFormValues] = useState({
     email: "",
@@ -20,11 +23,13 @@ export default function SignIn() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     // Sign-in handler logic
     try {
       const response = await signinApi(formValues.email, formValues.password);
       
       if (response.address){
+        dispatch(setVendor(response));
         router.push("/dashboard");
       } else {
         router.push("/complete-profile");

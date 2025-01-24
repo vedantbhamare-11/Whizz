@@ -40,6 +40,8 @@ const completeProfile = async (req, res, next) => {
             ...( logoUrl !== null && {vendorLogo: logoUrl})
         };
 
+        // remove password
+
         return successResponse(res, 200, vendor, "Profile completed successfully");
     } catch (error) {
         if (error.name === "CastError") {

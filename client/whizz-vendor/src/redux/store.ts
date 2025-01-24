@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import ordersReducer from "./orderSlice";
 import menuReducer from './menuSlice';
 import dashboardReducer from './dashboardSlice'; 
-import userReducer from './userSlice';
+import userReducer from './vendorSlice';
 
 export const store = configureStore({
   reducer: {

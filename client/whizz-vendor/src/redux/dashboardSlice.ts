@@ -40,7 +40,14 @@ export const fetchDashboardData = createAsyncThunk(
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
-  reducers: {},
+  reducers: {
+    incrementMenuCount: (state) => {
+      state.activeMenuItems += 1;
+    },
+    decrementMenuCount: (state) => {
+      state.activeMenuItems -= 1;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchDashboardData.pending, (state) => {
@@ -60,4 +67,5 @@ const dashboardSlice = createSlice({
   },
 });
 
+export const { incrementMenuCount, decrementMenuCount } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

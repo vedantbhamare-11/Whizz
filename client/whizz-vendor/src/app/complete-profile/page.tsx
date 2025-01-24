@@ -16,9 +16,12 @@ import { Upload } from "lucide-react";
 import { useState } from "react";
 import { completeProfileApi } from "../API/auth";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setVendor } from "@/redux/vendorSlice";
 
 export default function ProfileSetup() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState({
     vendorLogo: "",
@@ -35,12 +38,13 @@ export default function ProfileSetup() {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("Form submitted");
     event.preventDefault();
     try {
+      // Comlete profile
       const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
-      console.log(response);  
+      console.log(response);
       if (response){
+        dispatch(setVendor(response));
         router.push("/dashboard");
       };
     } catch (error) {

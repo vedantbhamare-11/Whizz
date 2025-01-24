@@ -10,6 +10,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
 import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
+import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,9 +40,13 @@ export default function Menu() {
   // Handle toggling dish availability
   const handleToggleAvailability = async (id: string, isAvailable: boolean) => {
     try {
+      // Make API request for toggling availability
       const response = await toggleDishAvailabilityApi(id, isAvailable);
       if (response){
+        // Update menu state
         dispatch(toggleAvailability({id, isAvailable}));
+        // Update active menu count on dashboard
+        isAvailable ? dispatch(incrementMenuCount()) : dispatch(decrementMenuCount());
       }
     } catch (error) {
       console.log(error);
