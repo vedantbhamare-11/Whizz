@@ -11,10 +11,11 @@ import { fetchMenuItems, addMenuItem } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
 
 // Define the MenuItem type explicitly
-interface MenuItem {
+export interface MenuItem {
   id: number;
   image: string;
   name: string;
+  description?: string;
   price: number;
   category: string;
   subCategory: string;
