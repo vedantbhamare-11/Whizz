@@ -3,6 +3,8 @@ import ordersReducer from "./orderSlice";
 import menuReducer from './menuSlice';
 import dashboardReducer from './dashboardSlice'; 
 import vendorReducer from './vendorSlice';
+import deliveredOrdersReducer from "./deliveredOrdersSlice";
+import rejectedOrderReducer from "./rejectedOrderSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     menu: menuReducer,
     dashboard: dashboardReducer,
     vendor: vendorReducer,
+    deliveredOrders: deliveredOrdersReducer, // Include the reducer here
+    rejectedOrders: rejectedOrderReducer,
   },
 });
 

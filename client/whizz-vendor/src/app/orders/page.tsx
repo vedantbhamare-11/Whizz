@@ -3,10 +3,18 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
+import DeliveredOrderDetailsDialog from "@/components/DeliveredOrderDetailsDialog";
 import OrderCard from "@/components/OrderCard";
+import RejectedOrderDetailsDialog from "@/components/RejectedOrderDetailsDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
@@ -33,13 +41,14 @@ export default function Orders() {
   const dispatch = useDispatch();
 
   const orders = useSelector((state: RootState) => state.orders.orders);
+  const deliveredOrders = useSelector(
+    (state: RootState) => state.deliveredOrders.deliveredOrders
+  );
   const [activeTab, setActiveTab] = useState("currentOrders");
-  const [orderQueue, setOrderQueue] = useState(orders.orderQueue);
-  const [inProgress, setInProgress] = useState(orders.inProgress);
-  const [readyForPickup, setReadyForPickup] = useState(orders.readyForPickup);
-  const [outForDelivery, setOutForDelivery] = useState(orders.outForDelivery);
-  const [delivered, setDelivered] = useState(orders.delivered);
-  const [rejected, setRejected] = useState(orders.rejected);
+
+  const rejectedOrders = useSelector(
+    (state: RootState) => state.rejectedOrders.rejectedOrders
+  );
 
   const heading =
     activeTab === "currentOrders"
@@ -169,7 +178,10 @@ export default function Orders() {
               </div>
             </TabsContent>
 
-            <TabsContent value="deliveredOrders" className="border border-gray-200 rounded-md">
+            <TabsContent
+              value="deliveredOrders"
+              className="border border-gray-200 rounded-md"
+            >
               <Table className="mt-6">
                 <TableHeader>
                   <TableRow>
@@ -180,29 +192,30 @@ export default function Orders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {delivered.map((order, index) => (
+                  {deliveredOrders?.map((order, index) => (
                     <TableRow key={index}>
                       <TableCell>{order.whizzOrderId}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                        <DeliveredOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.deliveredTime}</TableCell>
-                      <TableCell>{"Unknown"}</TableCell>
+                      <TableCell>{order.deliveryTime}</TableCell>
+                      <TableCell>{order.deliveredBy.name}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TabsContent>
-
-            <TabsContent value="rejectedOrders" className="border border-gray-200 rounded-md">
+            <TabsContent
+              value="rejectedOrders"
+              className="border border-gray-200 rounded-md"
+            >
+              {/* Rejected Orders */}
               <Table className="mt-6">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
                     <TableHead>Order Details</TableHead>
-                    <TableHead>Note</TableHead>
+                    <TableHead>Reason</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -210,11 +223,9 @@ export default function Orders() {
                     <TableRow key={index}>
                       <TableCell>{order.whizzOrderId}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                        <RejectedOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.status}</TableCell>
+                      <TableCell>{order.rejectionReason}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
