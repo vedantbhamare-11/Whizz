@@ -9,7 +9,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
-import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
+
+// Define the MenuItem type explicitly
+export interface MenuItem {
+  id: number;
+  image: string;
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  subCategory: string;
+  startTime?: string;
+  endTime?: string;
+  daysAvailable?: string[];
+  available: boolean;
+}
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
@@ -60,6 +74,21 @@ export default function Menu() {
     }
   };
 
+  const handleEdit = (id: number) => {
+    console.log(`Edit menu item with ID: ${id}`);
+    // Add edit functionality here
+  };
+
+  const handleDelete = (id: number) => {
+    console.log(`Delete menu item with ID: ${id}`);
+    // Add delete functionality here
+  };
+
+  const handleShowDetails = (id: number) => {
+    console.log(`Show details for menu item with ID: ${id}`);
+    // Add show details functionality here
+  };
+
   // Filter menu items based on search term
   const filteredMenuItems = menuItems.filter((item: any) =>
     item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -81,7 +110,7 @@ export default function Menu() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              
+
               <AddItemModal
                 onAddItem={handleAddItem}
               />
@@ -90,10 +119,11 @@ export default function Menu() {
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
             {menuStatus === "loading" && <p>Loading menu items...</p>}
             {menuStatus === "succeeded" && (
-              <MenuTable 
-                menuItems={filteredMenuItems} 
-                onToggleAvailability={handleToggleAvailability} 
-                onChangeCategory={handleManageCategory}
+              <MenuTable
+                menuItems={filteredMenuItems}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onShowDetails={handleShowDetails}
               />
             )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}

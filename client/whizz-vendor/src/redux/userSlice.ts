@@ -24,7 +24,7 @@ const initialState: UserState = {
     area: "Nungambakkam",
     type: "Veg",
     daysAvailability: ["Monday", "Tuesday", "Wednesday"],
-    logo: "https://imgs.search.brave.com/YD6n1WJWcRgrmMG5o4RD7Yy9GxdhyfTtg-pNQ6ZrFUA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA1LzMyLzIwLzAz/LzM2MF9GXzUzMjIw/MDM1NV9vZEtOOU91/M1dCNmlIV0pURklF/bEZ0SmJUdXpKc3BZ/Ni5qcGc",
+    logo: "https://images.unsplash.com/photo-1612222869049-d8ec83637a3c?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
     opensAt: "10:00 AM",
     closesAt: "10:00 PM",
   },
