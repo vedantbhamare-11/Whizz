@@ -23,6 +23,16 @@ export default function ProfileSetup() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const allDays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   const [formValues, setFormValues] = useState({
     vendorLogo: "",
     vendorName: "",
@@ -32,25 +42,10 @@ export default function ProfileSetup() {
     restaurantType: "Veg",
     startTime: "",
     endTime: "",
-    availableDays: [] as string[],
+    availableDays: [...allDays] as string[],
   });
 
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      // Comlete profile
-      const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
-      console.log(response);
-      if (response){
-        dispatch(setVendor(response));
-        router.push("/dashboard");
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -87,6 +82,8 @@ export default function ProfileSetup() {
     return Object.keys(newErrors).length === 0;
   };
 
+  
+
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
@@ -96,13 +93,31 @@ export default function ProfileSetup() {
     }));
   };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (validateForm()){
+      try {
+        // Comlete profile
+        const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
+        console.log(response);
+        if (response){
+          console.log("hitted");
+          dispatch(setVendor(response));
+          router.push("/dashboard");
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    } 
+  };
+
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center text-gray-800">
           Profile Setup
         </h1>
-        <form className="grid grid-cols-2 gap-5 mt-6">
+        <form  onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="grid gap-1.5">
@@ -242,30 +257,23 @@ export default function ProfileSetup() {
             <div>
             <Label>Days Availability</Label>
             <div className="grid grid-cols-3 gap-2">
-              {[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ].map((day) => (
+              {allDays.map((day) => (
                 <div key={day} className="flex items-center gap-2">
                   <Checkbox
+                    defaultChecked
                     checked={formValues.availableDays.includes(day)}
                     onCheckedChange={() => toggleDay(day)}
                   />
-                  <span>{day}</span>
+                  <Label htmlFor={day.toLowerCase()}>{day}</Label>
                 </div>
               ))}
             </div>
+            {errors.availableDays && <p className="text-red-500 text-sm">{errors.availableDays}</p>}
           </div>
           </div>
           <div className="flex justify-center mt-8 col-span-2">
           <Button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
           >
             Submit

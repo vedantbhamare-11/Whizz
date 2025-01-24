@@ -9,7 +9,9 @@ import { RootState } from "@/redux/store";
 import Image from "next/image";
 
 export default function Profile() {
-  const user = useSelector((state: RootState) => state.user.user);
+  const vendor = useSelector((state: RootState) => state.vendor.vendor);
+
+  console.log(vendor);
 
   return (
     <div className="flex">
@@ -20,16 +22,16 @@ export default function Profile() {
           {/* Profile Header */}
           <div className="text-center mb-10">
             <Image
-              src={user.logo}
+              src={vendor.vendorLogo}
               alt="Restaurant Logo"
               width={150}
               height={150}
               className="rounded-lg mx-auto"
             />
             <div className="flex justify-center items-center gap-4">
-            <h1 className="text-3xl font-bold mt-4">{user.name}</h1>
+            <h1 className="text-3xl font-bold mt-4">{vendor.vendorName}</h1>
             <Badge className="flex items-center justify-center bg-[#3CAE06] text-white text-sm rounded-full mt-4">
-              {user.type}
+              {vendor.restaurantType}
             </Badge>
             </div>
             
@@ -41,10 +43,10 @@ export default function Profile() {
             <Card className="p-6 shadow-md">
               <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
               <p className="text-gray-600 mt-2">
-                <span className="font-bold">Address:</span> {user.address}
+                <span className="font-bold">Address:</span> {vendor.address}
               </p>
               <p className="text-gray-600 mt-2">
-                <span className="font-bold">Phone:</span> {user.phone}
+                <span className="font-bold">Phone:</span> {vendor.vendorPhone}
               </p>
             </Card>
 
@@ -54,10 +56,10 @@ export default function Profile() {
               <div className="flex flex-row gap-8 justify-around">
               <div>
               <p className="text-gray-600 mt-2">
-                <span className="font-bold">Opens At:</span> {user.opensAt}
+                <span className="font-bold">Opens At:</span> {vendor.startTime}
               </p>
               <p className="text-gray-600 mt-2">
-                <span className="font-bold">Closes At:</span> {user.closesAt}
+                <span className="font-bold">Closes At:</span> {vendor.endTime}
               </p>
               </div>
               <div>
@@ -65,7 +67,7 @@ export default function Profile() {
                 <span className="font-bold">Days Available:</span>
               </p>
               <ul className="list-disc ml-5 text-gray-600">
-                {user.daysAvailability.map((day, index) => (
+                {vendor.availableDays.map((day, index) => (
                   <li key={index}>{day}</li>
                 ))}
               </ul>

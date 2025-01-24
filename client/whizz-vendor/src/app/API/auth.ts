@@ -50,7 +50,7 @@ const completeProfileApi = async (
     formData.append('restaurantType', vendorData.restaurantType);
     formData.append('startTime', vendorData.startTime);
     formData.append('endTime', vendorData.endTime);
-    vendorData.availableDays.map((day: string) => formData.append('availability[]', day));
+    vendorData.availableDays.map((day: string) => formData.append('availableDays[]', day));
     
   try {
     // Make API request
