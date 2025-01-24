@@ -61,7 +61,7 @@ export default function Menu() {
   };
 
   // Filter menu items based on search term
-  const filteredMenuItems = menuItems.filter((item) =>
+  const filteredMenuItems = menuItems.filter((item: any) =>
     item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

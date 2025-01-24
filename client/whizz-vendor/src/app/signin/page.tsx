@@ -6,17 +6,40 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image"; // Import Image component
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import {signinApi} from "@/app/API/auth";
 
 export default function SignIn() {
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+ const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // Sign-in handler logic
+    try {
+      const response = await signinApi(formValues.email, formValues.password);
+      
+      if (response.address){
+        router.push("/dashboard");
+      } else {
+        router.push("/complete-profile");
+      };
 
-    // Add your authentication logic here (e.g., API call)
+    } catch (error) {
+      console.log(error); 
+    }
+  };
 
-    // On successful authentication, redirect to the dashboard
-    router.push("/dashboard");
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
   };
 
   return (
@@ -30,7 +53,10 @@ export default function SignIn() {
             <Input
               type="email"
               id="email"
+              name="email"
               placeholder="Enter your email"
+              value={formValues.email}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -45,7 +71,10 @@ export default function SignIn() {
             <Input
               type="password"
               id="password"
+              name="password"
               placeholder="Enter your password"
+              value={formValues.password}
+              onChange={handleInputChange}
               required
             />
           </div>

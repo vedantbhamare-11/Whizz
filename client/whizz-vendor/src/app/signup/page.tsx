@@ -6,17 +6,51 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image"; // Import Image component
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { signupApi } from "../API/auth";
 
 export default function SignUp() {
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const validate = () => {
+    if (formValues.password !== formValues.confirmPassword) {
+      alert("Passwords do not match");
+      return false;
+    }
+    return true;
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Add your authentication logic here (e.g., API call)
+    if (formValues.password !== formValues.confirmPassword) {
+      throw new Error("Passwords do not match");
+    };
 
-    // On successful authentication, redirect to the dashboard
-    router.push("/dashboard");
+    // Sign-in handler logic
+    try {
+      const response = await signupApi(formValues.email, formValues.password);
+      console.log(response);
+      if (response){
+        router.push("/complete-profile");
+      };
+
+    } catch (error) {
+      console.log(error); 
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
   };
 
   return (
@@ -31,7 +65,10 @@ export default function SignUp() {
             <Input
               type="email"
               id="email"
+              name="email"
               placeholder="Enter your email"
+              value={formValues.email}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -44,7 +81,10 @@ export default function SignUp() {
             <Input
               type="password"
               id="password"
+              name="password"
               placeholder="Enter your password"
+              value={formValues.password}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -56,15 +96,18 @@ export default function SignUp() {
             <Input
               type="password"
               id="confirmPassword"
+              name="confirmPassword"
               placeholder="Re-Enter your password"
+              value={formValues.confirmPassword}
+              onChange={handleInputChange}
               required
             />
           </div>
           {/* Submit Button */}
           <Button type="submit"  className="w-full bg-[#3CAE06]">
-            <Link href="/complete-profile">
+            
             Sign Up
-            </Link>
+            
           </Button>
         </form>
         {/* Sign-up Link */}

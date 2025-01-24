@@ -14,24 +14,63 @@ import {
 import Image from "next/image";
 import { Upload } from "lucide-react";
 import { useState } from "react";
+import { completeProfileApi } from "../API/auth";
+import { useRouter } from "next/navigation";
 
 export default function ProfileSetup() {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [formValues, setFormValues] = useState({
+    vendorLogo: "",
+    vendorName: "",
+    address: "",
+    vendorPhone: "",
+    area: "",
+    restaurantType: "Veg",
+    startTime: "",
+    endTime: "",
+    availableDays: [] as string[],
+  });
+
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    console.log("Form submitted");
     event.preventDefault();
-    console.log("Profile submitted!");
+    try {
+      const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
+      console.log(response);  
+      if (response){
+        router.push("/dashboard");
+      };
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setUploadedImage(reader.result as string); // Save the base64 image
-      };
-      reader.readAsDataURL(file);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setFormValues({ ...formValues, vendorLogo: imageUrl });
+      setUploadedImage(file);
     }
+  };
+
+  const toggleDay = (day: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day],
+    }));
   };
 
   return (
@@ -49,9 +88,12 @@ export default function ProfileSetup() {
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantName">Restaurant Name</Label>
               <Input
-                id="restaurantName"
+                id="vendorName"
+                name="vendorName"
                 type="text"
                 placeholder="Enter restaurant name"
+                value={formValues.vendorName}
+                onChange={handleInputChange}
                 required
               />
             </div>
@@ -59,23 +101,33 @@ export default function ProfileSetup() {
               <Label htmlFor="address">Address</Label>
               <Input
                 id="address"
+                name="address"
                 type="text"
                 placeholder="Enter address"
+                value={formValues.address}
+                onChange={handleInputChange}
                 required
               />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
-                id="phoneNumber"
+                id="vendorPhone"
+                name="vendorPhone"
                 type="number"
                 placeholder="Enter phone number"
+                value={formValues.vendorPhone}
+                onChange={handleInputChange}
                 required
               />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="area">Area</Label>
-              <Select>
+              <Select
+              defaultValue={formValues.area}
+              onValueChange={(value) =>
+                setFormValues({ ...formValues, area: value })
+              }>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select area" />
                 </SelectTrigger>
@@ -88,7 +140,12 @@ export default function ProfileSetup() {
 
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
-              <Select>
+              <Select
+                defaultValue={formValues.restaurantType}
+                onValueChange={(value) =>
+                  setFormValues({ ...formValues, restaurantType: value })
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select restaurant type" />
                 </SelectTrigger>
@@ -105,11 +162,23 @@ export default function ProfileSetup() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
-                <Input id="opensAt" type="time" required />
+                <Input 
+                  id="startTime" 
+                  name="startTime" 
+                  type="time" 
+                  value={formValues.startTime} 
+                  onChange={handleInputChange}
+                  required />
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
-                <Input id="closesAt" type="time" required />
+                <Input 
+                  id="endTime" 
+                  name="endTime" 
+                  type="time" 
+                  value={formValues.endTime} 
+                  onChange={handleInputChange} 
+                  required />
               </div>
             </div>
           </div>
@@ -125,7 +194,7 @@ export default function ProfileSetup() {
                 <div className="border-2 p-2  bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
                     <Image
-                      src={uploadedImage}
+                      src={formValues.vendorLogo}
                       alt="Uploaded"
                       className="object-contain h-full max-h-[220px] rounded-md"
                       width={220}
@@ -149,42 +218,30 @@ export default function ProfileSetup() {
             </div>
 
             {/* Days Availability */}
-            <div className="space-y-2">
-              <Label>Days Availability</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="monday" />
-                  <Label htmlFor="monday">Monday</Label>
+            <div>
+            <Label>Days Availability</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ].map((day) => (
+                <div key={day} className="flex items-center gap-2">
+                  <Checkbox
+                    checked={formValues.availableDays.includes(day)}
+                    onCheckedChange={() => toggleDay(day)}
+                  />
+                  <span>{day}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="tuesday" />
-                  <Label htmlFor="tuesday">Tuesday</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="wednesday" />
-                  <Label htmlFor="wednesday">Wednesday</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="thursday" />
-                  <Label htmlFor="thursday">Thursday</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="friday" />
-                  <Label htmlFor="friday">Friday</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="saturday" />
-                  <Label htmlFor="saturday">Saturday</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="sunday" />
-                  <Label htmlFor="sunday">Sunday</Label>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </form>
-        <div className="flex justify-center mt-8">
+          </div>
+          <div className="flex justify-center mt-8 col-span-2">
           <Button
             type="submit"
             className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
@@ -192,6 +249,8 @@ export default function ProfileSetup() {
             Submit
           </Button>
         </div>
+        </form>
+        
       </div>
 
       {/* Logo and Text */}

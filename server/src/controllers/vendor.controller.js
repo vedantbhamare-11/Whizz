@@ -1,20 +1,20 @@
 import mongoose from "mongoose";
 import { Dish, Order, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
-import { log } from "console";
 
 // Complete Profile 
 const completeProfile = async (req, res, next) => {
     // Check if vendorId is provided
-    // const vendorId = req.userId;
-    const vendorId = "6792277cfff48a74453c1a77";
+    const vendorId = req.userId;
+
      if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
     };
 
     // Extract vendor details
     const { vendorName, address, restaurantType, gst, area, vendorPhone, startTime, endTime, availableDays } = req.body;
-    if (!vendorName || !address || !restaurantType || !gst || !area || !vendorPhone || !startTime || !endTime ) {
+    
+    if (!vendorName || !address || !restaurantType || !area || !vendorPhone || !startTime || !endTime ) {
         return errorResponse(res, 400, null, "All fields are required");
     };
 
@@ -51,8 +51,7 @@ const completeProfile = async (req, res, next) => {
 
 const getDashboardData = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = "677e6bedf9823a75597f9029";
-    // const vendorId = req.userId;
+    const vendorId = req.userId;
 
     // Check if vendorId is provided
     if (!vendorId) {
@@ -145,8 +144,7 @@ const manageOpenHours = async (req, res, next) => {
 // Add new dishes
 const addDish = async (req, res, next) => {
     // Extract vendorId
-    const vendorId = "677e6bedf9823a75597f9029";
-    // const vendorId = req.userId;
+    const vendorId = req.userId;
 
     if (!vendorId) {
         return errorResponse(res, 400, null, "Vendor ID is required");
@@ -322,8 +320,7 @@ const deleteDish = async (req, res, next) => {
 
 // Get all dishes
 const getDishes = async (req, res, next) => {
-    // const vendorId = req.userId;
-    const vendorId = "677e6bedf9823a75597f9029";
+    const vendorId = req.userId;
 
     // Extract query parameters for offset-based fetching and sorting
     const { offset = 0, limit = 30, sort = "-createdAt" } = req.query;
@@ -341,7 +338,7 @@ const getDishes = async (req, res, next) => {
         const updatedDishes = dishes.map(dish => {
             return {
                 ...dish._doc,
-                image: dish.image !== 'null' ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
+                image: dish.image ? `${req.protocol}://${req.get("host")}/${dish.image}` : null
             }
         });
         // Count total dishes for client-side scroll optimization
@@ -359,8 +356,7 @@ const getDishes = async (req, res, next) => {
 // Get all orders
 const getOrders = async (req, res, next) => {
     // Extract vendorId
-    // const vendorId = req.userId;
-    const vendorId = "677e6bedf9823a75597f9029";
+    const vendorId = req.userId;
 
     // Check if vendorId is provided
     if (!vendorId) {
