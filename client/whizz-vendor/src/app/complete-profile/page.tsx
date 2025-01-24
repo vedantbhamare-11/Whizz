@@ -23,78 +23,92 @@ export default function ProfileSetup() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const allDays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   const [formValues, setFormValues] = useState({
-    restaurantName: "",
+    vendorLogo: "",
+    vendorName: "",
     address: "",
-    phoneNumber: "",
+    vendorPhone: "",
     area: "",
-    restaurantType: "",
-    opensAt: "",
-    closesAt: "",
-    daysAvailable: [] as string[],
+    restaurantType: "Veg",
+    startTime: "",
+    endTime: "",
+    availableDays: [...allDays] as string[],
   });
 
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setFormValues({ ...formValues, vendorLogo: imageUrl });
+      setUploadedImage(file);
+    }
+  };
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      // Comlete profile
-      const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
-      console.log(response);
-      if (response){
-        dispatch(setVendor(response));
-        router.push("/dashboard");
-      };
-    } catch (error) {
-      console.log(error);
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formValues.restaurantName) newErrors.restaurantName = "Restaurant name is required.";
+    if (!formValues.vendorName) newErrors.vendorName = "Restaurant name is required.";
     if (!formValues.address) newErrors.address = "Address is required.";
-    if (!formValues.phoneNumber) newErrors.phoneNumber = "Phone number is required.";
-    else if (!/^\d{10}$/.test(formValues.phoneNumber)) newErrors.phoneNumber = "Phone number must be 10 digits.";
+    if (!formValues.vendorPhone) newErrors.vendorPhone = "Phone number is required.";
+    else if (!/^\d{10}$/.test(formValues.vendorPhone)) newErrors.vendorPhone = "Phone number must be 10 digits.";
     if (!formValues.area) newErrors.area = "Area is required.";
     if (!formValues.restaurantType) newErrors.restaurantType = "Restaurant type is required.";
-    if (!formValues.opensAt) newErrors.opensAt = "Opening time is required.";
-    if (!formValues.closesAt) newErrors.closesAt = "Closing time is required.";
-    if (formValues.daysAvailable.length === 0) newErrors.daysAvailable = "Select at least one day.";
+    if (!formValues.startTime) newErrors.startTime = "Opening time is required.";
+    if (!formValues.endTime) newErrors.endTime = "Closing time is required.";
+    if (formValues.availableDays.length === 0) newErrors.availableDays = "Select at least one day.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Prevent default for both form and button clicks
   
-    if (validateForm()) {
-      console.log("Form submitted successfully!", formValues);
-    } else {
-      console.log("Form contains errors.");
-    }
-  };
-  
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setUploadedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
-      daysAvailable: prev.daysAvailable.includes(day)
-        ? prev.daysAvailable.filter((d) => d !== day)
-        : [...prev.daysAvailable, day],
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day],
     }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (validateForm()){
+      try {
+        // Comlete profile
+        const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
+        console.log(response);
+        if (response){
+          console.log("hitted");
+          dispatch(setVendor(response));
+          router.push("/dashboard");
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    } 
   };
 
   return (
@@ -103,7 +117,7 @@ export default function ProfileSetup() {
         <h1 className="text-2xl font-bold text-center text-gray-800">
           Profile Setup
         </h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
+        <form  onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="grid gap-1.5">
@@ -113,8 +127,9 @@ export default function ProfileSetup() {
                 name="vendorName"
                 type="text"
                 placeholder="Enter restaurant name"
-                value={formValues.restaurantName}
-                onChange={(e) => setFormValues({ ...formValues, restaurantName: e.target.value })}
+                value={formValues.vendorName}
+                onChange={handleInputChange}
+                required
               />
               {errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
             </div>
@@ -126,34 +141,30 @@ export default function ProfileSetup() {
                 type="text"
                 placeholder="Enter address"
                 value={formValues.address}
-                onChange={(e) => setFormValues({ ...formValues, address: e.target.value })}
+                onChange={handleInputChange}
+                required
               />
               {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
             </div>
             <div className="grid gap-1.5">
-  <Label htmlFor="phoneNumber">Phone Number</Label>
-  <Input
-    id="phoneNumber"
-    type="text"
-    placeholder="Enter phone number"
-    value={formValues.phoneNumber}
-    maxLength={10} // Restrict the input to 10 digits
-    onChange={(e) => {
-      const value = e.target.value;
-      // Allow only numeric input
-      if (/^\d*$/.test(value)) {
-        setFormValues({ ...formValues, phoneNumber: value });
-      }
-    }}
-  />
-  {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
-</div>
-
+              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Input
+                id="vendorPhone"
+                name="vendorPhone"
+                type="number"
+                placeholder="Enter phone number"
+                value={formValues.vendorPhone}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
             <div className="grid gap-1.5">
               <Label htmlFor="area">Area</Label>
               <Select
-                onValueChange={(value) => setFormValues({ ...formValues, area: value })}
-              >
+              defaultValue={formValues.area}
+              onValueChange={(value) =>
+                setFormValues({ ...formValues, area: value })
+              }>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select area" />
                 </SelectTrigger>
@@ -167,7 +178,10 @@ export default function ProfileSetup() {
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
               <Select
-                onValueChange={(value) => setFormValues({ ...formValues, restaurantType: value })}
+                defaultValue={formValues.restaurantType}
+                onValueChange={(value) =>
+                  setFormValues({ ...formValues, restaurantType: value })
+                }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select restaurant type" />
@@ -184,24 +198,23 @@ export default function ProfileSetup() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
-                <Input
-                  id="opensAt"
-                  type="time"
-                  value={formValues.opensAt}
-                  onChange={(e) => setFormValues({ ...formValues, opensAt: e.target.value })}
-                />
-                {errors.opensAt && <p className="text-red-500 text-sm">{errors.opensAt}</p>}
+                <Input 
+                  id="startTime" 
+                  name="startTime" 
+                  type="time" 
+                  value={formValues.startTime} 
+                  onChange={handleInputChange}
+                  required />
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
-                <Input
-                  id="closesAt"
-                  className=""
-                  type="time"
-                  value={formValues.closesAt}
-                  onChange={(e) => setFormValues({ ...formValues, closesAt: e.target.value })}
-                />
-                {errors.closesAt && <p className="text-red-500 text-sm">{errors.closesAt}</p>}
+                <Input 
+                  id="endTime" 
+                  name="endTime" 
+                  type="time" 
+                  value={formValues.endTime} 
+                  onChange={handleInputChange} 
+                  required />
               </div>
             </div>
           </div>
@@ -240,28 +253,27 @@ export default function ProfileSetup() {
               </label>
             </div>
 
-            <div className="space-y-2">
-              <Label>Days Availability</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <div key={day} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={day.toLowerCase()}
-                      checked={formValues.daysAvailable.includes(day)}
-                      onCheckedChange={() => toggleDay(day)}
-                    />
-                    <Label htmlFor={day.toLowerCase()}>{day}</Label>
-                  </div>
-                ))}
-              </div>
-              {errors.daysAvailable && <p className="text-red-500 text-sm">{errors.daysAvailable}</p>}
+            {/* Days Availability */}
+            <div>
+            <Label>Days Availability</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {allDays.map((day) => (
+                <div key={day} className="flex items-center gap-2">
+                  <Checkbox
+                    defaultChecked
+                    checked={formValues.availableDays.includes(day)}
+                    onCheckedChange={() => toggleDay(day)}
+                  />
+                  <Label htmlFor={day.toLowerCase()}>{day}</Label>
+                </div>
+              ))}
             </div>
+            {errors.availableDays && <p className="text-red-500 text-sm">{errors.availableDays}</p>}
           </div>
           </div>
           <div className="flex justify-center mt-8 col-span-2">
           <Button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
           >
             Submit

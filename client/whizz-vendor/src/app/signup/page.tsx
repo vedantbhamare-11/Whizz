@@ -7,11 +7,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { signupApi } from "../API/auth";
 
 export default function SignUp() {
   const router = useRouter();
 
-  // State for form inputs and errors
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -19,6 +19,41 @@ export default function SignUp() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    if (formValues.password !== formValues.confirmPassword) {
+      alert("Passwords do not match");
+      return false;
+    }
+    return true;
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (formValues.password !== formValues.confirmPassword) {
+      throw new Error("Passwords do not match");
+    };
+
+    // Sign-in handler logic
+    try {
+      const response = await signupApi(formValues.email, formValues.password);
+      console.log(response);
+      if (response){
+        router.push("/complete-profile");
+      };
+
+    } catch (error) {
+      console.log(error); 
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   // Validation function
   const validateForm = () => {
@@ -51,18 +86,6 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  
-    if (validateForm()) {
-      console.log("Form submitted successfully:", formValues);
-      router.push("/complete-profile");
-    } else {
-      console.log("Validation failed:", errors);
-    }
-  };
   
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
@@ -81,7 +104,7 @@ export default function SignUp() {
               name="email"
               placeholder="Enter your email"
               value={formValues.email}
-              onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
+              onChange={handleInputChange}
               required
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
@@ -99,7 +122,7 @@ export default function SignUp() {
               name="password"
               placeholder="Enter your password"
               value={formValues.password}
-              onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
+              onChange={handleInputChange}
               required
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
@@ -117,7 +140,7 @@ export default function SignUp() {
               name="confirmPassword"
               placeholder="Re-Enter your password"
               value={formValues.confirmPassword}
-              onChange={(e) => setFormValues({ ...formValues, confirmPassword: e.target.value })}
+              onChange={handleInputChange}
               required
             />
             {errors.confirmPassword && (
@@ -125,11 +148,10 @@ export default function SignUp() {
             )}
           </div>
           {/* Submit Button */}
-          <Button
-            onClick={handleSubmit}
-            className="w-full bg-[#3CAE06] hover:bg-[#36A205] text-white"
-          >
+          <Button type="submit"  className="w-full bg-[#3CAE06]">
+            
             Sign Up
+            
           </Button>
         </form>
         {/* Sign-up Link */}

@@ -38,6 +38,16 @@ interface AddItemModalProps {
 }
 
 export default function AddItemModal({ onAddItem }: AddItemModalProps) {
+  const allDays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   const [formValues, setFormValues] = useState({
     image: "",
     dishName: "",
@@ -47,7 +57,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
     subcategory: "Main Course",
     startTime: "",
     endTime: "",
-    availableDays: [] as string[],
+    availableDays: [...allDays] as string[],
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
@@ -278,15 +288,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
           <div>
             <Label>Days Availability</Label>
             <div className="grid grid-cols-3 gap-2">
-              {[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ].map((day) => (
+              {allDays.map((day) => (
                 <div key={day} className="flex items-center gap-2">
                   <Checkbox
                     checked={formValues.availableDays.includes(day)}

@@ -8,10 +8,10 @@ import {
 import { MoreVertical, PenSquare, Trash2, List } from "lucide-react";
 
 interface MenuTablePopoverProps {
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onShowDetails: (id: number) => void;
-  itemId: number;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onShowDetails: (id: string) => void;
+  itemId: string;
 }
 
 export default function MenuTablePopover({

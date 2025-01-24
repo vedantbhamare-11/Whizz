@@ -16,10 +16,13 @@ export default function SignIn() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const [formValues, setFormValues] = useState({
+ const [formValues, setFormValues] = useState({
     email: "",
     password: "",
   });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,7 +37,19 @@ export default function SignIn() {
       } else {
         router.push("/complete-profile");
       };
-  const [errors, setErrors] = useState<Record<string, string>>({});
+
+    } catch (error) {
+      console.log(error); 
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
 
   // Validation function
   const validateForm = () => {
@@ -58,16 +73,6 @@ export default function SignIn() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      console.log("Form submitted successfully:", formValues);
-      // On successful authentication, redirect to the dashboard
-      router.push("/dashboard");
-    } else {
-      console.log("Validation failed:", errors);
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
@@ -84,7 +89,7 @@ export default function SignIn() {
               name="email"
               placeholder="Enter your email"
               value={formValues.email}
-              onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
+              onChange={handleInputChange}
               required
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
@@ -105,7 +110,7 @@ export default function SignIn() {
               name="password"
               placeholder="Enter your password"
               value={formValues.password}
-              onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
+              onChange={handleInputChange}
               required
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
@@ -113,7 +118,6 @@ export default function SignIn() {
           {/* Submit Button */}
           <Button
             type="submit"
-            onClick={handleSubmit}
             className="w-full bg-[#3CAE06] hover:bg-[#36A205] text-white"
           >
             Login

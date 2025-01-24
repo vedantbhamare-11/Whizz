@@ -12,21 +12,6 @@ import { useEffect, useState } from "react";
 import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 
-// Define the MenuItem type explicitly
-export interface MenuItem {
-  id: number;
-  image: string;
-  name: string;
-  description?: string;
-  price: number;
-  category: string;
-  subCategory: string;
-  startTime?: string;
-  endTime?: string;
-  daysAvailable?: string[];
-  available: boolean;
-}
-
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
   const menuItems = useSelector((state: RootState) => state.menu.items);
@@ -80,17 +65,17 @@ export default function Menu() {
     }
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     console.log(`Edit menu item with ID: ${id}`);
     // Add edit functionality here
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     console.log(`Delete menu item with ID: ${id}`);
     // Add delete functionality here
   };
 
-  const handleShowDetails = (id: number) => {
+  const handleShowDetails = (id: string) => {
     console.log(`Show details for menu item with ID: ${id}`);
     // Add show details functionality here
   };
@@ -125,8 +110,10 @@ export default function Menu() {
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
             {menuStatus === "loading" && <p>Loading menu items...</p>}
             {menuStatus === "succeeded" && (
-              <MenuTable
-                menuItems={filteredMenuItems}
+              <MenuTable 
+                menuItems={filteredMenuItems as any} 
+                onToggleAvailability={handleToggleAvailability} 
+                onChangeCategory={handleManageCategory}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onShowDetails={handleShowDetails}

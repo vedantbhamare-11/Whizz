@@ -53,6 +53,19 @@ const vendorSchema = new mongoose.Schema({
         default: "vendor",
         required: true
     },
+    startTime: {
+        type: String,
+        required: true
+    },
+    endTime: {
+        type: String,
+        required: true
+    },
+    availableDays: {
+        type: [String],
+        default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        required: true,
+    },
     isOpen: {
         type: Boolean,
         default: true,
@@ -72,7 +85,7 @@ const dishSchema = new mongoose.Schema({
         required: true
     },
     price: {
-        type: Number,
+        type: Number, 
         required: true
     },
     description: {
