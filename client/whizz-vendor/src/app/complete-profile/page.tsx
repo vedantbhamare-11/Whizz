@@ -24,18 +24,18 @@ export default function ProfileSetup() {
   const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState({
-    vendorLogo: "",
-    vendorName: "",
+    restaurantName: "",
     address: "",
-    vendorPhone: "",
+    phoneNumber: "",
     area: "",
-    restaurantType: "Veg",
-    startTime: "",
-    endTime: "",
-    availableDays: [] as string[],
+    restaurantType: "",
+    opensAt: "",
+    closesAt: "",
+    daysAvailable: [] as string[],
   });
 
-  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,31 +49,51 @@ export default function ProfileSetup() {
       };
     } catch (error) {
       console.log(error);
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formValues.restaurantName) newErrors.restaurantName = "Restaurant name is required.";
+    if (!formValues.address) newErrors.address = "Address is required.";
+    if (!formValues.phoneNumber) newErrors.phoneNumber = "Phone number is required.";
+    else if (!/^\d{10}$/.test(formValues.phoneNumber)) newErrors.phoneNumber = "Phone number must be 10 digits.";
+    if (!formValues.area) newErrors.area = "Area is required.";
+    if (!formValues.restaurantType) newErrors.restaurantType = "Restaurant type is required.";
+    if (!formValues.opensAt) newErrors.opensAt = "Opening time is required.";
+    if (!formValues.closesAt) newErrors.closesAt = "Closing time is required.";
+    if (formValues.daysAvailable.length === 0) newErrors.daysAvailable = "Select at least one day.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); // Prevent default for both form and button clicks
+  
+    if (validateForm()) {
+      console.log("Form submitted successfully!", formValues);
+    } else {
+      console.log("Form contains errors.");
     }
   };
+  
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setFormValues({ ...formValues, vendorLogo: imageUrl });
-      setUploadedImage(file);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUploadedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
-      availableDays: prev.availableDays.includes(day)
-        ? prev.availableDays.filter((d) => d !== day)
-        : [...prev.availableDays, day],
+      daysAvailable: prev.daysAvailable.includes(day)
+        ? prev.daysAvailable.filter((d) => d !== day)
+        : [...prev.daysAvailable, day],
     }));
   };
 
@@ -83,10 +103,7 @@ export default function ProfileSetup() {
         <h1 className="text-2xl font-bold text-center text-gray-800">
           Profile Setup
         </h1>
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-2 gap-5 mt-6"
-        >
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="grid gap-1.5">
@@ -96,10 +113,10 @@ export default function ProfileSetup() {
                 name="vendorName"
                 type="text"
                 placeholder="Enter restaurant name"
-                value={formValues.vendorName}
-                onChange={handleInputChange}
-                required
+                value={formValues.restaurantName}
+                onChange={(e) => setFormValues({ ...formValues, restaurantName: e.target.value })}
               />
+              {errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="address">Address</Label>
@@ -109,29 +126,34 @@ export default function ProfileSetup() {
                 type="text"
                 placeholder="Enter address"
                 value={formValues.address}
-                onChange={handleInputChange}
-                required
+                onChange={(e) => setFormValues({ ...formValues, address: e.target.value })}
               />
+              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input
-                id="vendorPhone"
-                name="vendorPhone"
-                type="number"
-                placeholder="Enter phone number"
-                value={formValues.vendorPhone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+  <Label htmlFor="phoneNumber">Phone Number</Label>
+  <Input
+    id="phoneNumber"
+    type="text"
+    placeholder="Enter phone number"
+    value={formValues.phoneNumber}
+    maxLength={10} // Restrict the input to 10 digits
+    onChange={(e) => {
+      const value = e.target.value;
+      // Allow only numeric input
+      if (/^\d*$/.test(value)) {
+        setFormValues({ ...formValues, phoneNumber: value });
+      }
+    }}
+  />
+  {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+</div>
+
             <div className="grid gap-1.5">
               <Label htmlFor="area">Area</Label>
               <Select
-              defaultValue={formValues.area}
-              onValueChange={(value) =>
-                setFormValues({ ...formValues, area: value })
-              }>
+                onValueChange={(value) => setFormValues({ ...formValues, area: value })}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select area" />
                 </SelectTrigger>
@@ -140,15 +162,12 @@ export default function ProfileSetup() {
                   <SelectItem value="nungambakkam">Nungambakkam</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.area && <p className="text-red-500 text-sm">{errors.area}</p>}
             </div>
-
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
               <Select
-                defaultValue={formValues.restaurantType}
-                onValueChange={(value) =>
-                  setFormValues({ ...formValues, restaurantType: value })
-                }
+                onValueChange={(value) => setFormValues({ ...formValues, restaurantType: value })}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select restaurant type" />
@@ -160,29 +179,29 @@ export default function ProfileSetup() {
                   <SelectItem value="multicuisine">Multicuisine</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.restaurantType && <p className="text-red-500 text-sm">{errors.restaurantType}</p>}
             </div>
-
-            {/* Opens At and Closes At */}
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
-                <Input 
-                  id="startTime" 
-                  name="startTime" 
-                  type="time" 
-                  value={formValues.startTime} 
-                  onChange={handleInputChange}
-                  required />
+                <Input
+                  id="opensAt"
+                  type="time"
+                  value={formValues.opensAt}
+                  onChange={(e) => setFormValues({ ...formValues, opensAt: e.target.value })}
+                />
+                {errors.opensAt && <p className="text-red-500 text-sm">{errors.opensAt}</p>}
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
-                <Input 
-                  id="endTime" 
-                  name="endTime" 
-                  type="time" 
-                  value={formValues.endTime} 
-                  onChange={handleInputChange} 
-                  required />
+                <Input
+                  id="closesAt"
+                  className=""
+                  type="time"
+                  value={formValues.closesAt}
+                  onChange={(e) => setFormValues({ ...formValues, closesAt: e.target.value })}
+                />
+                {errors.closesAt && <p className="text-red-500 text-sm">{errors.closesAt}</p>}
               </div>
             </div>
           </div>
@@ -195,7 +214,7 @@ export default function ProfileSetup() {
                 htmlFor="logoInput"
                 className="border border-gray-300 rounded-lg p-2 cursor-pointer"
               >
-                <div className="border-2 p-2  bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
+                <div className="border-2 p-2 bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
                     <Image
                       src={formValues.vendorLogo}
@@ -221,33 +240,28 @@ export default function ProfileSetup() {
               </label>
             </div>
 
-            {/* Days Availability */}
-            <div>
-            <Label>Days Availability</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ].map((day) => (
-                <div key={day} className="flex items-center gap-2">
-                  <Checkbox
-                    checked={formValues.availableDays.includes(day)}
-                    onCheckedChange={() => toggleDay(day)}
-                  />
-                  <span>{day}</span>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <Label>Days Availability</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                  <div key={day} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={day.toLowerCase()}
+                      checked={formValues.daysAvailable.includes(day)}
+                      onCheckedChange={() => toggleDay(day)}
+                    />
+                    <Label htmlFor={day.toLowerCase()}>{day}</Label>
+                  </div>
+                ))}
+              </div>
+              {errors.daysAvailable && <p className="text-red-500 text-sm">{errors.daysAvailable}</p>}
             </div>
           </div>
           </div>
           <div className="flex justify-center mt-8 col-span-2">
           <Button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
           >
             Submit
@@ -255,29 +269,6 @@ export default function ProfileSetup() {
         </div>
         </form>
         
-      </div>
-
-      {/* Logo and Text */}
-      <div className="mt-6 text-center">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          width={100}
-          height={100}
-          className="mx-auto"
-        />
-        <p className="text-sm text-gray-500 mt-4">
-          By clicking continue, you agree to our{" "}
-          <br />
-          <a href="/terms" className="hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="/privacy" className="hover:underline">
-            Privacy Policy
-          </a>
-          .
-        </p>
       </div>
     </div>
   );
