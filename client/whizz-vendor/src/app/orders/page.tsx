@@ -41,13 +41,17 @@ export default function Orders() {
   const dispatch = useDispatch();
 
   const orders = useSelector((state: RootState) => state.orders.orders);
+
+  const [activeTab, setActiveTab] = useState("currentOrders");
+  const [orderQueue, setOrderQueue] = useState(orders.orderQueue);
+  const [inProgress, setInProgress] = useState(orders.inProgress);
+  const [readyForPickup, setReadyForPickup] = useState(orders.readyForPickup);
+  const [outForDelivery, setOutForDelivery] = useState(orders.outForDelivery);
+  const [delivered, setDelivered] = useState(orders.delivered);
+  const [rejected, setRejected] = useState(orders.rejected);
+
   const deliveredOrders = useSelector(
     (state: RootState) => state.deliveredOrders.deliveredOrders
-  );
-  const [activeTab, setActiveTab] = useState("currentOrders");
-
-  const rejectedOrders = useSelector(
-    (state: RootState) => state.rejectedOrders.rejectedOrders
   );
 
   const heading =
@@ -106,13 +110,16 @@ export default function Orders() {
   }, []);
 
   // Handle accepting order logic here
-  const handleOrderStatus = (orderId: string, newStatus: any) => {
+  const handleOrderStatus = async (orderId: string, newStatus: any) => {
     console.log("id", orderId, "newStatus", newStatus);
 
     try {
-      const response = updateOrder(orderId, newStatus);
+      const response = await updateOrder(orderId, newStatus);
 
       dispatch(updateOrderStatus({ orderId, newStatus }));
+      if (newStatus === "rejected") {
+        setRejected([...rejected, response]);
+      }
 
     } catch (error) {
       console.log(error);
@@ -225,7 +232,7 @@ export default function Orders() {
                       <TableCell>
                         <RejectedOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.rejectionReason}</TableCell>
+                      <TableCell>{order.rejectedReason}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

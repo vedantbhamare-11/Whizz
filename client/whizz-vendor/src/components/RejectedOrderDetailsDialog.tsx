@@ -8,10 +8,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RejectedOrder } from "@/redux/rejectedOrderSlice";
+import { Order } from "@/redux/orderSlice";
+
 
 interface RejectedOrderDetailsDialogProps {
-  order: RejectedOrder;
+  order: Order;
 }
 
 export default function RejectedOrderDetailsDialog({
@@ -30,14 +31,14 @@ export default function RejectedOrderDetailsDialog({
         </DialogHeader>
         <div>
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold">{order.orderId}</h3>
+            <h3 className="text-lg font-bold">{order.whizzOrderId}</h3>
           </div>
           <div className="border-b my-4"></div>
           <div className="space-y-4">
             {order.dishes.map((dish, index) => (
               <div key={index} className="flex justify-between items-center">
                 <div>
-                  <p className="text-base text-black">{dish.name}</p>
+                  <p className="text-base text-black">{dish.dishName}</p>
                   <p className="text-sm text-gray-500">Rs {dish.price}</p>
                 </div>
                 <div className="w-8 h-8 flex items-center justify-center bg-white rounded-md border border-gray-300">
@@ -48,7 +49,7 @@ export default function RejectedOrderDetailsDialog({
           </div>
           <div className="mt-4 space-y-2">
             <p className="text-md text-black font-semibold">Rejection Reason</p>
-            <p className="text-sm text-gray-500">{order.rejectionReason}</p>
+            <p className="text-sm text-gray-500">{order.rejectedReason}</p>
           </div>
         </div>
       </DialogContent>

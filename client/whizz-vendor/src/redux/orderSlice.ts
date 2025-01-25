@@ -7,7 +7,7 @@ interface Dish {
   quantity: number;
 }
 
-interface Order {
+export interface Order {
   whizzOrderId: string;
   timeAgo?: string;
   createdTime: string;
@@ -23,6 +23,7 @@ interface Order {
     phone: string;
     profilePic: string;
   };
+  rejectedReason?: string;
 }
 
 interface OrdersState {
