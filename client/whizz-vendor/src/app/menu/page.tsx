@@ -42,8 +42,8 @@ export default function Menu() {
     dispatch(addMenuItem(newItem));
   };
 
-  const handleEdit = (id: number) => {
-    console.log(`Edit menu item with ID: ${id}`);
+  const handleEdit = (item: MenuItem) => {
+    console.log(`Edit menu item with ID: ${item.id}`);
     // Add edit functionality here
   };
 

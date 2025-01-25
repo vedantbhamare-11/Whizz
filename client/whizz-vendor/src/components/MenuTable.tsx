@@ -38,9 +38,9 @@ export interface MenuItem {
 
 interface MenuTableProps {
   menuItems: MenuItem[];
-  onEdit: (id: number) => void;
+  onEdit: (item: MenuItem) => void;
   onDelete: (id: number) => void;
-  onShowDetails: (id: number) => void; // Ensure this is included
+  onShowDetails: (id: number) => void;
 }
 
 export default function MenuTable({ menuItems, onEdit, onDelete }: MenuTableProps) {
@@ -74,6 +74,8 @@ export default function MenuTable({ menuItems, onEdit, onDelete }: MenuTableProp
             <TableHead>Price</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Sub-Category</TableHead>
+            <TableHead>Start Time</TableHead>
+            <TableHead>End Time</TableHead>
             <TableHead>Availability</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -149,6 +151,8 @@ export default function MenuTable({ menuItems, onEdit, onDelete }: MenuTableProp
                   </SelectContent>
                 </Select>
               </TableCell>
+              <TableCell>{item.startTime || "Not Set"}</TableCell>
+              <TableCell>{item.endTime || "Not Set"}</TableCell>
               <TableCell>
                 <Switch
                   defaultChecked={item.available}
@@ -159,7 +163,7 @@ export default function MenuTable({ menuItems, onEdit, onDelete }: MenuTableProp
                 <MenuTablePopover
                   menuItem={item}
                   itemId={item.id}
-                  onEdit={(updatedItem) => onEdit(updatedItem.id)}
+                  onEdit={onEdit}
                   onDelete={onDelete}
                   onShowDetails={handleShowDetails}
                 />
