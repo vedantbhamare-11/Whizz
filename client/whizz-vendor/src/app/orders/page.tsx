@@ -50,10 +50,6 @@ export default function Orders() {
   const [delivered, setDelivered] = useState(orders.delivered);
   const [rejected, setRejected] = useState(orders.rejected);
 
-  const deliveredOrders = useSelector(
-    (state: RootState) => state.deliveredOrders.deliveredOrders
-  );
-
   const heading =
     activeTab === "currentOrders"
       ? "Current Orders"
@@ -199,14 +195,14 @@ export default function Orders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {deliveredOrders?.map((order, index) => (
+                  {delivered?.map((order, index) => (
                     <TableRow key={index}>
                       <TableCell>{order.whizzOrderId}</TableCell>
                       <TableCell>
                         <DeliveredOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.deliveryTime}</TableCell>
-                      <TableCell>{order.deliveredBy.name}</TableCell>
+                      <TableCell>{order.timeAgo}</TableCell>
+                      <TableCell>{order.agentInfo?.name || "Agent"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

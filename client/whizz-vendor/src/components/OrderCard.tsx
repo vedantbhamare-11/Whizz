@@ -118,22 +118,22 @@ export default function OrderCard({
       )}
 
       {/* Out for Delivery Section */}
-      {status === "outForDelivery" && agentInfo && (
+      {status === "outForDelivery" &&  (
         <div className="mt-4 space-y-2">
           <p className="text-md text-black font-semibold">Order picked by</p>
           <div className="flex items-center gap-4">
             {/* Profile Picture */}
             <Image
-              src={agentInfo.profilePic}
-              alt={agentInfo.name}
+              src={agentInfo?.profilePic || "/agent.png"}
+              alt={agentInfo?.name || "Delivery agent"}
               width={100}
               height={100}
               className="rounded-full border border-gray-300 w-10 h-10"
             />
             {/* Agent Details */}
             <div>
-              <p className="text-md font-semibold">{agentInfo.name}</p>
-              <p className="text-sm text-gray-500">{agentInfo.phone}</p>
+              <p className="text-md font-semibold">{agentInfo?.name || "Whizz Agent" }</p>
+              <p className="text-sm text-gray-500">{agentInfo?.phone || "+91 123456789"}</p>
             </div>
           </div>
         </div>

@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { useState } from "react";
 import { MoreVertical } from "lucide-react";
+import AddItemModal from "./AddItemModal";
 
 
 interface MenuItem {
@@ -44,10 +45,9 @@ interface MenuTableProps {
   onChangeCategory: (id: string, category: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onShowDetails: (id: string) => void; // Ensure this is included
 }
 
-export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onEdit, onDelete, onShowDetails }: MenuTableProps) {
+export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onEdit, onDelete}: MenuTableProps) {
 
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [subCategories, setSubCategories] = useState<string[]>([
@@ -158,6 +158,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
               <TableCell>
                 <Switch
                   defaultChecked={item.isAvailable}
+                  onCheckedChange={(checked) => onToggleAvailability(item._id, checked)}
                   className="data-[state=checked]:bg-[#3CAE06]"
                 />
               </TableCell>

@@ -75,10 +75,6 @@ export default function Menu() {
     // Add delete functionality here
   };
 
-  const handleShowDetails = (id: string) => {
-    console.log(`Show details for menu item with ID: ${id}`);
-    // Add show details functionality here
-  };
 
   // Filter menu items based on search term
   const filteredMenuItems = menuItems.filter((item: any) =>
@@ -116,7 +112,6 @@ export default function Menu() {
                 onChangeCategory={handleManageCategory}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                onShowDetails={handleShowDetails}
               />
             )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}

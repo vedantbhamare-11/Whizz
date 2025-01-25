@@ -22,7 +22,7 @@ export default function Profile() {
           {/* Profile Header */}
           <div className="text-center mb-10">
             <Image
-              src={vendor.vendorLogo}
+              src={vendor.vendorLogo || "/placeholder.png"}
               alt="Restaurant Logo"
               width={150}
               height={150}
@@ -73,8 +73,6 @@ export default function Profile() {
               </ul>
               </div>
               </div>
-              
-              
             </Card>
           </div>
         </div>

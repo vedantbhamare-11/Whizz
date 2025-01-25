@@ -46,23 +46,6 @@ export default function ProfileSetup() {
   });
 
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setFormValues({ ...formValues, vendorLogo: imageUrl });
-      setUploadedImage(file);
-    }
-  };
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -82,7 +65,27 @@ export default function ProfileSetup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+
+    if(name === "vendorPhone"){
+      if (/^\d*$/.test(value)) {
+        setFormValues({ ...formValues, vendorPhone: value });
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setFormValues({ ...formValues, vendorLogo: imageUrl });
+      setUploadedImage(file);
+    }
+  };
 
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
@@ -99,9 +102,8 @@ export default function ProfileSetup() {
       try {
         // Comlete profile
         const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
-        console.log(response);
+
         if (response){
-          console.log("hitted");
           dispatch(setVendor(response));
           router.push("/dashboard");
         };
@@ -154,9 +156,11 @@ export default function ProfileSetup() {
                 type="number"
                 placeholder="Enter phone number"
                 value={formValues.vendorPhone}
+                maxLength={10}
                 onChange={handleInputChange}
                 required
               />
+               {errors.vendorPhone && <p className="text-red-500 text-sm">{errors.vendorPhone}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="area">Area</Label>
@@ -187,10 +191,10 @@ export default function ProfileSetup() {
                   <SelectValue placeholder="Select restaurant type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="veg">Veg</SelectItem>
-                  <SelectItem value="nonveg">Non-Veg</SelectItem>
-                  <SelectItem value="cafe">Cafe</SelectItem>
-                  <SelectItem value="multicuisine">Multicuisine</SelectItem>
+                  <SelectItem value="VEG">Veg</SelectItem>
+                  <SelectItem value="NON-VEG">Non-Veg</SelectItem>
+                  <SelectItem value="CAFE">Cafe</SelectItem>
+                  <SelectItem value="MC">Multicuisine</SelectItem>
                 </SelectContent>
               </Select>
               {errors.restaurantType && <p className="text-red-500 text-sm">{errors.restaurantType}</p>}
