@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { useState } from "react";
 
-interface MenuItem {
+export interface MenuItem {
   id: number;
   image: string;
   name: string;
@@ -157,8 +157,9 @@ export default function MenuTable({ menuItems, onEdit, onDelete }: MenuTableProp
               </TableCell>
               <TableCell>
                 <MenuTablePopover
+                  menuItem={item}
                   itemId={item.id}
-                  onEdit={onEdit}
+                  onEdit={(updatedItem) => onEdit(updatedItem.id)}
                   onDelete={onDelete}
                   onShowDetails={handleShowDetails}
                 />
