@@ -25,8 +25,13 @@ import { MoreVertical } from "lucide-react";
 import AddItemModal from "./AddItemModal";
 
 
+<<<<<<< HEAD
 interface MenuItem {
   _id: string;
+=======
+export interface MenuItem {
+  id: number;
+>>>>>>> vedant
   image: string;
   dishName: string;
   price: number;
@@ -41,10 +46,16 @@ interface MenuItem {
 
 interface MenuTableProps {
   menuItems: MenuItem[];
+<<<<<<< HEAD
   onToggleAvailability: (id: string, isAvailable: boolean) => void;
   onChangeCategory: (id: string, category: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+=======
+  onEdit: (item: MenuItem) => void;
+  onDelete: (id: number) => void;
+  onShowDetails: (id: number) => void;
+>>>>>>> vedant
 }
 
 export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onEdit, onDelete}: MenuTableProps) {
@@ -155,6 +166,8 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
                   </SelectContent>
                 </Select>
               </TableCell>
+              <TableCell>{item.startTime || "Not Set"}</TableCell>
+              <TableCell>{item.endTime || "Not Set"}</TableCell>
               <TableCell>
                 <Switch
                   defaultChecked={item.isAvailable}
@@ -164,7 +177,8 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
               </TableCell>
               <TableCell>
                 <MenuTablePopover
-                  itemId={item._id}
+                  menuItem={item}
+                  itemId={item.id}
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onShowDetails={handleShowDetails}
