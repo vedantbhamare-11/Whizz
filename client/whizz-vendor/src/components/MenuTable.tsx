@@ -21,6 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addSubcategory } from "@/app/API/menu";
+import { addNewSubcategory } from "@/redux/menuSlice";
 
 
 
@@ -42,12 +45,16 @@ interface MenuTableProps {
   menuItems: MenuItem[];
   onToggleAvailability: (id: string, isAvailable: boolean) => void;
   onChangeCategory: (id: string, category: string) => void;
+  onChangeSubcategory: (id: string, subcategory: string) => void;
   onDelete: (id: string) => void;
   onEdit: (item: MenuItem) => void;
   onShowDetails: (id: string) => void;
 }
 
-export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onEdit, onDelete}: MenuTableProps) {
+export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onChangeSubcategory, onEdit, onDelete}: MenuTableProps) {
+  const dispatch = useDispatch();
+
+  const vendorSubcategories = useSelector((state: any) => state.menu.subcategories);
 
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [subCategories, setSubCategories] = useState<string[]>([
@@ -56,6 +63,16 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
     "Dessert",
   ]);
 
+  useEffect(() => {
+    const extractedSubcategories = vendorSubcategories.map(
+      (item: { subcategory: string }) => item.subcategory
+    );
+  
+    setSubCategories((prev) =>
+      Array.from(new Set([...prev, ...extractedSubcategories]))
+    );
+  }, [vendorSubcategories]);
+  
   const handleShowDetails = (id: string) => {
     const item = menuItems.find((menuItem) => menuItem._id === id);
     if (item) setSelectedItem(item);
@@ -63,9 +80,13 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
 
   const handleCloseModal = () => setSelectedItem(null);
 
-  const addCustomSubCategory = (value: string) => {
+  const addCustomSubCategory = async (value: string) => {
     if (value && !subCategories.includes(value)) {
-      setSubCategories((prev) => [...prev, value]);
+      const response = await addSubcategory(value);
+      if (response) {
+        dispatch(addNewSubcategory(value  ));
+        setSubCategories((prev) => [...prev, value]);
+      }
     }
   };
 
@@ -79,6 +100,8 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
           <TableHead>Price</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Sub-Category</TableHead>
+          <TableHead>Start Time</TableHead>
+          <TableHead>End Time</TableHead>
           <TableHead>Availability</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -130,7 +153,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
             </TableCell>
             
               <TableCell>
-                <Select defaultValue={item.subcategory}>
+                <Select defaultValue={item.subcategory} onValueChange={(value) => onChangeSubcategory(item._id, value)}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Select Sub-Category" />
                   </SelectTrigger>

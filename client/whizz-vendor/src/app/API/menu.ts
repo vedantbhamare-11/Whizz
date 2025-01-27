@@ -109,6 +109,48 @@ const manageCategory = async (dishId: string, category: string) => {
     };
 };
 
+// Get subcategories
+const getSubcategories = async () => {
+    try {
+        const response = await axiosInstance.get('/vendor/subcategories');
+        if (response.data.success){
+            return response.data.data
+        } else {
+            throw new Error(response.data.message)
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// Manage dish subcategory
+const manageSubcategory = async (dishId: string, subcategory: string) => {
+    try {
+        const response = await axiosInstance.put('/vendor/manageSubcategory', { dishId, subcategory });
+        if (response.data.success){
+            return response.data.data
+        } else {
+            throw new Error(response.data.message)
+        }
+    } catch (error) {
+        console.log(error);
+    };
+};
+
+// Add subcategory
+const addSubcategory = async (subcategory: string) => {
+    try {
+        const response = await axiosInstance.post('/vendor/addSubcategory', { subcategory });
+        if (response.data.success){
+            return response.data.data
+        } else {
+            throw new Error(response.data.message)
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Delete dish
 const deleteDishApi = async (dishId: string) => {
     try {
@@ -123,4 +165,4 @@ const deleteDishApi = async (dishId: string) => {
     };
 };
 
-export { fetchMenuApi, addDishApi, updateDishApi, toggleDishAvailabilityApi, manageCategory, deleteDishApi };
+export { fetchMenuApi, addDishApi, updateDishApi, toggleDishAvailabilityApi, manageCategory, getSubcategories, manageSubcategory, addSubcategory, deleteDishApi };

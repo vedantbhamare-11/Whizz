@@ -3,8 +3,10 @@ import fs from "fs/promises"; // Use promises for better error handling
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { Dish, Order, Vendor } from "../models/vendor.models.js";
+import { Dish, Order, Subcategory, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
+import { convertToAmPm } from "../utils/convertTime.js";
+import { start } from "repl";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -216,9 +218,14 @@ const addDish = async (req, res, next) => {
       ? `${req.protocol}://${req.get("host")}/${newDish.image}`
       : null;
 
+      const startTime = convertToAmPm(req.body.startTime);
+      const endTime = convertToAmPm(req.body.endTime);
+
     // Construct dish
     const dish = {
       ...newDish._doc,
+      startTime,
+      endTime,
       image: imageUrl,
     };
 
@@ -300,9 +307,14 @@ const updateDish = async (req, res, next) => {
       ? `${req.protocol}://${req.get("host")}/${updatedDish.image}`
       : null;
 
+      const startTime = convertToAmPm(req.body.startTime);
+      const endTime = convertToAmPm(req.body.endTime);
+
     // Construct dish
     const dish = {
       ...updatedDish._doc,
+      startTime,
+      endTime,
       image: imageUrl,
     };
 
@@ -440,13 +452,17 @@ const getDishes = async (req, res, next) => {
     const updatedDishes = dishes.map((dish) => {
       return {
         ...dish._doc,
+        startTime: convertToAmPm(dish.startTime),
+        endTime: convertToAmPm(dish.endTime), 
         image: dish.image
           ? `${req.protocol}://${req.get("host")}/${dish.image}`
           : null,
-      };
+      };    
     });
     // Count total dishes for client-side scroll optimization
     const totalDishes = await Dish.countDocuments(query);
+
+    console.log(updatedDishes);
 
     return successResponse(
       res,
@@ -540,6 +556,91 @@ const updateOrderStatus = async (req, res, next) => {
   }
 };
 
+// Manage subcategory
+const manageSubcategory = async (req, res, next) => {
+    const vendorId = req.userId;
+    const { dishId, subcategory } = req.body;
+
+    // Check if vendorId is provided
+    if (!vendorId) {
+        return errorResponse(res, 400, null, "Vendor ID is required");
+    };
+
+    try {
+        // Check if subcategory already exists
+        const subcategoryExists = await Subcategory.findOne({ vendorId, subcategory });
+        let updatedDish;
+
+        if (!subcategoryExists && subcategory !== "Main Course" && subcategory !== "Dessert" && subcategory !== "Rice") {
+            return errorResponse(res, 400, null, "Subcategory does not exist");
+        } else {
+            updatedDish = await Dish.findByIdAndUpdate( dishId, {
+                $set: {
+                    subcategory: subcategory
+                }
+            }, {
+                new: true,
+                runValidators: true
+            }).select("subcategory");
+        };
+
+        return successResponse(res, 200, updatedDish, "Subcategory updated successfully");
+        
+    } catch (error) {
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid vendor ID format");
+          }
+        next(error);
+    }
+}
+
+// Add new subcategory
+const addNewSubcategory = async (req, res, next) => {
+    const vendorId = req.userId;
+    const { subcategory } = req.body;
+
+    // Check if vendorId is provided
+    if (!vendorId) {
+        return errorResponse(res, 400, null, "Vendor ID is required");
+    };
+
+    try {
+        // Check if subcategory already exists
+        const subcategoryExists = await Subcategory.findOne({ vendorId, subcategory });
+        if (subcategoryExists) {
+            return errorResponse(res, 400, null, "Subcategory already exists");
+        };
+
+        const newSubcategory = new Subcategory({
+            vendorId,
+            subcategory
+        }); 
+
+        await newSubcategory.save();
+
+        return successResponse(res, 200, newSubcategory, "Subcategory added successfully");
+    } catch (error) {
+        if (error.name === "CastError") {
+            return errorResponse(res, 400, null, "Invalid vendor ID format");
+          }
+        next(error);
+    }
+};
+
+// Get subcategories
+const getSubcategories = async (req, res, next) => {
+    const vendorId = req.userId;
+    try {
+        const subcategories = await Subcategory.find({ vendorId });
+        if (subcategories.length === 0) {
+            return successResponse(res, 200, [], "No subcategories found");
+        }
+        return successResponse(res, 200, subcategories, "Subcategories fetched successfully");
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Temp controller to check image uploads
 const uploadImage = async (req, res, next) => {
   try {
@@ -581,6 +682,9 @@ export {
   getOrders,
   updateOrderStatus,
   deleteDish,
+  addNewSubcategory,
+  manageSubcategory,
+  getSubcategories,
 
   /* Temp controllers */
   uploadImage,

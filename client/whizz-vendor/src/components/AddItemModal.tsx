@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { CloudUpload } from "lucide-react";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { addSubcategory } from "@/app/API/menu";
+import { addNewSubcategory } from "@/redux/menuSlice";
 
 interface AddItemModalProps {
   onAddItem: (newItem: {
@@ -38,6 +41,16 @@ interface AddItemModalProps {
 }
 
 export default function AddItemModal({ onAddItem }: AddItemModalProps) {
+  const dispatch = useDispatch();
+
+  const vendorSubcategories = useSelector((state: any) => state.menu.subcategories);
+
+    const [subCategories, setSubCategories] = useState<string[]>([
+      "Main Course",
+      "Rice",
+      "Dessert",
+    ]);
+  
   const allDays = [
     "Monday",
     "Tuesday",
@@ -62,6 +75,27 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const extractedSubcategories = vendorSubcategories.map(
+      (item: { subcategory: string }) => item.subcategory
+    );
+  
+    setSubCategories((prev) =>
+      Array.from(new Set([...prev, ...extractedSubcategories]))
+    );
+  }, [vendorSubcategories]);
+  
+
+  const addCustomSubCategory = async (value: string) => {
+    if (value && !subCategories.includes(value)) {
+      const response = await addSubcategory(value);
+      if (response) {
+        dispatch(addNewSubcategory(value));
+        setSubCategories((prev) => [...prev, value]);
+      }
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -253,10 +287,24 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                 <SelectValue placeholder="Select Sub-Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Main Course">Main Course</SelectItem>
-                <SelectItem value="Rice">Rice</SelectItem>
-                <SelectItem value="Dessert">Dessert</SelectItem>
-              </SelectContent>
+                    {subCategories.map((subCategory, index) => (
+                      <SelectItem key={index} value={subCategory}>
+                        {subCategory}
+                      </SelectItem>
+                    ))}
+                    <div className="p-2 border-t border-gray-200">
+                      <Input
+                        placeholder="Add sub-category"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            addCustomSubCategory(e.currentTarget.value);
+                            e.currentTarget.value = "";
+                          }
+                        }}
+                        className="text-sm"
+                      />
+                    </div>
+                  </SelectContent>
             </Select>
           </div>
           {/* Start Time and End Time */}

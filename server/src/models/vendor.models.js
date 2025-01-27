@@ -184,14 +184,29 @@ const orderSchema = new mongoose.Schema({
     },
 }, {timestamps: true});
 
+const subcategorySchema = new mongoose.Schema({
+    vendorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor",
+        required: true
+    },
+    subcategory: {
+        type: String,
+        required: false
+    }
+});
+
+
 // Creating models
 const Vendor = mongoose.model("Vendor", vendorSchema);
 const Dish = mongoose.model("Dish", dishSchema);
 const Order = mongoose.model("Order", orderSchema);
+const Subcategory = mongoose.model("Subcategory", subcategorySchema);
 
 // Exporting models
 export { 
     Vendor,
     Dish,
     Order,
+    Subcategory
 };

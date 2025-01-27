@@ -48,7 +48,6 @@ const userSlice = createSlice({
   reducers: {
     setVendor: (state, action: PayloadAction<Vendor>) => {
       state.vendor = action.payload;
-      console.log(state.vendor);
     },
     updateVendor: (state, action: PayloadAction<Partial<Vendor>>) => {
       state.vendor = { ...state.vendor, ...action.payload };

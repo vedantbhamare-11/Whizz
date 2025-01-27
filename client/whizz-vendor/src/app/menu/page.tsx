@@ -7,9 +7,9 @@ import MenuTable, { MenuItem } from "@/components/MenuTable";
 import AddItemModal from "@/components/AddItemModal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory, updateMenuItem, deleteMenuItem } from "@/redux/menuSlice";
+import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory, updateMenuItem, deleteMenuItem, changeSubcategory, setSubcategories } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
-import { addDishApi, deleteDishApi, manageCategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
+import { addDishApi, deleteDishApi, getSubcategories, manageCategory, manageSubcategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 
 export default function Menu() {
@@ -23,6 +23,13 @@ export default function Menu() {
     if (menuStatus === "idle") {
       dispatch(fetchMenuItems());
     }
+    const fetchSubcategories = async () => {
+      const response = await getSubcategories();
+      if (response) {
+        dispatch(setSubcategories(response));
+      }
+    };
+    fetchSubcategories();
   }, [dispatch, menuStatus]);
 
   // Handle adding a new menu item
@@ -36,6 +43,7 @@ export default function Menu() {
       console.log(error);
     }
   };
+
 
   // Handle toggling dish availability
   const handleToggleAvailability = async (id: string, isAvailable: boolean) => {
@@ -64,6 +72,18 @@ export default function Menu() {
       console.log(error);
     }
   };
+
+  // Handle subcategory selection
+  const handleManageSubCategory = async (id: string, subcategory: string) => {
+    try {
+      const response = await manageSubcategory(id, subcategory);
+      if (response){
+        dispatch(changeSubcategory({id, subcategory}));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // Handle editing a menu item
   const handleEdit = async (menuItems: MenuItem) => {    
@@ -127,6 +147,7 @@ export default function Menu() {
                 menuItems={filteredMenuItems as any} 
                 onToggleAvailability={handleToggleAvailability} 
                 onChangeCategory={handleManageCategory}
+                onChangeSubcategory={handleManageSubCategory}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onShowDetails={(id: string) => console.log(`Show details for menu item with ID: ${id}`)}

@@ -14,16 +14,22 @@ interface MenuItem {
   endTime?: string; // New field
   availableDays?: string[]; // New field
   isAvailable: boolean;
+};
+
+interface subcategory {
+  subcategory: string;
 }
 
 interface MenuState {
   items: MenuItem[];
   status: "idle" | "loading" | "succeeded" | "failed";
+  subcategories: subcategory[]
 }
 
 const initialState: MenuState = {
   items: [],
   status: "idle",
+  subcategories: []
 };
 
 // Async thunk to fetch menu items
@@ -52,6 +58,19 @@ const menuSlice = createSlice({
       if (item) {
         item.category = category;
       }
+    },
+    setSubcategories(state, action: PayloadAction<subcategory[]>) {
+      state.subcategories = action.payload;
+    },
+    changeSubcategory(state, action: PayloadAction<{ id: string; subcategory: string }>) {
+      const { id, subcategory } = action.payload;
+      const item = state.items.find((item) => item._id === id);
+      if (item) {
+        item.subcategory = subcategory;
+      }
+    },
+    addNewSubcategory(state, action: PayloadAction<string>) {
+      state.subcategories.push({ subcategory: action.payload });
     },
     updateMenuItem(state, action: PayloadAction<MenuItem>) {
       const item = state.items.find((item) => item._id === action.payload._id);
@@ -88,5 +107,5 @@ const menuSlice = createSlice({
   },
 });
 
-export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, deleteMenuItem } = menuSlice.actions;
+export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, changeSubcategory, setSubcategories, addNewSubcategory, deleteMenuItem } = menuSlice.actions;
 export default menuSlice.reducer;

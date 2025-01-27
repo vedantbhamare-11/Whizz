@@ -55,6 +55,7 @@ export default function EditItemModal({
   // Fetch the menu item details
   useEffect(() => {
     const menuItem = menuItems.find((item) => item._id === menuItemId);
+    console.log(menuItem)
     if (menuItem) {
       setFormValues({ ...menuItem });
       setSelectedImage(menuItem.image);
@@ -113,7 +114,7 @@ export default function EditItemModal({
             <Label htmlFor="image" className="flex flex-col items-center">
               {formValues.image ? (
                 <Image
-                  src={formValues.image as string}
+                  src={formValues.image instanceof File ? URL.createObjectURL(formValues.image) : formValues.image}
                   alt="Preview"
                   width={100}
                   height={100}
