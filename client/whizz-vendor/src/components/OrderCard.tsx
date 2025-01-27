@@ -56,7 +56,7 @@ export default function OrderCard({
   );
 
   const handleReject = () => {
-    console.log(`Order ${orderId} rejected for reason: ${rejectionReason}`);
+    onStatusChange(orderId, "rejected")
     setIsDialogOpen(false); // Close the dialog
   };
 
@@ -104,7 +104,6 @@ export default function OrderCard({
           <Button
             variant="destructive"
             className="flex items-center gap-2 bg-[#FF2C2C] text-white hover:bg-red-600"
-            onClick={() => onStatusChange(orderId, "rejected")}
             onClick={() => setIsDialogOpen(true)}
           >
             <X size={16} />

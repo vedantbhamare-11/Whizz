@@ -54,21 +54,21 @@ export default function ProfileSetup() {
     const newErrors: Record<string, string> = {};
 
     if (!formValues.vendorName)
-      newErrors.restaurantName = "Restaurant name is required.";
+      newErrors.vendorName = "Restaurant name is required.";
     if (!formValues.address) newErrors.address = "Address is required.";
     if (!formValues.latitude) newErrors.latitude = "Latitude is required.";
     if (!formValues.longitude) newErrors.longitude = "Longitude is required.";
     if (!formValues.vendorPhone)
-      newErrors.phoneNumber = "Phone number is required.";
+      newErrors.vendorPhone = "Phone number is required.";
     else if (!/^\d{10}$/.test(formValues.vendorPhone))
-      newErrors.phoneNumber = "Phone number must be 10 digits.";
+      newErrors.vendorPhone = "Phone number must be 10 digits.";
     if (!formValues.area) newErrors.area = "Area is required.";
     if (!formValues.restaurantType)
       newErrors.restaurantType = "Restaurant type is required.";
-    if (!formValues.startTime) newErrors.opensAt = "Opening time is required.";
-    if (!formValues.endTime) newErrors.closesAt = "Closing time is required.";
+    if (!formValues.startTime) newErrors.startTime = "Opening time is required.";
+    if (!formValues.endTime) newErrors.endTime = "Closing time is required.";
     if (formValues.availableDays.length === 0)
-      newErrors.daysAvailable = "Select at least one day.";
+      newErrors.availableDays = "Select at least one day.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -142,8 +142,8 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
-              {errors.restaurantName && (
-                <p className="text-red-500 text-sm">{errors.restaurantName}</p>
+              {errors.vendorName && (
+                <p className="text-red-500 text-sm">{errors.vendorName}</p>
               )}
             </div>
             <div className="grid gap-1.5">
@@ -284,6 +284,9 @@ export default function ProfileSetup() {
                   value={formValues.startTime} 
                   onChange={handleInputChange}
                   required />
+                  {errors.startTime && (
+                <p className="text-red-500 text-sm">{errors.startTime}</p>
+              )}
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
@@ -294,6 +297,9 @@ export default function ProfileSetup() {
                   value={formValues.endTime} 
                   onChange={handleInputChange} 
                   required />
+                  {errors.startTime && (
+                <p className="text-red-500 text-sm">{errors.startTime}</p>
+              )}
               </div>
             </div>
           </div>

@@ -7,15 +7,15 @@ interface Vendor {
   address: string;
   vendorPhone: string;
   area: "Nungambakkam" | "Anna Nagar" | "";
-  restaurantType: "VEG" | "NON-VEG" | "MC" | "Cafe" | "";
+  restaurantType: "VEG" | "NON-VEG" | "MC" | "CAFE" | "";
   availableDays: string[];
   vendorLogo: string;
   startTime: string;
   endTime: string;
   gst: string;
   isOpen: boolean;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
 }
 
 interface vendorState {
@@ -37,8 +37,8 @@ const initialState: vendorState = {
     endTime: "",
     gst: "",
     isOpen: true,
-    latitude: 0,
-    longitude: 0
+    latitude: "",
+    longitude: ""
    },
 };
 

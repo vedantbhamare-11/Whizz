@@ -461,9 +461,7 @@ const getDishes = async (req, res, next) => {
     });
     // Count total dishes for client-side scroll optimization
     const totalDishes = await Dish.countDocuments(query);
-
-    console.log(updatedDishes);
-
+    
     return successResponse(
       res,
       200,

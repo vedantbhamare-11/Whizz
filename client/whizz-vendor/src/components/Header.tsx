@@ -38,12 +38,11 @@ const handleOpening = async (isOpen: boolean) => {
     <header className="p-2 h-16 bg-[#fff] border-b border-[#e5e7eb] flex justify-end items-center gap-4 fixed z-40 top-0 left-0 right-0">
       {/* ShadCN Switch Component */}
       <div className="flex items-center gap-2">
+      <span>Restaurant{" "}{isActive ? "Active" : "Inactive"}</span> 
         <Switch 
           className="data-[state=checked]:bg-[#3CAE06] mr-12" 
           defaultChecked={isOpen}
-          onCheckedChange={(checked) => handleOpening(checked)}/>
-        <span>Restaurant{" "}{isActive ? "Active" : "Inactive"}</span> 
-       
+          onCheckedChange={(checked) => handleOpening(checked)}/>       
       </div>
     </header>
   );

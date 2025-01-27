@@ -62,8 +62,16 @@ const signIn = async (req, res, next) => {
         // Generate JWT token and set cookie
         const token = generateTokenAndSetCookie(res, isUserExist._id);
 
+        const userData = isUserExist.toObject ? isUserExist.toObject() : isUserExist;
+
+        const logoUrl = isUserExist.vendorLogo
+        ? `${req.protocol}://${req.get("host")}/${isUserExist.vendorLogo}`
+        : null;
+
+        userData.vendorLogo = logoUrl;
+
         // Remove vendorPassword from response
-        const { vendorPassword, ...rest } = isUserExist.toObject();
+        const { vendorPassword, ...rest } = userData;
 
         // Send success response with user data (without password)
         return successResponse(res, 200, rest, "User signed in successfully");

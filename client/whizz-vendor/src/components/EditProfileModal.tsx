@@ -32,30 +32,35 @@ export default function EditProfileModal({
   onClose: () => void;
 }) {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.user);
+  const vendor = useSelector((state: RootState) => state.vendor.vendor);
+  
 
-  const [formValues, setFormValues] = useState(user);
+  const [formValues, setFormValues] = useState(vendor);
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  
+
   useEffect(() => {
-    setFormValues(user); // Sync the form with user data whenever the modal opens
-    setUploadedImage(user.logo || "");
-  }, [user]);
+    setFormValues(vendor); // Sync the form with user data whenever the modal opens
+    setUploadedImage(vendor.vendorLogo || "");
+  }, [vendor]);
+
+  console.log(formValues.area);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formValues.name) newErrors.name = "Restaurant name is required.";
+    if (!formValues.vendorName) newErrors.vendorName = "Restaurant name is required.";
     if (!formValues.address) newErrors.address = "Address is required.";
     if (!formValues.latitude) newErrors.latitude = "Latitude is required.";
     if (!formValues.longitude) newErrors.longitude = "Longitude is required.";
-    if (!formValues.phone) newErrors.phone = "Phone number is required.";
+    if (!formValues.vendorPhone) newErrors.vendorPhone = "Phone number is required.";
     if (!formValues.area) newErrors.area = "Area is required.";
-    if (!formValues.type) newErrors.type = "Restaurant type is required.";
-    if (!formValues.opensAt) newErrors.opensAt = "Opening time is required.";
-    if (!formValues.closesAt) newErrors.closesAt = "Closing time is required.";
-    if (formValues.daysAvailability.length === 0)
-      newErrors.daysAvailability = "Select at least one day.";
+    if (!formValues.restaurantType) newErrors.restaurantType = "Restaurant type is required.";
+    if (!formValues.startTime) newErrors.startTime = "Opening time is required.";
+    if (!formValues.endTime) newErrors.endTime = "Closing time is required.";
+    if (formValues.availableDays.length === 0)
+      newErrors.availableDays = "Select at least one day.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -83,9 +88,9 @@ export default function EditProfileModal({
   const toggleDay = (day: string) => {
     setFormValues((prev) => ({
       ...prev,
-      daysAvailability: prev.daysAvailability.includes(day)
-        ? prev.daysAvailability.filter((d) => d !== day)
-        : [...prev.daysAvailability, day],
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day],
     }));
   };
 
@@ -103,9 +108,9 @@ export default function EditProfileModal({
               <Label htmlFor="name">Restaurant Name</Label>
               <Input
                 id="name"
-                value={formValues.name}
+                value={formValues.vendorName}
                 onChange={(e) =>
-                  setFormValues({ ...formValues, name: e.target.value })
+                  setFormValues({ ...formValues, vendorName: e.target.value })
                 }
               />
               {errors.name && (
@@ -135,7 +140,7 @@ export default function EditProfileModal({
                 <Label htmlFor="latitude">Latitude</Label>
                 <Input
                   id="latitude"
-                  value={formValues.latitude}
+                  value={formValues.latitude ?? ""}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (/^-?\d*\.?\d*$/.test(value)) {
@@ -160,7 +165,7 @@ export default function EditProfileModal({
                 <Label htmlFor="longitude">Longitude</Label>
                 <Input
                   id="longitude"
-                  value={formValues.longitude}
+                  value={formValues.longitude ?? ""}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (/^-?\d*\.?\d*$/.test(value)) {
@@ -188,13 +193,13 @@ export default function EditProfileModal({
               <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
-                value={formValues.phone}
+                value={formValues.vendorPhone}
                 maxLength={10} // Prevent input beyond 10 digits
                 onChange={(e) => {
                   const value = e.target.value;
                   if (/^\d*$/.test(value) && value.length <= 10) {
                     // Only allow numeric input and up to 10 digits
-                    setFormValues({ ...formValues, phone: value });
+                    setFormValues({ ...formValues, vendorPhone: value });
                     setErrors((prevErrors) => ({
                       ...prevErrors,
                       phone: "", // Clear error if the input is valid
@@ -238,16 +243,15 @@ export default function EditProfileModal({
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
               <Select
-                value={formValues.type}
+                value={formValues.restaurantType}
                 onValueChange={(value) =>
                   setFormValues({
                     ...formValues,
-                    type: value as
-                      | "Veg"
-                      | "Non-Veg"
-                      | "Multicuisine"
-                      | "Cafe"
-                      | "",
+                    restaurantType: value as
+                      | "VEG"
+                      | "NON-VEG"
+                      | "MC"
+                      | "CAFE",
                   })
                 }
               >
@@ -255,10 +259,10 @@ export default function EditProfileModal({
                   <SelectValue placeholder="Select restaurant type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Veg">Veg</SelectItem>
-                  <SelectItem value="Non-Veg">Non-Veg</SelectItem>
-                  <SelectItem value="Cafe">Cafe</SelectItem>
-                  <SelectItem value="Multicuisine">Multicuisine</SelectItem>
+                  <SelectItem value="VEG">Veg</SelectItem>
+                  <SelectItem value="NON-VEG">Non-Veg</SelectItem>
+                  <SelectItem value="CAFE">Cafe</SelectItem>
+                  <SelectItem value="MC">Multicuisine</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -276,7 +280,7 @@ export default function EditProfileModal({
                 <div className="border-2 p-2 bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
                     <Image
-                      src={uploadedImage}
+                      src={uploadedImage || '/placeholder.png'}
                       alt="Uploaded"
                       className="object-contain h-full max-h-[270px] rounded-md"
                       width={220}
@@ -307,9 +311,9 @@ export default function EditProfileModal({
                 <Input
                   id="opensAt"
                   type="time"
-                  value={formValues.opensAt}
+                  value={formValues.startTime}
                   onChange={(e) =>
-                    setFormValues({ ...formValues, opensAt: e.target.value })
+                    setFormValues({ ...formValues, startTime: e.target.value })
                   }
                 />
                 {errors.opensAt && (
@@ -323,9 +327,9 @@ export default function EditProfileModal({
                 <Input
                   id="closesAt"
                   type="time"
-                  value={formValues.closesAt}
+                  value={formValues.endTime}
                   onChange={(e) =>
-                    setFormValues({ ...formValues, closesAt: e.target.value })
+                    setFormValues({ ...formValues, endTime: e.target.value })
                   }
                 />
                 {errors.closesAt && (
@@ -349,7 +353,7 @@ export default function EditProfileModal({
                 ].map((day) => (
                   <div key={day} className="flex items-center gap-2">
                     <Checkbox
-                      checked={formValues.daysAvailability.includes(day)}
+                      checked={formValues.availableDays.includes(day)}
                       onCheckedChange={() => toggleDay(day)}
                     />
                     <Label>{day}</Label>
