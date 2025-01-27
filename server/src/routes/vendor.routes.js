@@ -11,8 +11,8 @@ router.post('/completeProfile', verifyToken, upload.single("vendorLogo"), comple
 router.get("/", verifyToken, getDashboardData);
 router.get("/dishes", verifyToken, getDishes);
 router.post("/add", verifyToken, upload.single("image"), addDish);
-router.put("/update", verifyToken, updateDish);
-router.delete("/delete", verifyToken, deleteDish);
+router.put("/update", verifyToken, upload.single("image"), updateDish);
+router.delete("/delete/:dishId", verifyToken, deleteDish);
 router.put('/toggleDishAvailability', verifyToken, manageDishAvailability);
 router.put('/manageCategory', verifyToken, manageCategory);
 router.put('/toggleOpening', verifyToken, manageOpening);

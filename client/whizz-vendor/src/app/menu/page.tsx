@@ -3,13 +3,13 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
-import MenuTable from "@/components/MenuTable";
+import MenuTable, { MenuItem } from "@/components/MenuTable";
 import AddItemModal from "@/components/AddItemModal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory } from "@/redux/menuSlice";
+import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory, updateMenuItem, deleteMenuItem } from "@/redux/menuSlice";
 import { useEffect, useState } from "react";
-import { addDishApi, manageCategory, toggleDishAvailabilityApi } from "../API/menu";
+import { addDishApi, deleteDishApi, manageCategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 
 export default function Menu() {
@@ -65,13 +65,30 @@ export default function Menu() {
     }
   };
 
-  const handleEdit = (id: string) => {
-    console.log(`Edit menu item with ID: ${id}`);
+  // Handle editing a menu item
+  const handleEdit = async (menuItems: MenuItem) => {    
     // Add edit functionality here
+    try {
+      // Make API request
+      const response = await updateDishApi(menuItems);
+      if (response) {
+        dispatch(updateMenuItem(response));
+      }
+    } catch (error) {
+      console.log(error);
+    };
   };
 
-  const handleDelete = (id: string) => {
-    console.log(`Delete menu item with ID: ${id}`);
+  const handleDelete = async (id: string) => {
+
+    try {
+      const response = await deleteDishApi(id);
+      if (response.success) {
+        dispatch(deleteMenuItem(id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
     // Add delete functionality here
   };
 
@@ -112,6 +129,7 @@ export default function Menu() {
                 onChangeCategory={handleManageCategory}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onShowDetails={(id: string) => console.log(`Show details for menu item with ID: ${id}`)}
               />
             )}
             {menuStatus === "failed" && <p>Failed to load menu items.</p>}

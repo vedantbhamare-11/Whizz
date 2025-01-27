@@ -53,6 +53,25 @@ const menuSlice = createSlice({
         item.category = category;
       }
     },
+    updateMenuItem(state, action: PayloadAction<MenuItem>) {
+      const item = state.items.find((item) => item._id === action.payload._id);
+      if (item) {
+        item.image = action.payload.image;
+        item.dishName = action.payload.dishName;
+        item.description = action.payload.description;
+        item.price = action.payload.price;
+        item.category = action.payload.category;
+        item.subcategory = action.payload.subcategory;
+        item.startTime = action.payload.startTime;
+        item.endTime = action.payload.endTime;
+        item.availableDays = action.payload.availableDays;
+        item.isAvailable = action.payload.isAvailable
+      }
+      state.status = "idle";
+    },
+    deleteMenuItem(state, action: PayloadAction<string>) {
+      state.items = state.items.filter((item) => item._id !== action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -69,5 +88,5 @@ const menuSlice = createSlice({
   },
 });
 
-export const { addMenuItem, toggleAvailability, changeCategory } = menuSlice.actions;
+export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, deleteMenuItem } = menuSlice.actions;
 export default menuSlice.reducer;

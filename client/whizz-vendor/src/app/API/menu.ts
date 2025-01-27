@@ -48,6 +48,38 @@ const addDishApi = async (dishData: any) => {
     }
 };
 
+// Update a dish 
+const updateDishApi = async (dishData: any) => {
+    const formData = new FormData();
+
+    formData.append('dishId', dishData._id);
+    formData.append('dishName', dishData.dishName);
+    formData.append('price', dishData.price);
+    formData.append('description', dishData.description);
+    formData.append('category', dishData.category);
+    formData.append('subcategory', dishData.subcategory);
+    formData.append('startTime', dishData.startTime);
+    formData.append('endTime', dishData.endTime);
+    formData.append('image', dishData.image);
+    dishData.availableDays.map((day: string) => formData.append('availableDays[]', day));
+
+    try {
+        const response = await axiosInstance.put('/vendor/update', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response.data.success){
+            return response.data.data
+        } else {
+            throw new Error(response.data.message)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+};
+
 // Toggle availability of a dish
 const toggleDishAvailabilityApi = async (dishId: string, availability: boolean) => {
     try {
@@ -77,4 +109,18 @@ const manageCategory = async (dishId: string, category: string) => {
     };
 };
 
-export { fetchMenuApi, addDishApi, toggleDishAvailabilityApi, manageCategory };
+// Delete dish
+const deleteDishApi = async (dishId: string) => {
+    try {
+        const response = await axiosInstance.delete(`/vendor/delete/${dishId}`);
+        if (response.data.success){
+            return response.data
+        } else {
+            throw new Error(response.data.message)
+        }
+    } catch (error) {
+        console.log(error);
+    };
+};
+
+export { fetchMenuApi, addDishApi, updateDishApi, toggleDishAvailabilityApi, manageCategory, deleteDishApi };

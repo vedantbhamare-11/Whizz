@@ -20,23 +20,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { useState } from "react";
-import { MoreVertical } from "lucide-react";
-import AddItemModal from "./AddItemModal";
+import { use, useEffect, useState } from "react";
 
 
-<<<<<<< HEAD
-interface MenuItem {
-  _id: string;
-=======
+
 export interface MenuItem {
-  id: number;
->>>>>>> vedant
-  image: string;
+  _id: string;
+  image: File | null;
   dishName: string;
   price: number;
   category: string;
-  subCategory: string;
+  subcategory: string;
   isAvailable: boolean;
   description?: string;
   startTime?: string;
@@ -46,16 +40,11 @@ export interface MenuItem {
 
 interface MenuTableProps {
   menuItems: MenuItem[];
-<<<<<<< HEAD
   onToggleAvailability: (id: string, isAvailable: boolean) => void;
   onChangeCategory: (id: string, category: string) => void;
-  onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-=======
   onEdit: (item: MenuItem) => void;
-  onDelete: (id: number) => void;
-  onShowDetails: (id: number) => void;
->>>>>>> vedant
+  onShowDetails: (id: string) => void;
 }
 
 export default function MenuTable({ menuItems, onToggleAvailability, onChangeCategory, onEdit, onDelete}: MenuTableProps) {
@@ -99,7 +88,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
           <TableRow key={item._id}>
             <TableCell>
               <Image
-                src={item.image ? item.image : "/placeholder.png"}
+                src={item.image instanceof File ? URL.createObjectURL(item.image) : item.image || '/placeholder.png'}
                 alt={item.dishName}
                 width={50}
                 height={50}
@@ -141,7 +130,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
             </TableCell>
             
               <TableCell>
-                <Select defaultValue={item.subCategory}>
+                <Select defaultValue={item.subcategory}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Select Sub-Category" />
                   </SelectTrigger>
@@ -178,7 +167,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
               <TableCell>
                 <MenuTablePopover
                   menuItem={item}
-                  itemId={item.id}
+                  itemId={item._id}
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onShowDetails={handleShowDetails}

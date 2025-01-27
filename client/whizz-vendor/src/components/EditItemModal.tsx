@@ -24,22 +24,22 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 interface MenuItem {
-  id: number;
-  image: string;
-  name: string;
-  description?: string;
+  _id?: string;
+  image: File | string | null;
+  dishName: string;
+  description?: string; // New field
   price: number;
   category: string;
-  subCategory: string;
-  startTime?: string;
-  endTime?: string;
-  daysAvailable?: string[];
-  available: boolean;
+  subcategory: string;
+  startTime?: string; // New field
+  endTime?: string; // New field
+  availableDays?: string[]; // New field
+  isAvailable: boolean;
 }
 
 interface EditItemModalProps {
-  menuItemId: number;
-  onSave: (updatedItem: MenuItem) => void;
+  menuItemId: string;
+  onSave: (updatedItem: any) => void;
   onClose: () => void;
 }
 
@@ -50,12 +50,14 @@ export default function EditItemModal({
 }: EditItemModalProps) {
   const menuItems = useSelector((state: RootState) => state.menu.items);
   const [formValues, setFormValues] = useState<MenuItem | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | string | null>(null);
 
   // Fetch the menu item details
   useEffect(() => {
-    const menuItem = menuItems.find((item) => item.id === menuItemId);
+    const menuItem = menuItems.find((item) => item._id === menuItemId);
     if (menuItem) {
       setFormValues({ ...menuItem });
+      setSelectedImage(menuItem.image);
     }
   }, [menuItemId, menuItems]);
 
@@ -70,7 +72,8 @@ export default function EditItemModal({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
-      setFormValues((prev) => (prev ? { ...prev, image: imageUrl } : null));
+      setFormValues({ ...formValues, image: imageUrl } as MenuItem);
+      setSelectedImage(file);
     }
   };
 
@@ -79,9 +82,9 @@ export default function EditItemModal({
       prev
         ? {
             ...prev,
-            daysAvailable: prev.daysAvailable?.includes(day)
-              ? prev.daysAvailable.filter((d) => d !== day)
-              : [...(prev.daysAvailable || []), day],
+            availableDays: prev.availableDays?.includes(day)
+              ? prev.availableDays.filter((d) => d !== day)
+              : [...(prev.availableDays || []), day],
           }
         : null
     );
@@ -89,7 +92,7 @@ export default function EditItemModal({
 
   const handleSaveChanges = () => {
     if (formValues) {
-      onSave({ ...formValues });
+      onSave({ ...formValues, image: selectedImage  });
       onClose();
     }
   };
@@ -110,7 +113,7 @@ export default function EditItemModal({
             <Label htmlFor="image" className="flex flex-col items-center">
               {formValues.image ? (
                 <Image
-                  src={formValues.image}
+                  src={formValues.image as string}
                   alt="Preview"
                   width={100}
                   height={100}
@@ -140,10 +143,10 @@ export default function EditItemModal({
           <div>
             <Label htmlFor="name">Item Name</Label>
             <Input
-              id="name"
-              name="name"
+              id="dishName"
+              name="dishName"
               type="text"
-              value={formValues.name}
+              value={formValues.dishName}
               onChange={handleInputChange}
             />
           </div>
@@ -195,10 +198,10 @@ export default function EditItemModal({
           <div>
             <Label htmlFor="subCategory">Sub-Category</Label>
             <Select
-              value={formValues.subCategory}
+              value={formValues.subcategory}
               onValueChange={(value) =>
                 setFormValues((prev) =>
-                  prev ? { ...prev, subCategory: value } : null
+                  prev ? { ...prev, subcategory: value } : null
                 )
               }
             >
@@ -254,7 +257,7 @@ export default function EditItemModal({
               ].map((day) => (
                 <div key={day} className="flex items-center gap-2">
                   <Checkbox
-                    checked={formValues.daysAvailable?.includes(day)}
+                    checked={formValues.availableDays?.includes(day)}
                     onCheckedChange={() => toggleDay(day)}
                   />
                   <span>{day}</span>

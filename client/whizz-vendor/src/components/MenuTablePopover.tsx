@@ -12,9 +12,9 @@ import EditItemModal from "./EditItemModal";
 
 interface MenuTablePopoverProps {
   onEdit: (updatedItem: MenuItem) => void; // Pass updated item to the parent
-  onDelete: (id: number) => void;
-  onShowDetails: (id: number) => void;
-  itemId: number;
+  onDelete: (id: string) => void;
+  onShowDetails: (id: string) => void;
+  itemId: string;
   menuItem: MenuItem;
 }
 
