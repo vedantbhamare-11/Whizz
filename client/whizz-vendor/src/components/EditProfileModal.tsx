@@ -129,15 +129,28 @@ export default function EditProfileModal({
             </div>
 
             {/* Latitude & Longitude */}
+            {/* Latitude & Longitude */}
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="latitude">Latitude</Label>
                 <Input
                   id="latitude"
                   value={formValues.latitude}
-                  onChange={(e) =>
-                    setFormValues({ ...formValues, latitude: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^-?\d*\.?\d*$/.test(value)) {
+                      setFormValues({ ...formValues, latitude: value });
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        latitude: "", // Clear error if the input is valid
+                      }));
+                    } else {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        latitude: "Please enter a valid decimal number",
+                      }));
+                    }
+                  }}
                 />
                 {errors.latitude && (
                   <p className="text-red-500 text-sm">{errors.latitude}</p>
@@ -148,9 +161,21 @@ export default function EditProfileModal({
                 <Input
                   id="longitude"
                   value={formValues.longitude}
-                  onChange={(e) =>
-                    setFormValues({ ...formValues, longitude: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^-?\d*\.?\d*$/.test(value)) {
+                      setFormValues({ ...formValues, longitude: value });
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        longitude: "", // Clear error if the input is valid
+                      }));
+                    } else {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        longitude: "Please enter a valid decimal number",
+                      }));
+                    }
+                  }}
                 />
                 {errors.longitude && (
                   <p className="text-red-500 text-sm">{errors.longitude}</p>
@@ -164,9 +189,23 @@ export default function EditProfileModal({
               <Input
                 id="phone"
                 value={formValues.phone}
-                onChange={(e) =>
-                  setFormValues({ ...formValues, phone: e.target.value })
-                }
+                maxLength={10} // Prevent input beyond 10 digits
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value) && value.length <= 10) {
+                    // Only allow numeric input and up to 10 digits
+                    setFormValues({ ...formValues, phone: value });
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      phone: "", // Clear error if the input is valid
+                    }));
+                  } else {
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      phone: "Please enter a valid 10-digit phone number",
+                    }));
+                  }
+                }}
               />
               {errors.phone && (
                 <p className="text-red-500 text-sm">{errors.phone}</p>
