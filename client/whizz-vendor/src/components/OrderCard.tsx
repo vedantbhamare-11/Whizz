@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { X, Check, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
