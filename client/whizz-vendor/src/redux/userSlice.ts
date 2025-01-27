@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface Vendor {
   name: string;
   address: string;
+  latitude: string;
+  longitude: string;
   phone: string;
   area: "Nungambakkam" | "Anna Nagar" | "";
   type: "Veg" | "Non-Veg" | "Multicuisine" | "Cafe" | "";
@@ -20,6 +22,8 @@ const initialState: UserState = {
   user: {
     name: "My Restaurant",
     address: "123 Main St",
+    latitude: "123.456",
+    longitude: "789.012",
     phone: "555-555-5555",
     area: "Nungambakkam",
     type: "Veg",
