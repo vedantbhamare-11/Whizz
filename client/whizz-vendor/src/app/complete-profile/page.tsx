@@ -38,6 +38,8 @@ export default function ProfileSetup() {
     vendorName: "",
     address: "",
     vendorPhone: "",
+    latitude: "",
+    longitude: "",
     area: "",
     restaurantType: "Veg",
     startTime: "",
@@ -51,15 +53,22 @@ export default function ProfileSetup() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formValues.vendorName) newErrors.vendorName = "Restaurant name is required.";
+    if (!formValues.vendorName)
+      newErrors.restaurantName = "Restaurant name is required.";
     if (!formValues.address) newErrors.address = "Address is required.";
-    if (!formValues.vendorPhone) newErrors.vendorPhone = "Phone number is required.";
-    else if (!/^\d{10}$/.test(formValues.vendorPhone)) newErrors.vendorPhone = "Phone number must be 10 digits.";
+    if (!formValues.latitude) newErrors.latitude = "Latitude is required.";
+    if (!formValues.longitude) newErrors.longitude = "Longitude is required.";
+    if (!formValues.vendorPhone)
+      newErrors.phoneNumber = "Phone number is required.";
+    else if (!/^\d{10}$/.test(formValues.vendorPhone))
+      newErrors.phoneNumber = "Phone number must be 10 digits.";
     if (!formValues.area) newErrors.area = "Area is required.";
-    if (!formValues.restaurantType) newErrors.restaurantType = "Restaurant type is required.";
-    if (!formValues.startTime) newErrors.startTime = "Opening time is required.";
-    if (!formValues.endTime) newErrors.endTime = "Closing time is required.";
-    if (formValues.availableDays.length === 0) newErrors.availableDays = "Select at least one day.";
+    if (!formValues.restaurantType)
+      newErrors.restaurantType = "Restaurant type is required.";
+    if (!formValues.startTime) newErrors.opensAt = "Opening time is required.";
+    if (!formValues.endTime) newErrors.closesAt = "Closing time is required.";
+    if (formValues.availableDays.length === 0)
+      newErrors.daysAvailable = "Select at least one day.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -133,7 +142,9 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
-              {errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
+              {errors.restaurantName && (
+                <p className="text-red-500 text-sm">{errors.restaurantName}</p>
+              )}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="address">Address</Label>
@@ -146,8 +157,68 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
-              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-1.5">
+                <Label htmlFor="latitude">Latitude</Label>
+                <Input
+                  id="latitude"
+                  type="text"
+                  placeholder="Enter latitude"
+                  value={formValues.latitude}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^-?\d*(\.\d*)?$/.test(value)) {
+                      setFormValues({ ...formValues, latitude: value });
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        latitude: "",
+                      }));
+                    } else {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        latitude: "Please enter a valid number",
+                      }));
+                    }
+                  }}
+                />
+                {errors.latitude && (
+                  <p className="text-red-500 text-sm">{errors.latitude}</p>
+                )}
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="longitude">Longitude</Label>
+                <Input
+                  id="longitude"
+                  placeholder="Enter longitude"
+                  type="text"
+                  value={formValues.longitude}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^-?\d*(\.\d*)?$/.test(value)) {
+                      setFormValues({ ...formValues, longitude: value });
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        longitude: "",
+                      }));
+                    } else {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        longitude: "Please enter a valid number",
+                      }));
+                    }
+                  }}
+                />
+                {errors.longitude && (
+                  <p className="text-red-500 text-sm">{errors.longitude}</p>
+                )}
+              </div>
+            </div>
+
             <div className="grid gap-1.5">
               <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
@@ -177,7 +248,9 @@ export default function ProfileSetup() {
                   <SelectItem value="nungambakkam">Nungambakkam</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.area && <p className="text-red-500 text-sm">{errors.area}</p>}
+              {errors.area && (
+                <p className="text-red-500 text-sm">{errors.area}</p>
+              )}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="restaurantType">Restaurant Type</Label>
@@ -197,7 +270,9 @@ export default function ProfileSetup() {
                   <SelectItem value="MC">Multicuisine</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.restaurantType && <p className="text-red-500 text-sm">{errors.restaurantType}</p>}
+              {errors.restaurantType && (
+                <p className="text-red-500 text-sm">{errors.restaurantType}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
@@ -236,12 +311,12 @@ export default function ProfileSetup() {
                     <Image
                       src={formValues.vendorLogo}
                       alt="Uploaded"
-                      className="object-contain h-full max-h-[220px] rounded-md"
+                      className="object-contain h-full max-h-[270px] rounded-md"
                       width={220}
                       height={220}
                     />
                   ) : (
-                    <div className="flex justify-center flex-row gap-2 h-[220px] items-center">
+                    <div className="flex justify-center flex-row gap-2 h-[270px] items-center">
                       <Upload size={24} />
                       <span className="font-medium">Upload</span>
                     </div>

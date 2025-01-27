@@ -1,7 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { X, Check, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
@@ -38,11 +45,20 @@ export default function OrderCard({
   agentInfo,
   onStatusChange,
 }: OrderCardProps) {
+  // State for dialog visibility and rejection reason
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
+
   // Calculate total price
   const totalPrice = dishes.reduce(
     (total, dish) => total + dish.price * dish.quantity,
     0
   );
+
+  const handleReject = () => {
+    console.log(`Order ${orderId} rejected for reason: ${rejectionReason}`);
+    setIsDialogOpen(false); // Close the dialog
+  };
 
   return (
     <Card className="p-3 space-y-4 rounded-md">
@@ -89,6 +105,7 @@ export default function OrderCard({
             variant="destructive"
             className="flex items-center gap-2 bg-[#FF2C2C] text-white hover:bg-red-600"
             onClick={() => onStatusChange(orderId, "rejected")}
+            onClick={() => setIsDialogOpen(true)}
           >
             <X size={16} />
             Reject
@@ -138,6 +155,46 @@ export default function OrderCard({
           </div>
         </div>
       )}
+
+      {/* Reject Order Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="bg-white sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Reason for Order Rejection</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <textarea
+              placeholder="Enter the reason for rejection"
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              rows={3} // Default number of rows
+              className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2  focus:border-transparent"
+              style={{ overflow: "hidden" }} // Prevent scrollbar
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto"; // Reset height
+                target.style.height = `${target.scrollHeight}px`; // Set new height
+              }}
+            />
+            <div className="flex justify-between gap-4">
+              <Button
+                variant="outline"
+                className="w-1/2"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="w-1/2 bg-[#FF2C2C] text-white hover:bg-red-600"
+                onClick={handleReject}
+              >
+                Reject
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
