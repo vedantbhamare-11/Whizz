@@ -6,7 +6,6 @@ import { fileURLToPath } from "url";
 import { Dish, Order, Subcategory, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
 import { convertToAmPm } from "../utils/convertTime.js";
-import { start } from "repl";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +29,8 @@ const completeProfile = async (req, res, next) => {
     vendorPhone,
     startTime,
     endTime,
+    latitude,
+    longitude,
     availableDays,
   } = req.body;
 
@@ -72,6 +73,105 @@ const completeProfile = async (req, res, next) => {
     const vendor = {
       ...updatedVendor._doc,
       ...(logoUrl !== null && { vendorLogo: logoUrl }),
+      startTime: convertToAmPm(updatedVendor.startTime),
+      endTime: convertToAmPm(updatedVendor.endTime),
+    };
+
+    // remove password
+
+    return successResponse(res, 200, vendor, "Profile completed successfully");
+  } catch (error) {
+    if (error.name === "CastError") {
+      return errorResponse(res, 400, null, "Invalid vendor ID");
+    }
+    next(error);
+  }
+};
+
+// Edit Profile
+const editProfile = async (req, res, next) => {
+  // Check if vendorId is provided
+  const vendorId = req.userId;
+
+  if (!vendorId) {
+    return errorResponse(res, 400, null, "Vendor ID is required");
+  }
+
+  // Extract vendor details
+  const {
+    vendorName,
+    address,
+    restaurantType,
+    gst,
+    area,
+    vendorPhone,
+    startTime,
+    endTime,
+    latitude,
+    longitude,
+    availableDays,
+  } = req.body;
+
+  if (
+    !vendorName ||
+    !address ||
+    !restaurantType ||
+    !area ||
+    !vendorPhone ||
+    !startTime ||
+    !endTime ||
+    !availableDays
+  ) {
+    return errorResponse(res, 400, null, "All fields are required");
+  }
+
+  try {
+
+    const currentVendor = await Vendor.findById(vendorId);
+
+    if (!currentVendor) {
+      return errorResponse(res, 404, null, "Vendor not found");
+    };
+
+    // Extract vendor logo
+    const vendorLogo = req.fileRelativePath || currentVendor.vendorLogo;
+
+    // Delete the old image if a new one is provided
+    if (req.fileRelativePath && currentVendor.vendorLogo) {
+      const oldImagePath = path.join(__dirname, "../", currentVendor.vendorLogo);
+
+      try {
+        await fs.unlink(oldImagePath); // Use fs.promises.unlink to handle deletion
+        console.log(`Deleted old image: ${oldImagePath}`);
+      } catch (err) {
+        console.error(`Error deleting old image: ${err.message}`);
+      }
+    }    
+
+    // Update vendor
+    const updatedVendor = await Vendor.findByIdAndUpdate(
+      vendorId,
+      {
+        ...req.body,
+        ...(vendorLogo && { vendorLogo }),
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    // Create the url for the locally stored image
+    const logoUrl = vendorLogo
+      ? `${req.protocol}://${req.get("host")}/${updatedVendor.vendorLogo}`
+      : null;
+
+    // Update vendor with the image url
+    const vendor = {
+      ...updatedVendor._doc,
+      ...(logoUrl !== null && { vendorLogo: logoUrl }),
+      startTime : convertToAmPm(updatedVendor.startTime),
+      endTime : convertToAmPm(updatedVendor.endTime)
     };
 
     // remove password
@@ -88,6 +188,8 @@ const completeProfile = async (req, res, next) => {
 const getDashboardData = async (req, res, next) => {
   // Extract vendorId
   const vendorId = req.userId;
+
+  console.log(vendorId);
 
   // Check if vendorId is provided
   if (!vendorId) {
@@ -133,6 +235,8 @@ const getDashboardData = async (req, res, next) => {
       activeMenuItems,
       revenue: totalRevenue[0]?.total || 0,
     };
+
+    console.log(dashboardData);
 
     return successResponse(
       res,
@@ -218,6 +322,7 @@ const addDish = async (req, res, next) => {
       ? `${req.protocol}://${req.get("host")}/${newDish.image}`
       : null;
 
+      
       const startTime = convertToAmPm(req.body.startTime);
       const endTime = convertToAmPm(req.body.endTime);
 
@@ -683,6 +788,7 @@ export {
   addNewSubcategory,
   manageSubcategory,
   getSubcategories,
+  editProfile,
 
   /* Temp controllers */
   uploadImage,

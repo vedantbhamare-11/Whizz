@@ -11,6 +11,7 @@ const persistConfig = {
   key: "root",
   storage,
   whiteList: ["vendor"],
+  blackelist: ["orders", "menu", "dashboard"],
 };
 
 const rootReducer = combineReducers({

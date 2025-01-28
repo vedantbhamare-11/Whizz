@@ -2,6 +2,7 @@ import { generateTokenAndSetCookie, removeTokenAndCookie } from "../utils/tokenH
 import { comparePassword, hashPassword } from "../utils/passwordHandler.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
 import { Vendor } from "../models/vendor.models.js";
+import { convertToAmPm } from "../utils/convertTime.js";
 
 // Signup controller
 const signUp = async (req, res, next) => {
@@ -69,6 +70,8 @@ const signIn = async (req, res, next) => {
         : null;
 
         userData.vendorLogo = logoUrl;
+        userData.startTime = convertToAmPm(userData.startTime);
+        userData.endTime = convertToAmPm(userData.endTime);
 
         // Remove vendorPassword from response
         const { vendorPassword, ...rest } = userData;

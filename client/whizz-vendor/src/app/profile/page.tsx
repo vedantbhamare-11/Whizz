@@ -13,6 +13,7 @@ import EditProfileModal from "@/components/EditProfileModal";
 
 export default function Profile() {
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
+  console.log(vendor);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -33,7 +34,7 @@ export default function Profile() {
           {/* Profile Header */}
           <div className="text-center mb-10">
             <Image
-              src={ "/placeholder.png"}
+              src={vendor?.vendorLogo || "/placeholder.png"}
               alt="Restaurant Logo"
               width={150}
               height={150}

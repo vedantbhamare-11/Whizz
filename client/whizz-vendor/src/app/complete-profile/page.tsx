@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import { Upload } from "lucide-react";
 import { useState } from "react";
-import { completeProfileApi } from "../API/auth";
+import { completeProfileApi } from "../API/restaurant";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";

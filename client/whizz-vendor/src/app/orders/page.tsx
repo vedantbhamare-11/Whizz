@@ -18,8 +18,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
-import { convertTime, fetchOrdersApi, updateOrder } from "../API/order";
+import { fetchOrdersApi, updateOrder } from "../API/order";
 import { setOrders, updateOrderStatus } from "@/redux/orderSlice";
+import { convertTime } from "@/lib/convertTime";
 
 // Helper function to format status names
 const formatStatusName = (status: string) => {

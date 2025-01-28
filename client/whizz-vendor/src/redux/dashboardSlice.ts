@@ -26,7 +26,7 @@ export const fetchDashboardData = createAsyncThunk(
     // Simulating a delay to mimic an API call
     try {
       const dashboardData = await fetchDashboardCountsApi();
-
+      console.log(dashboardData);
       if (dashboardData) {
         return dashboardData;
       }

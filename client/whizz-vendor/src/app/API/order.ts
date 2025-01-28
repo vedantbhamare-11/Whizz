@@ -14,29 +14,6 @@ const fetchOrdersApi = async () => {
     }
 }
 
-// Function to calculate time ago
-const convertTime = (time: string) => {
-    const currentTime = new Date().getTime();
-    const orderTime = new Date(time).getTime();
-    const timeDifference = Math.abs(currentTime - orderTime); // Difference in milliseconds
-
-    // Convert milliseconds to a readable format
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) {
-      return `${days} days ago`;
-    } else if (hours > 0) {
-      return `${hours} hours ago`;
-    } else if (minutes > 0) {
-      return `${minutes} minutes ago`;
-    } else {
-      return `${seconds} seconds ago`;
-    }
-};
-
 // Update order status
 const updateOrder = async (whizzOrderId: string, status: string) => {
     try {
@@ -52,4 +29,4 @@ const updateOrder = async (whizzOrderId: string, status: string) => {
     }
 }
 
-export { fetchOrdersApi, convertTime, updateOrder }
+export { fetchOrdersApi, updateOrder }

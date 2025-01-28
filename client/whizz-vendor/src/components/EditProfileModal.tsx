@@ -22,7 +22,9 @@ import { useState, useEffect } from "react";
 import { CloudUpload } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
-import { updateUser } from "@/redux/userSlice";
+import { updateVendor } from "@/redux/vendorSlice";
+import { editProfileApi } from "@/app/API/restaurant";
+import { convertTo24Hour }  from "@/lib/convertTime";
 
 export default function EditProfileModal({
   isOpen,
@@ -34,19 +36,15 @@ export default function EditProfileModal({
   const dispatch = useDispatch();
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
   
-
   const [formValues, setFormValues] = useState(vendor);
   const [uploadedImage, setUploadedImage] = useState<string>("");
+  const [newImage, setNewImage] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  
-
   useEffect(() => {
-    setFormValues(vendor); // Sync the form with user data whenever the modal opens
-    setUploadedImage(vendor.vendorLogo || "");
+    setFormValues({...vendor, startTime: convertTo24Hour(vendor.startTime), endTime: convertTo24Hour(vendor.endTime) }); // Sync the form with user data whenever the modal opens
+    setUploadedImage(vendor.vendorLogo !== "null" || vendor.vendorLogo !== null ? vendor.vendorLogo : "");
   }, [vendor]);
-
-  console.log(formValues.area);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -66,22 +64,26 @@ export default function EditProfileModal({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      dispatch(updateUser({ ...formValues, logo: uploadedImage }));
-      console.log("Profile updated:", formValues);
+      try {
+        const response = await editProfileApi({...formValues, vendorLogo: newImage !== null ? newImage : vendor.vendorLogo});
+        if (response) {
+          dispatch(updateVendor(response));
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
       onClose();
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setUploadedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setUploadedImage(imageUrl);
+      setNewImage(file);
     }
   };
 
@@ -113,8 +115,8 @@ export default function EditProfileModal({
                   setFormValues({ ...formValues, vendorName: e.target.value })
                 }
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
+              {errors.vendorName && (
+                <p className="text-red-500 text-sm">{errors.vendorName}</p>
               )}
             </div>
 
@@ -207,13 +209,13 @@ export default function EditProfileModal({
                   } else {
                     setErrors((prevErrors) => ({
                       ...prevErrors,
-                      phone: "Please enter a valid 10-digit phone number",
+                      vendorPhone: "Please enter a valid 10-digit phone number",
                     }));
                   }
                 }}
               />
-              {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone}</p>
+              {errors.vendorPhone && (
+                <p className="text-red-500 text-sm">{errors.vendorPhone}</p>
               )}
             </div>
 
@@ -280,7 +282,7 @@ export default function EditProfileModal({
                 <div className="border-2 p-2 bg-[#FAFAFA] border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center relative">
                   {uploadedImage ? (
                     <Image
-                      src={uploadedImage || '/placeholder.png'}
+                      src={uploadedImage}
                       alt="Uploaded"
                       className="object-contain h-full max-h-[270px] rounded-md"
                       width={220}
@@ -309,15 +311,15 @@ export default function EditProfileModal({
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
                 <Input
-                  id="opensAt"
+                  id="startTime"
                   type="time"
                   value={formValues.startTime}
                   onChange={(e) =>
                     setFormValues({ ...formValues, startTime: e.target.value })
                   }
                 />
-                {errors.opensAt && (
-                  <p className="text-red-500 text-sm">{errors.opensAt}</p>
+                {errors.startTime && (
+                  <p className="text-red-500 text-sm">{errors.startTime}</p>
                 )}
               </div>
 
@@ -325,15 +327,15 @@ export default function EditProfileModal({
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
                 <Input
-                  id="closesAt"
+                  id="endTime"
                   type="time"
                   value={formValues.endTime}
                   onChange={(e) =>
                     setFormValues({ ...formValues, endTime: e.target.value })
                   }
                 />
-                {errors.closesAt && (
-                  <p className="text-red-500 text-sm">{errors.closesAt}</p>
+                {errors.endTime && (
+                  <p className="text-red-500 text-sm">{errors.endTime}</p>
                 )}
               </div>
             </div>
