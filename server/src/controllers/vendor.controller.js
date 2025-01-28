@@ -94,7 +94,7 @@ const completeProfile = async (req, res, next) => {
 // Edit Profile
 const editProfile = async (req, res, next) => {
   // Check if vendorId is provided
-  const vendorId = req.userId;
+  const vendorId = req.userId; 
 
   if (!vendorId) {
     return errorResponse(res, 400, null, "Vendor ID is required");

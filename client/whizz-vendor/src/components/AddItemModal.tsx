@@ -24,6 +24,7 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { addSubcategory } from "@/app/API/menu";
 import { addNewSubcategory } from "@/redux/menuSlice";
+import { convertTo24Hour } from "@/lib/convertTime";
 
 interface AddItemModalProps {
   onAddItem: (newItem: {
@@ -44,6 +45,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   const dispatch = useDispatch();
 
   const vendorSubcategories = useSelector((state: any) => state.menu.subcategories);
+  const vendor = useSelector((state: any) => state.vendor.vendor);
 
     const [subCategories, setSubCategories] = useState<string[]>([
       "Main Course",
@@ -68,13 +70,30 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
     price: "",
     category: "Veg",
     subcategory: "Main Course",
-    startTime: "",
-    endTime: "",
+    startTime: convertTo24Hour(vendor.startTime),
+    endTime: convertTo24Hour(vendor.endTime),
     availableDays: [...allDays] as string[],
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formValues.dishName) newErrors.dishName = "Dish name is required.";
+    if (!formValues.price) newErrors.price = "Price is required.";
+    if (!formValues.category) newErrors.category = "Category is required.";
+    if (!formValues.subcategory) newErrors.subcategory = "Subcategory is required.";
+    if (!formValues.startTime) newErrors.startTime = "Start time is required.";
+    if (!formValues.endTime) newErrors.endTime = "End time type is required.";
+    if (formValues.availableDays.length === 0)
+      newErrors.availableDays = "Select at least one day.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     const extractedSubcategories = vendorSubcategories.map(
@@ -114,20 +133,22 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   };
 
   const handleAddItem = () => {
-    const newItem = {
-      image: selectedImage ,
-      dishName: formValues.dishName,
-      price: Number(formValues.price),
-      description: formValues.description,
-      category: formValues.category,
-      subcategory: formValues.subcategory,
-      startTime: formValues.startTime,
-      endTime: formValues.endTime,
-      availableDays: formValues.availableDays,
-      isAvailable: true,
-    };
-    onAddItem(newItem);
-    handleClose();
+    if (validateForm()) {
+      const newItem = {
+        image: selectedImage ,
+        dishName: formValues.dishName,
+        price: Number(formValues.price),
+        description: formValues.description,
+        category: formValues.category,
+        subcategory: formValues.subcategory,
+        startTime: formValues.startTime,
+        endTime: formValues.endTime,
+        availableDays: formValues.availableDays,
+        isAvailable: true,
+      };
+      onAddItem(newItem);
+      handleClose();
+    }
   };
 
   const toggleDay = (day: string) => {
@@ -152,6 +173,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
       availableDays: [],
     });
     setSelectedImage(null);
+    setErrors({});
     setIsOpen(false);
   };
 
@@ -211,6 +233,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
               value={formValues.dishName}
               onChange={handleInputChange}
             />
+            {errors.dishName && (
+                <p className="text-red-500 text-sm">{errors.dishName}</p>
+              )}
           </div>
           <div>
             <Label htmlFor="description">Item Description</Label>
@@ -235,6 +260,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                 value={formValues.price}
                 onChange={handleInputChange}
               />
+              {errors.price && (
+                <p className="text-red-500 text-sm">{errors.price}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="category">Category</Label>
@@ -272,6 +300,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {errors.category && (
+                <p className="text-red-500 text-sm">{errors.category}</p>
+              )}
             </div>
           </div>
           {/* Sub Category */}
@@ -306,6 +337,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                     </div>
                   </SelectContent>
             </Select>
+            {errors.subcategory && (
+                <p className="text-red-500 text-sm">{errors.subcategory}</p>
+              )}
           </div>
           {/* Start Time and End Time */}
           <div className="grid grid-cols-2 gap-2">
@@ -319,6 +353,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                 onChange={handleInputChange}
                 className="w-full p-2 border text-sm border-gray-300 rounded-md "
               />
+              {errors.startTime && (
+                <p className="text-red-500 text-sm">{errors.startTime}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="endTime">End Time</Label>
@@ -330,6 +367,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                 onChange={handleInputChange}
                 className="w-full p-2 text-sm border border-gray-300 rounded-md"
               />
+              {errors.endTime && (
+                <p className="text-red-500 text-sm">{errors.endTime}</p>
+              )}
             </div>
           </div>
           {/* Days Availability */}
@@ -346,6 +386,9 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                 </div>
               ))}
             </div>
+            {errors.availableDays && (
+                <p className="text-red-500 text-sm">{errors.availableDays}</p>
+              )}
           </div>
           {/* Buttons */}
           <div className="flex justify-between gap-4">

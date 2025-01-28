@@ -61,7 +61,7 @@ const signIn = async (req, res, next) => {
         };
 
         // Generate JWT token and set cookie
-        const token = generateTokenAndSetCookie(res, isUserExist._id);
+        generateTokenAndSetCookie(res, isUserExist._id);
 
         const userData = isUserExist.toObject ? isUserExist.toObject() : isUserExist;
 

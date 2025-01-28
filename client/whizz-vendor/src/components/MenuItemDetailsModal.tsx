@@ -39,23 +39,23 @@ export default function MenuItemDetailsModal({
 
           {/* Middle Column */}
           <div className="space-y-6">
-            <div className="mb-4 flex justify-around">
+            <div className="mb-4 flex justify-between">
               <p className="font-bold">Price:</p>
               <p className="text-gray-600">₹{menuItem.price}</p>
             </div>
-            <div className="mb-4 flex justify-around">
+            <div className="mb-4 flex justify-between">
               <p className="font-bold">Category:</p>
               <p className="text-gray-600">{menuItem.category}</p>
             </div>
-            <div className="mb-4 flex justify-around">
+            <div className="mb-4 flex justify-between">
               <p className="font-bold">Sub-Category:</p>
-              <p className="text-gray-600">{menuItem.subCategory}</p>
+              <p className="text-gray-600">{menuItem.subcategory}</p>
             </div>
-            <div className="mb-4 flex justify-around">
+            <div className="mb-4 flex justify-between">
               <p className="font-bold">Start Time:</p>
               <p className="text-gray-600">{menuItem.startTime || "N/A"}</p>
             </div>
-            <div className="flex justify-around">
+            <div className="flex justify-between">
               <p className="font-bold">End Time:</p>
               <p className="text-gray-600">{menuItem.endTime || "N/A"}</p>
             </div>

@@ -39,9 +39,9 @@ export default function SignIn() {
         router.push("/complete-profile");
       };
 
-    } catch (error) {
+    } catch (error: any) {
       console.error(error); 
-      toast.error("Sign-in failed");
+      toast.error(error.response?.data?.message || "Invalid credentials");
     }
     }
   };

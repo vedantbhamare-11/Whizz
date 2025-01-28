@@ -62,6 +62,7 @@ export default function EditItemModal({
     "Rice",
     "Dessert",
   ]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const extractedSubcategories = vendorSubcategories.map(
@@ -73,6 +74,20 @@ export default function EditItemModal({
     );
   }, [vendorSubcategories]);
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formValues?.dishName) newErrors.dishName = "Dish name is required.";
+    if (!formValues?.price) newErrors.price = "Price is required.";
+    if (!formValues?.category) newErrors.category = "Category is required.";
+    if (!formValues?.subcategory) newErrors.subcategory = "Subcategory is required.";
+    if (!formValues?.startTime) newErrors.startTime = "Start time is required.";
+    if (!formValues?.endTime) newErrors.endTime = "End time type is required.";
+    if (formValues?.availableDays?.length === 0)
+      newErrors.availableDays = "Select at least one day.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const addCustomSubCategory = async (value: string) => {
     if (value && !subCategories.includes(value)) {
@@ -124,7 +139,7 @@ export default function EditItemModal({
   };
 
   const handleSaveChanges = () => {
-    if (formValues) {
+    if (validateForm()) {
       onSave({ ...formValues, image: selectedImage });
       onClose();
     }
@@ -182,6 +197,9 @@ export default function EditItemModal({
               value={formValues.dishName}
               onChange={handleInputChange}
             />
+            {errors.dishName && (
+                <p className="text-red-500 text-sm">{errors.dishName}</p>
+              )}
           </div>
 
           {/* Description */}
@@ -208,6 +226,9 @@ export default function EditItemModal({
                 onChange={handleInputChange}
               />
             </div>
+            {errors.price && (
+                <p className="text-red-500 text-sm">{errors.price}</p>
+              )}
             <div>
               <Label htmlFor="category">Category</Label>
               <Select
@@ -244,6 +265,9 @@ export default function EditItemModal({
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {errors.category && (
+                <p className="text-red-500 text-sm">{errors.category}</p>
+              )}
             </div>
           </div>
 
@@ -281,6 +305,9 @@ export default function EditItemModal({
                 </div>
               </SelectContent>
             </Select>
+            {errors.subcategory && (
+                <p className="text-red-500 text-sm">{errors.subcategory}</p>
+              )}
           </div>
 
           {/* Start Time and End Time */}
@@ -295,6 +322,9 @@ export default function EditItemModal({
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md text-sm"
               />
+              {errors.startTime && (
+                <p className="text-red-500 text-sm">{errors.startTime}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="endTime">End Time</Label>
@@ -306,6 +336,9 @@ export default function EditItemModal({
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md text-sm"
               />
+              {errors.endTime && (
+                <p className="text-red-500 text-sm">{errors.endTime}</p>
+              )}
             </div>
           </div>
 
@@ -331,6 +364,9 @@ export default function EditItemModal({
                 </div>
               ))}
             </div>
+            {errors.availableDays && (
+                <p className="text-red-500 text-sm">{errors.availableDays}</p>
+              )}
           </div>
 
           {/* Save and Cancel Buttons */}
