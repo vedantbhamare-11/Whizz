@@ -18,7 +18,6 @@ const fetchOrdersApi = async () => {
 const updateOrder = async (whizzOrderId: string, status: string) => {
     try {
         const response = await axiosInstance.put('/vendor/updateOrder', { whizzOrderId, status });
-        console.log(response.data.data);
         if (response.data.success){
             return response.data.data
         } else {

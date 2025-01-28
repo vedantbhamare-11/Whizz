@@ -76,7 +76,6 @@ const editProfileApi = async (
 
 // Toggle opening
 const toggleOpeningApi = async (isOpen: boolean) => {
-    console.log(isOpen);
     try {
         const response = await axiosInstance.put('/vendor/toggleOpening', { isOpen });
         if (response.data.success){

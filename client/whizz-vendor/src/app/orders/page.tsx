@@ -108,7 +108,6 @@ export default function Orders() {
 
   // Handle accepting order logic here
   const handleOrderStatus = async (orderId: string, newStatus: any) => {
-    console.log("id", orderId, "newStatus", newStatus);
 
     try {
       const response = await updateOrder(orderId, newStatus);

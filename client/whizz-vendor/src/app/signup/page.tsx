@@ -38,7 +38,6 @@ export default function SignUp() {
     // Sign-in handler logic
     try {
       const response = await signupApi(formValues.email, formValues.password);
-      console.log(response);
       if (response){
         router.push("/complete-profile");
       };

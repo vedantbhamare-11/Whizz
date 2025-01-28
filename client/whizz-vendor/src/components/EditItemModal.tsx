@@ -87,7 +87,7 @@ export default function EditItemModal({
   // Fetch the menu item details
   useEffect(() => {
     const menuItem = menuItems.find((item) => item._id === menuItemId);
-    console.log(menuItem)
+
     if (menuItem) {
       setFormValues({ ...menuItem, startTime: menuItem.startTime && convertTo24Hour(menuItem.startTime), endTime: menuItem.endTime && convertTo24Hour(menuItem.endTime) });
       setSelectedImage(menuItem.image);

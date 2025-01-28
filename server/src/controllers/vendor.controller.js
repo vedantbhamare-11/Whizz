@@ -189,8 +189,6 @@ const getDashboardData = async (req, res, next) => {
   // Extract vendorId
   const vendorId = req.userId;
 
-  console.log(vendorId);
-
   // Check if vendorId is provided
   if (!vendorId) {
     return errorResponse(res, 400, null, "Vendor ID is required");
@@ -235,8 +233,6 @@ const getDashboardData = async (req, res, next) => {
       activeMenuItems,
       revenue: totalRevenue[0]?.total || 0,
     };
-
-    console.log(dashboardData);
 
     return successResponse(
       res,
@@ -357,8 +353,6 @@ const updateDish = async (req, res, next) => {
     endTime,
     availableDays,
   } = req.body;
-
-  console.log(req.body);
 
   if (!dishId) {
     return errorResponse(res, 400, null, "Dish ID is required");
@@ -743,22 +737,6 @@ const getSubcategories = async (req, res, next) => {
     }
 };
 
-// Temp controller to check image uploads
-const uploadImage = async (req, res, next) => {
-  try {
-    if (!req.file) {
-      return res.status(400).send("No file uploaded");
-    }
-    // File is successfully uploaded
-    res.status(200).send({
-      message: "Image uploaded successfully!",
-      imagePath: `/dishImages/${req.file.filename}`, // Send back the relative image path
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Temp controller to create order manually
 const createOrder = async (req, res, next) => {
   try {
@@ -790,6 +768,5 @@ export {
   editProfile,
 
   /* Temp controllers */
-  uploadImage,
   createOrder,
 };
