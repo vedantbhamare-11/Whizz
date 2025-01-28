@@ -247,8 +247,8 @@ export default function ProfileSetup() {
                   <SelectValue placeholder="Select area" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="anna-nagar">Anna Nagar</SelectItem>
-                  <SelectItem value="nungambakkam">Nungambakkam</SelectItem>
+                  <SelectItem value="Anna Nagar">Anna Nagar</SelectItem>
+                  <SelectItem value="Nungambakkam">Nungambakkam</SelectItem>
                 </SelectContent>
               </Select>
               {errors.area && (

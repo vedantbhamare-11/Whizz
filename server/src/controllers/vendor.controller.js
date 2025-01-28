@@ -57,6 +57,7 @@ const completeProfile = async (req, res, next) => {
       {
         ...req.body,
         ...(vendorLogo && { vendorLogo }),
+        isProfileCompleted: true
       },
       {
         new: true,
@@ -79,9 +80,7 @@ const completeProfile = async (req, res, next) => {
       ...(logoUrl !== null && { vendorLogo: logoUrl }),
       startTime: isValid24HourTime(updatedVendor.startTime) && convertToAmPm(updatedVendor.startTime),
       endTime: isValid24HourTime(updatedVendor.endTime) && convertToAmPm(updatedVendor.endTime),
-      isProfileCompleted: true
     };
-    // remove password
 
     return successResponse(res, 200, vendor, "Profile completed successfully");
   } catch (error) {

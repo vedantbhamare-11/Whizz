@@ -64,7 +64,6 @@ const signIn = async (req, res, next) => {
         const token = generateTokenAndSetCookie(res, isUserExist._id);
 
         const userData = isUserExist.toObject ? isUserExist.toObject() : isUserExist;
-        console.log(userData);
 
         const logoUrl = isUserExist.vendorLogo
         ? `${req.protocol}://${req.get("host")}/${isUserExist.vendorLogo}`

@@ -90,6 +90,9 @@ const menuSlice = createSlice({
     },
     deleteMenuItem(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item._id !== action.payload);
+    },
+    setStatus(state, action: PayloadAction<"idle" | "loading" | "succeeded" | "failed">) {
+      state.status = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -107,5 +110,5 @@ const menuSlice = createSlice({
   },
 });
 
-export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, changeSubcategory, setSubcategories, addNewSubcategory, deleteMenuItem } = menuSlice.actions;
+export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, changeSubcategory, setSubcategories, addNewSubcategory, deleteMenuItem, setStatus } = menuSlice.actions;
 export default menuSlice.reducer;

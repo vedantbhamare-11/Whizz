@@ -31,7 +31,6 @@ export default function SignIn() {
        // Sign-in handler logic
     try {
       const response = await signinApi(formValues.email, formValues.password);
-      console.log(response);
       if (response.isProfileCompleted){
         dispatch(setVendor(response));
         toast.success("Sign-in successful");

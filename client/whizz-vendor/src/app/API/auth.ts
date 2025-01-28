@@ -36,4 +36,18 @@ const signupApi = async (vendorEmail: string, vendorPassword: string) => {
   }
 };
 
-export { signinApi, signupApi };
+const logOutApi = async () => {
+  try {
+    // Make API request
+    const response = await axiosInstance.post("/auth/signout");
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { signinApi, signupApi, logOutApi };

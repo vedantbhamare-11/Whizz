@@ -3,10 +3,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation"; // Import usePathname
-import { ChartLine, NotepadText, LayoutList, User } from "lucide-react";
+import { ChartLine, NotepadText, LayoutList, User, LogOut } from "lucide-react";
+import { logOutApi } from "@/app/API/auth";
+import { useDispatch } from "react-redux";
+import { setVendor } from "@/redux/vendorSlice";
+import { setStatus } from "@/redux/menuSlice";
 
 export default function Sidebar() {
   const pathname = usePathname(); // Get the current path
+  const dispatch = useDispatch();
+
+   const handleLogout = async () => {
+    try {
+      const response = await logOutApi();
+      if (response) {
+        dispatch(setVendor({
+          _id: "",
+          vendorEmail: "",
+          vendorName: "",
+          address: "",
+          vendorPhone: "",
+          area: "",
+          restaurantType: "",
+          availableDays: [],
+          vendorLogo: "",
+          startTime: "",
+          endTime: "",
+          gst: "",
+          isOpen: false,
+          latitude: "",
+          longitude: ""
+        }));
+        dispatch(setStatus("idle"));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <aside className="flex flex-col justify-between w-48 h-screen bg-gray-100 fixed z-50">
@@ -67,12 +100,11 @@ export default function Sidebar() {
         </Link>
         {/* Profile Link */}
         <Link
-          href="/profile"
-          className={`p-2 flex items-center font-semibold gap-3 rounded-md ${
-            pathname === "/profile" ? "bg-[#3CAE06] text-white" : "text-black hover:bg-gray-200"
-          }`}
+          href="/signin"
+          onClick={handleLogout}
+          className={"p-2 flex items-center font-semibold gap-3 rounded-md text-black hover:bg-gray-200"}
         >
-          <User size={20} />
+          <LogOut size={20} />
           <span>Logout</span>
         </Link>
       </div>
