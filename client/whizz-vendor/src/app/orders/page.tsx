@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { fetchOrdersApi, updateOrder } from "../API/order";
 import { setOrders, updateOrderStatus } from "@/redux/orderSlice";
 import { convertTime } from "@/lib/convertTime";
+import { toast } from "react-toastify";
 
 // Helper function to format status names
 const formatStatusName = (status: string) => {
@@ -116,9 +117,10 @@ export default function Orders() {
       if (newStatus === "rejected") {
         setRejected([...rejected, response]);
       }
-
+      toast.success(`Order now in ${newStatus}`);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to update order status");
     }
   };
 

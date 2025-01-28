@@ -18,6 +18,7 @@ import { completeProfileApi } from "../API/restaurant";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
+import { toast } from "react-toastify";
 
 export default function ProfileSetup() {
   const router = useRouter();
@@ -114,10 +115,12 @@ export default function ProfileSetup() {
 
         if (response){
           dispatch(setVendor(response));
+          toast.success("Profile completed successfully");
           router.push("/dashboard");
         };
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        toast.error("Failed to complete profile");
       }
     } 
   };

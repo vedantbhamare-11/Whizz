@@ -7,6 +7,7 @@ import { toggleOpeningApi } from "@/app/API/restaurant";
 import { RootState } from "@/redux/store";
 import { toggleOpening } from "@/redux/vendorSlice";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -19,9 +20,11 @@ const handleOpening = async (isOpen: boolean) => {
     const response = await toggleOpeningApi(isOpen);
     if (response) {
       dispatch(toggleOpening(isOpen));
+      toast.success(`Your restaurant is ${isOpen ? "opened" : "closed"}`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    toast.error("Failed to toggle opening");
   }
 };
 

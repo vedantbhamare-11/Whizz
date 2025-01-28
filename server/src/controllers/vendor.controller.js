@@ -64,6 +64,10 @@ const completeProfile = async (req, res, next) => {
       }
     );
 
+    if (!updatedVendor) {
+      return errorResponse(res, 404, null, "Vendor not found");
+    }
+
     // Create the url for the locally stored image
     const logoUrl = vendorLogo
       ? `${req.protocol}://${req.get("host")}/${updatedVendor.vendorLogo}`
@@ -73,10 +77,10 @@ const completeProfile = async (req, res, next) => {
     const vendor = {
       ...updatedVendor._doc,
       ...(logoUrl !== null && { vendorLogo: logoUrl }),
-      startTime: convertToAmPm(updatedVendor.startTime),
-      endTime: convertToAmPm(updatedVendor.endTime),
+      startTime: isValid24HourTime(updatedVendor.startTime) && convertToAmPm(updatedVendor.startTime),
+      endTime: isValid24HourTime(updatedVendor.endTime) && convertToAmPm(updatedVendor.endTime),
+      isProfileCompleted: true
     };
-
     // remove password
 
     return successResponse(res, 200, vendor, "Profile completed successfully");
@@ -443,7 +447,7 @@ const manageDishAvailability = async (req, res, next) => {
         new: true,
         runValidators: true,
       }
-    ).select("isAvailable");
+    )
 
     // Check if dish was updated
     if (!updatedDish) {
@@ -480,7 +484,7 @@ const manageCategory = async (req, res, next) => {
         new: true,
         runValidators: true,
       }
-    ).select("category");
+    )
 
     // Check if dish was updated
     if (!updatedDish) {

@@ -25,6 +25,7 @@ import { RootState } from "@/redux/store";
 import { updateVendor } from "@/redux/vendorSlice";
 import { editProfileApi } from "@/app/API/restaurant";
 import { convertTo24Hour }  from "@/lib/convertTime";
+import { toast } from "react-toastify";
 
 export default function EditProfileModal({
   isOpen,
@@ -70,9 +71,11 @@ export default function EditProfileModal({
         const response = await editProfileApi({...formValues, vendorLogo: newImage !== null ? newImage : vendor.vendorLogo});
         if (response) {
           dispatch(updateVendor(response));
+          toast.success("Profile updated successfully!");
         }
       } catch (error) {
         console.error("Error updating profile:", error);
+        toast.error("Failed to update profile");
       }
       onClose();
     }

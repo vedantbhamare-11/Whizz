@@ -11,6 +11,7 @@ import { useState } from "react";
 import {signinApi} from "@/app/API/auth";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
+import { toast } from "react-toastify";
 
 export default function SignIn() {
   const router = useRouter();
@@ -26,20 +27,23 @@ export default function SignIn() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // Sign-in handler logic
+    if (validateForm()) {
+       // Sign-in handler logic
     try {
       const response = await signinApi(formValues.email, formValues.password);
-      
-      if (response.address){
+      console.log(response);
+      if (response.isProfileCompleted){
         dispatch(setVendor(response));
+        toast.success("Sign-in successful");
         router.push("/dashboard");
       } else {
         router.push("/complete-profile");
       };
 
     } catch (error) {
-      console.log(error); 
+      console.error(error); 
+      toast.error("Sign-in failed");
+    }
     }
   };
 

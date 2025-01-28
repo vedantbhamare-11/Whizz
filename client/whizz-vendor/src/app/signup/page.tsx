@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signupApi } from "../API/auth";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const router = useRouter();
@@ -30,20 +31,23 @@ export default function SignUp() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (formValues.password !== formValues.confirmPassword) {
-      throw new Error("Passwords do not match");
-    };
-
-    // Sign-in handler logic
-    try {
-      const response = await signupApi(formValues.email, formValues.password);
-      if (response){
-        router.push("/complete-profile");
+    if (!validateForm()) {
+      if (formValues.password !== formValues.confirmPassword) {
+        throw new Error("Passwords do not match");
       };
-
-    } catch (error) {
-      console.log(error); 
+  
+      // Sign-in handler logic
+      try {
+        const response = await signupApi(formValues.email, formValues.password);
+        if (response){
+          toast.success("Sign-up successful");
+          router.push("/complete-profile");
+        };
+  
+      } catch (error) {
+        console.error(error); 
+        toast.error("Sign-up failed");
+      }
     }
   };
 

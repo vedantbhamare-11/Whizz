@@ -58,12 +58,22 @@ export default function Sidebar() {
         {/* Profile Link */}
         <Link
           href="/profile"
-          className={`p-2 mb-6 flex items-center font-semibold gap-3 rounded-md ${
+          className={`p-2 mb-2 flex items-center font-semibold gap-3 rounded-md ${
             pathname === "/profile" ? "bg-[#3CAE06] text-white" : "text-black hover:bg-gray-200"
           }`}
         >
           <User size={20} />
           <span>Profile</span>
+        </Link>
+        {/* Profile Link */}
+        <Link
+          href="/profile"
+          className={`p-2 flex items-center font-semibold gap-3 rounded-md ${
+            pathname === "/profile" ? "bg-[#3CAE06] text-white" : "text-black hover:bg-gray-200"
+          }`}
+        >
+          <User size={20} />
+          <span>Logout</span>
         </Link>
       </div>
     </aside>

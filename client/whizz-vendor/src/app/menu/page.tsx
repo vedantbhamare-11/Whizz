@@ -11,6 +11,7 @@ import { fetchMenuItems, addMenuItem, toggleAvailability, changeCategory, update
 import { useEffect, useState } from "react";
 import { addDishApi, deleteDishApi, getSubcategories, manageCategory, manageSubcategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
+import { toast } from "react-toastify";
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,11 +37,13 @@ export default function Menu() {
   const handleAddItem = async (newItem: any) => {
     try {
       const response = await addDishApi(newItem);
-      if (response) {
-        dispatch(addMenuItem(response));
+      if (response.data) {
+        dispatch(addMenuItem(response.data));
+        toast.success(response.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Adding new item failed");
     }
   };
 
@@ -55,9 +58,11 @@ export default function Menu() {
         dispatch(toggleAvailability({id, isAvailable}));
         // Update active menu count on dashboard
         isAvailable ? dispatch(incrementMenuCount()) : dispatch(decrementMenuCount());
+        toast.success(`${response.dishName} is now ${isAvailable ? "available" : "unavailable"}`);  
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error(`Failed to ${isAvailable ? "enable" : "disable"} the dish`);
     }
   };
 
@@ -67,9 +72,11 @@ export default function Menu() {
       const response = await manageCategory(id, category);
       if (response){
         dispatch(changeCategory({id, category}));
+        toast.success(`${response.dishName} is now in ${category}`);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to change category");
     }
   };
 
@@ -79,9 +86,11 @@ export default function Menu() {
       const response = await manageSubcategory(id, subcategory);
       if (response){
         dispatch(changeSubcategory({id, subcategory}));
+        toast.success(`${response.dishName} is now in ${subcategory}`);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to change subcategory");
     }
   }
 
@@ -91,11 +100,13 @@ export default function Menu() {
     try {
       // Make API request
       const response = await updateDishApi(menuItems);
-      if (response) {
-        dispatch(updateMenuItem(response));
+      if (response.data) {
+        dispatch(updateMenuItem(response.data));
+        toast.success(response.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to update menu item");
     };
   };
 
@@ -105,9 +116,11 @@ export default function Menu() {
       const response = await deleteDishApi(id);
       if (response.success) {
         dispatch(deleteMenuItem(id));
+        toast.success(response.message);
       }
     } catch (error) {
       console.log(error);
+      toast.error("Failed to delete menu item");
     }
     // Add delete functionality here
   };

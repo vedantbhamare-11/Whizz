@@ -39,7 +39,7 @@ const addDishApi = async (dishData: any) => {
         });
 
         if (response.data.success){
-            return response.data.data
+            return response.data
         } else {
             throw new Error(response.data.message)
         }
@@ -71,7 +71,7 @@ const updateDishApi = async (dishData: any) => {
         });
 
         if (response.data.success){
-            return response.data.data
+            return response.data
         } else {
             throw new Error(response.data.message)
         }

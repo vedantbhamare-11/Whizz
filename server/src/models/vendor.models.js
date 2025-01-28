@@ -71,6 +71,11 @@ const vendorSchema = new mongoose.Schema({
         default: true,
         required: true
     },
+    isProfileCompleted: {
+        type: Boolean,
+        default: false,
+        required: true
+    }
 }, {timestamps: true});
 
 // Dish model 

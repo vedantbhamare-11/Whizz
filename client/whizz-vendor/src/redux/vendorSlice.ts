@@ -20,6 +20,7 @@ interface Vendor {
 
 interface vendorState {
   vendor: Vendor;
+  isAuth: boolean;
 }
 
 const initialState: vendorState = {
@@ -40,6 +41,7 @@ const initialState: vendorState = {
     latitude: "",
     longitude: ""
    },
+   isAuth: false
 };
 
 const userSlice = createSlice({
@@ -48,6 +50,7 @@ const userSlice = createSlice({
   reducers: {
     setVendor: (state, action: PayloadAction<Vendor>) => {
       state.vendor = action.payload;
+      state.isAuth = true;
     },
     updateVendor: (state, action: PayloadAction<Partial<Vendor>>) => {
       state.vendor = { ...state.vendor, ...action.payload };
