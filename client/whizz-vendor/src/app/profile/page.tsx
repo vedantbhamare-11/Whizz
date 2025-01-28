@@ -13,7 +13,6 @@ import EditProfileModal from "@/components/EditProfileModal";
 
 export default function Profile() {
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
-  console.log(vendor);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 

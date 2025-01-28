@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 import { Dish, Order, Subcategory, Vendor } from "../models/vendor.models.js";
 import { errorResponse, successResponse } from "../utils/responseHandler.js";
-import { convertToAmPm } from "../utils/convertTime.js";
+import { convertToAmPm, isValid24HourTime } from "../utils/convertTime.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -358,6 +358,8 @@ const updateDish = async (req, res, next) => {
     availableDays,
   } = req.body;
 
+  console.log(req.body);
+
   if (!dishId) {
     return errorResponse(res, 400, null, "Dish ID is required");
   }
@@ -412,14 +414,11 @@ const updateDish = async (req, res, next) => {
       ? `${req.protocol}://${req.get("host")}/${updatedDish.image}`
       : null;
 
-      const startTime = convertToAmPm(req.body.startTime);
-      const endTime = convertToAmPm(req.body.endTime);
-
     // Construct dish
     const dish = {
       ...updatedDish._doc,
-      startTime,
-      endTime,
+      startTime: isValid24HourTime(updatedDish.startTime) && convertToAmPm(updatedDish.startTime),
+      endTime: isValid24HourTime(updatedDish.endTime) && convertToAmPm(updatedDish.endTime),
       image: imageUrl,
     };
 
@@ -557,8 +556,8 @@ const getDishes = async (req, res, next) => {
     const updatedDishes = dishes.map((dish) => {
       return {
         ...dish._doc,
-        startTime: convertToAmPm(dish.startTime),
-        endTime: convertToAmPm(dish.endTime), 
+        startTime: isValid24HourTime(dish.startTime) ? convertToAmPm(dish.startTime) : dish.startTime,
+        endTime: isValid24HourTime(dish.endTime) ? convertToAmPm(dish.endTime) : dish.endTime, 
         image: dish.image
           ? `${req.protocol}://${req.get("host")}/${dish.image}`
           : null,

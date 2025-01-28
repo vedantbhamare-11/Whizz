@@ -20,8 +20,11 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { CloudUpload } from "lucide-react";
 import Image from "next/image";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { convertTo24Hour } from "@/lib/convertTime";
+import { addSubcategory } from "@/app/API/menu";
+import { addNewSubcategory } from "@/redux/menuSlice";
 
 interface MenuItem {
   _id?: string;
@@ -48,16 +51,45 @@ export default function EditItemModal({
   onSave,
   onClose,
 }: EditItemModalProps) {
+  const dispatch = useDispatch();
+
+  const vendorSubcategories = useSelector((state: any) => state.menu.subcategories);
   const menuItems = useSelector((state: RootState) => state.menu.items);
   const [formValues, setFormValues] = useState<MenuItem | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | string | null>(null);
+  const [subCategories, setSubCategories] = useState<string[]>([
+    "Main Course",
+    "Rice",
+    "Dessert",
+  ]);
+
+  useEffect(() => {
+    const extractedSubcategories = vendorSubcategories.map(
+      (item: { subcategory: string }) => item.subcategory
+    );
+
+    setSubCategories((prev) =>
+      Array.from(new Set([...prev, ...extractedSubcategories]))
+    );
+  }, [vendorSubcategories]);
+
+
+  const addCustomSubCategory = async (value: string) => {
+    if (value && !subCategories.includes(value)) {
+      const response = await addSubcategory(value);
+      if (response) {
+        dispatch(addNewSubcategory(value));
+        setSubCategories((prev) => [...prev, value]);
+      }
+    }
+  };
 
   // Fetch the menu item details
   useEffect(() => {
     const menuItem = menuItems.find((item) => item._id === menuItemId);
     console.log(menuItem)
     if (menuItem) {
-      setFormValues({ ...menuItem });
+      setFormValues({ ...menuItem, startTime: menuItem.startTime && convertTo24Hour(menuItem.startTime), endTime: menuItem.endTime && convertTo24Hour(menuItem.endTime) });
       setSelectedImage(menuItem.image);
     }
   }, [menuItemId, menuItems]);
@@ -82,18 +114,18 @@ export default function EditItemModal({
     setFormValues((prev) =>
       prev
         ? {
-            ...prev,
-            availableDays: prev.availableDays?.includes(day)
-              ? prev.availableDays.filter((d) => d !== day)
-              : [...(prev.availableDays || []), day],
-          }
+          ...prev,
+          availableDays: prev.availableDays?.includes(day)
+            ? prev.availableDays.filter((d) => d !== day)
+            : [...(prev.availableDays || []), day],
+        }
         : null
     );
   };
 
   const handleSaveChanges = () => {
     if (formValues) {
-      onSave({ ...formValues, image: selectedImage  });
+      onSave({ ...formValues, image: selectedImage });
       onClose();
     }
   };
@@ -188,8 +220,28 @@ export default function EditItemModal({
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Veg">Veg</SelectItem>
-                  <SelectItem value="Non-Veg">Non-Veg</SelectItem>
+                  <SelectItem value="Veg">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/veg.png"
+                        alt="Veg"
+                        width={16}
+                        height={16}
+                      />
+                      Veg
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="Non-Veg">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/non-veg.png"
+                        alt="Non-Veg"
+                        width={16}
+                        height={16}
+                      />
+                      Non-Veg
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -210,9 +262,23 @@ export default function EditItemModal({
                 <SelectValue placeholder="Select Sub-Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Main Course">Main Course</SelectItem>
-                <SelectItem value="Rice">Rice</SelectItem>
-                <SelectItem value="Dessert">Dessert</SelectItem>
+                {subCategories.map((subCategory, index) => (
+                  <SelectItem key={index} value={subCategory}>
+                    {subCategory}
+                  </SelectItem>
+                ))}
+                <div className="p-2 border-t border-gray-200">
+                  <Input
+                    placeholder="Add sub-category"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addCustomSubCategory(e.currentTarget.value);
+                        e.currentTarget.value = "";
+                      }
+                    }}
+                    className="text-sm"
+                  />
+                </div>
               </SelectContent>
             </Select>
           </div>
