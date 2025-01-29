@@ -68,7 +68,7 @@ export default function Orders() {
         if (orders) {
 
           // Add timeAgo property
-          const orderTimeUpdated = order.map((order: any) => ({
+          const orderTimeUpdated = order.data.map((order: any) => ({
             ...order,
             timeAgo: convertTime(order.updatedAt)
           }))
@@ -100,8 +100,8 @@ export default function Orders() {
           dispatch(setOrders(orderData));
         }
 
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        toast.error(error);
       }
     }
     fetchOrders();
@@ -115,12 +115,11 @@ export default function Orders() {
 
       dispatch(updateOrderStatus({ orderId, newStatus }));
       if (newStatus === "rejected") {
-        setRejected([...rejected, response]);
+        setRejected([...rejected, response.data]);
       }
       toast.success(`Order now in ${newStatus}`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to update order status");
+    } catch (error: any) {
+      toast.error(error);
     }
   };
 

@@ -81,7 +81,7 @@ export default function ProfileSetup() {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
 
-    if(name === "vendorPhone"){
+    if (name === "vendorPhone") {
       if (/^\d*$/.test(value)) {
         setFormValues({ ...formValues, vendorPhone: value });
       }
@@ -91,6 +91,11 @@ export default function ProfileSetup() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only JPEG, PNG, and GIF files are allowed.");
+        return;
+      }
       const imageUrl = URL.createObjectURL(file);
       setFormValues({ ...formValues, vendorLogo: imageUrl });
       setUploadedImage(file);
@@ -108,21 +113,20 @@ export default function ProfileSetup() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (validateForm()){
+    if (validateForm()) {
       try {
         // Comlete profile
-        const response = await completeProfileApi({...formValues, vendorLogo: uploadedImage});
+        const response = await completeProfileApi({ ...formValues, vendorLogo: uploadedImage });
 
-        if (response){
-          dispatch(setVendor(response));
-          toast.success("Profile completed successfully");
+        if (response.success) {
+          dispatch(setVendor(response.data));
           router.push("/dashboard");
+          toast.success(response.message);
         };
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to complete profile");
+      } catch (error: any) {
+        toast.error(error);
       }
-    } 
+    }
   };
 
   return (
@@ -131,7 +135,7 @@ export default function ProfileSetup() {
         <h1 className="text-2xl font-bold text-center text-gray-800">
           Profile Setup
         </h1>
-        <form  onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5 mt-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="grid gap-1.5">
@@ -234,15 +238,15 @@ export default function ProfileSetup() {
                 onChange={handleInputChange}
                 required
               />
-               {errors.vendorPhone && <p className="text-red-500 text-sm">{errors.vendorPhone}</p>}
+              {errors.vendorPhone && <p className="text-red-500 text-sm">{errors.vendorPhone}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="area">Area</Label>
               <Select
-              defaultValue={formValues.area}
-              onValueChange={(value) =>
-                setFormValues({ ...formValues, area: value })
-              }>
+                defaultValue={formValues.area}
+                onValueChange={(value) =>
+                  setFormValues({ ...formValues, area: value })
+                }>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select area" />
                 </SelectTrigger>
@@ -280,29 +284,29 @@ export default function ProfileSetup() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="opensAt">Opens At</Label>
-                <Input 
-                  id="startTime" 
-                  name="startTime" 
-                  type="time" 
-                  value={formValues.startTime} 
+                <Input
+                  id="startTime"
+                  name="startTime"
+                  type="time"
+                  value={formValues.startTime}
                   onChange={handleInputChange}
                   required />
-                  {errors.startTime && (
-                <p className="text-red-500 text-sm">{errors.startTime}</p>
-              )}
+                {errors.startTime && (
+                  <p className="text-red-500 text-sm">{errors.startTime}</p>
+                )}
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="closesAt">Closes At</Label>
-                <Input 
-                  id="endTime" 
-                  name="endTime" 
-                  type="time" 
-                  value={formValues.endTime} 
-                  onChange={handleInputChange} 
+                <Input
+                  id="endTime"
+                  name="endTime"
+                  type="time"
+                  value={formValues.endTime}
+                  onChange={handleInputChange}
                   required />
-                  {errors.startTime && (
-                <p className="text-red-500 text-sm">{errors.startTime}</p>
-              )}
+                {errors.startTime && (
+                  <p className="text-red-500 text-sm">{errors.startTime}</p>
+                )}
               </div>
             </div>
           </div>
@@ -343,32 +347,32 @@ export default function ProfileSetup() {
 
             {/* Days Availability */}
             <div>
-            <Label>Days Availability</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {allDays.map((day) => (
-                <div key={day} className="flex items-center gap-2">
-                  <Checkbox
-                    defaultChecked
-                    checked={formValues.availableDays.includes(day)}
-                    onCheckedChange={() => toggleDay(day)}
-                  />
-                  <Label htmlFor={day.toLowerCase()}>{day}</Label>
-                </div>
-              ))}
+              <Label>Days Availability</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {allDays.map((day) => (
+                  <div key={day} className="flex items-center gap-2">
+                    <Checkbox
+                      defaultChecked
+                      checked={formValues.availableDays.includes(day)}
+                      onCheckedChange={() => toggleDay(day)}
+                    />
+                    <Label htmlFor={day.toLowerCase()}>{day}</Label>
+                  </div>
+                ))}
+              </div>
+              {errors.availableDays && <p className="text-red-500 text-sm">{errors.availableDays}</p>}
             </div>
-            {errors.availableDays && <p className="text-red-500 text-sm">{errors.availableDays}</p>}
-          </div>
           </div>
           <div className="flex justify-center mt-8 col-span-2">
-          <Button
-            type="submit"
-            className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
-          >
-            Submit
-          </Button>
-        </div>
+            <Button
+              type="submit"
+              className="w-1/2 bg-[#3CAE06] hover:bg-[#36A205] text-white"
+            >
+              Submit
+            </Button>
+          </div>
         </form>
-        
+
       </div>
     </div>
   );

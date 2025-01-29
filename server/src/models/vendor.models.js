@@ -4,31 +4,24 @@ import mongoose from "mongoose";
 const vendorSchema = new mongoose.Schema({
     vendorName: {
         type: String,
-        required: false
     },
     address: {
         type: String,
-        required: false
     },
     restaurantType: {
         type: String,
-        required: false
     },
     latitude: {
         type: Number,
-        required: false
     },
     longitude: {
         type: Number,
-        required: false
     },
     gst: {
         type: String,
-        required: false
     },
     area: {
         type: String,
-        required: false
     },
     vendorEmail: {
         type: String,
@@ -41,11 +34,9 @@ const vendorSchema = new mongoose.Schema({
     },
     vendorPhone: {
         type: String,
-        required: false
     },
     vendorLogo: {
         type: String,
-        required: false
     },
     role: {
         type: String,
@@ -55,16 +46,13 @@ const vendorSchema = new mongoose.Schema({
     },
     startTime: {
         type: String,
-        required: true
     },
     endTime: {
-        type: String,
-        required: true
+        type: String,        required: false
     },
     availableDays: {
         type: [String],
         default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-        required: true,
     },
     isOpen: {
         type: Boolean,

@@ -27,13 +27,9 @@ const completeProfileApi = async (
         }
       });
   
-      if (response.data.success) {
-        return response.data.data;
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
+      return response.data;
+    } catch (error: any) {
+      throw error.response.data.message;
     }
 };
 
@@ -64,13 +60,9 @@ const editProfileApi = async (
         }
       });
   
-      if (response.data.success) {
-        return response.data.data;
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
+      return response.data;
+    } catch (error: any) {
+      throw error.response.data.message;
     }
   };
 
@@ -78,13 +70,9 @@ const editProfileApi = async (
 const toggleOpeningApi = async (isOpen: boolean) => {
     try {
         const response = await axiosInstance.put('/vendor/toggleOpening', { isOpen });
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+        return response.data
+    } catch (error: any) {
+      throw error.response.data.message;
     };
 };
 

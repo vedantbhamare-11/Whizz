@@ -38,13 +38,9 @@ const addDishApi = async (dishData: any) => {
             }
         });
 
-        if (response.data.success){
-            return response.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error)
+       return response.data;
+    } catch (error: any) {
+        throw error.response.data.message;
     }
 };
 
@@ -70,13 +66,9 @@ const updateDishApi = async (dishData: any) => {
             }
         });
 
-        if (response.data.success){
-            return response.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error)
+        return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     }
 };
 
@@ -84,14 +76,9 @@ const updateDishApi = async (dishData: any) => {
 const toggleDishAvailabilityApi = async (dishId: string, availability: boolean) => {
     try {
         const response = await axiosInstance.put('/vendor/toggleDishAvailability', { dishId, availability });
-        
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+       return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     };
 };
 
@@ -99,13 +86,9 @@ const toggleDishAvailabilityApi = async (dishId: string, availability: boolean) 
 const manageCategory = async (dishId: string, category: string) => {
     try {
         const response = await axiosInstance.put('/vendor/manageCategory', { dishId, category });
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+       return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     };
 };
 
@@ -113,13 +96,9 @@ const manageCategory = async (dishId: string, category: string) => {
 const getSubcategories = async () => {
     try {
         const response = await axiosInstance.get('/vendor/subcategories');
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+        return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     }
 };
 
@@ -127,13 +106,9 @@ const getSubcategories = async () => {
 const manageSubcategory = async (dishId: string, subcategory: string) => {
     try {
         const response = await axiosInstance.put('/vendor/manageSubcategory', { dishId, subcategory });
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+        return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     };
 };
 
@@ -141,13 +116,9 @@ const manageSubcategory = async (dishId: string, subcategory: string) => {
 const addSubcategory = async (subcategory: string) => {
     try {
         const response = await axiosInstance.post('/vendor/addSubcategory', { subcategory });
-        if (response.data.success){
-            return response.data.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+        return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     }
 }
 
@@ -155,13 +126,9 @@ const addSubcategory = async (subcategory: string) => {
 const deleteDishApi = async (dishId: string) => {
     try {
         const response = await axiosInstance.delete(`/vendor/delete/${dishId}`);
-        if (response.data.success){
-            return response.data
-        } else {
-            throw new Error(response.data.message)
-        }
-    } catch (error) {
-        console.log(error);
+        return response.data
+    } catch (error: any) {
+        throw error.response.data.message;
     };
 };
 

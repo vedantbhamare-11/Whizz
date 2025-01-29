@@ -18,12 +18,11 @@ export default function Header() {
 const handleOpening = async (isOpen: boolean) => {
   try {
     const response = await toggleOpeningApi(isOpen);
-    if (response) {
+    if (response.success) {
       dispatch(toggleOpening(isOpen));
       toast.success(`Your restaurant is ${isOpen ? "opened" : "closed"}`);
     }
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     toast.error("Failed to toggle opening");
   }
 };

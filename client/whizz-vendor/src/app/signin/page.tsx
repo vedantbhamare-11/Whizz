@@ -40,8 +40,7 @@ export default function SignIn() {
       };
 
     } catch (error: any) {
-      console.error(error); 
-      toast.error(error.response?.data?.message || "Invalid credentials");
+      toast.error(error);
     }
     }
   };

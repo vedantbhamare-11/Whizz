@@ -70,8 +70,8 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
     price: "",
     category: "Veg",
     subcategory: "Main Course",
-    startTime: convertTo24Hour(vendor.startTime),
-    endTime: convertTo24Hour(vendor.endTime),
+    startTime: convertTo24Hour(vendor?.startTime),
+    endTime: convertTo24Hour(vendor?.endTime),
     availableDays: [...allDays] as string[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -109,7 +109,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   const addCustomSubCategory = async (value: string) => {
     if (value && !subCategories.includes(value)) {
       const response = await addSubcategory(value);
-      if (response) {
+      if (response.success) {
         dispatch(addNewSubcategory(value));
         setSubCategories((prev) => [...prev, value]);
       }

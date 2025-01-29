@@ -69,13 +69,12 @@ export default function EditProfileModal({
     if (validateForm()) {
       try {
         const response = await editProfileApi({...formValues, vendorLogo: newImage !== null ? newImage : vendor.vendorLogo});
-        if (response) {
-          dispatch(updateVendor(response));
-          toast.success("Profile updated successfully!");
+        if (response.success) {
+          dispatch(updateVendor(response.data));
+          toast.success(response.message);
         }
-      } catch (error) {
-        console.error("Error updating profile:", error);
-        toast.error("Failed to update profile");
+      } catch (error: any) {
+        toast.error(error);
       }
       onClose();
     }

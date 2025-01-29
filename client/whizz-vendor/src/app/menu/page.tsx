@@ -25,10 +25,14 @@ export default function Menu() {
       dispatch(fetchMenuItems());
     }
     const fetchSubcategories = async () => {
-      const response = await getSubcategories();
-      if (response) {
-        dispatch(setSubcategories(response));
+      try {
+        const response = await getSubcategories();
+      if (response.success) {
+        dispatch(setSubcategories(response.data));
       }
+      } catch (error: any) {
+        toast.error(error);
+      } 
     };
     fetchSubcategories();
   }, [dispatch, menuStatus]);
@@ -37,13 +41,12 @@ export default function Menu() {
   const handleAddItem = async (newItem: any) => {
     try {
       const response = await addDishApi(newItem);
-      if (response.data) {
+      if (response.success) {
         dispatch(addMenuItem(response.data));
         toast.success(response.message);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Adding new item failed");
+    } catch (error: any) {
+      toast.error(error);
     }
   };
 
@@ -53,15 +56,14 @@ export default function Menu() {
     try {
       // Make API request for toggling availability
       const response = await toggleDishAvailabilityApi(id, isAvailable);
-      if (response){
+      if (response.success){
         // Update menu state
         dispatch(toggleAvailability({id, isAvailable}));
         // Update active menu count on dashboard
         isAvailable ? dispatch(incrementMenuCount()) : dispatch(decrementMenuCount());
-        toast.success(`${response.dishName} is now ${isAvailable ? "available" : "unavailable"}`);  
+        toast.success(`${response.data.dishName} is now ${isAvailable ? "available" : "unavailable"}`);  
       }
     } catch (error) {
-      console.error(error);
       toast.error(`Failed to ${isAvailable ? "enable" : "disable"} the dish`);
     }
   };
@@ -70,13 +72,12 @@ export default function Menu() {
   const handleManageCategory = async (id: string, category: string) => {
     try {
       const response = await manageCategory(id, category);
-      if (response){
+      if (response.success){
         dispatch(changeCategory({id, category}));
-        toast.success(`${response.dishName} is now in ${category}`);
+        toast.success(`${response.data.dishName} is now in ${category}`);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to change category");
+    } catch (error: any) {
+      toast.error(error);
     }
   };
 
@@ -84,13 +85,12 @@ export default function Menu() {
   const handleManageSubCategory = async (id: string, subcategory: string) => {
     try {
       const response = await manageSubcategory(id, subcategory);
-      if (response){
+      if (response.success){
         dispatch(changeSubcategory({id, subcategory}));
-        toast.success(`${response.dishName} is now in ${subcategory}`);
+        toast.success(`${response.data.dishName} is now in ${subcategory}`);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to change subcategory");
+    } catch (error: any) {
+      toast.error(error);
     }
   }
 
@@ -104,9 +104,8 @@ export default function Menu() {
         dispatch(updateMenuItem(response.data));
         toast.success(response.message);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to update menu item");
+    } catch (error: any) {
+      toast.error(error);
     };
   };
 
@@ -118,9 +117,8 @@ export default function Menu() {
         dispatch(deleteMenuItem(id));
         toast.success(response.message);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to delete menu item");
+    } catch (error: any) {
+      toast.error(error);
     }
     // Add delete functionality here
   };

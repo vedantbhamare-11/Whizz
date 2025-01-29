@@ -21,32 +21,19 @@ export default function SignUp() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validate = () => {
-    if (formValues.password !== formValues.confirmPassword) {
-      alert("Passwords do not match");
-      return false;
-    }
-    return true;
-  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validateForm()) {
-      if (formValues.password !== formValues.confirmPassword) {
-        throw new Error("Passwords do not match");
-      };
-  
-      // Sign-in handler logic
+    if (validateForm()) {
       try {
         const response = await signupApi(formValues.email, formValues.password);
-        if (response){
-          toast.success("Sign-up successful");
+        if (response.success){
           router.push("/complete-profile");
+          toast.success(response.message);
         };
   
-      } catch (error) {
-        console.error(error); 
-        toast.error("Sign-up failed");
+      } catch (error: any) {
+        toast.error(error);
       }
     }
   };
@@ -151,10 +138,8 @@ export default function SignUp() {
             )}
           </div>
           {/* Submit Button */}
-          <Button type="submit"  className="w-full bg-[#3CAE06]">
-            
+          <Button type="submit" className="w-full bg-[#3CAE06] hover:bg-[#36A205] text-white">
             Sign Up
-            
           </Button>
         </form>
         {/* Sign-up Link */}

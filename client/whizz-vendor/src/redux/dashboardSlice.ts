@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import  { fetchDashboardCountsApi }  from "../app/API/dashboard";
 
 // Define the state structure
@@ -45,6 +45,9 @@ const dashboardSlice = createSlice({
     },
     decrementMenuCount: (state) => {
       state.activeMenuItems -= 1;
+    },
+    setDashboardStatus: (state, action: PayloadAction<"idle" | "loading" | "succeeded" | "failed">) => {
+      state.status = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -66,5 +69,5 @@ const dashboardSlice = createSlice({
   },
 });
 
-export const { incrementMenuCount, decrementMenuCount } = dashboardSlice.actions;
+export const { incrementMenuCount, decrementMenuCount, setDashboardStatus } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

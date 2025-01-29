@@ -8,6 +8,8 @@ import { logOutApi } from "@/app/API/auth";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
 import { setStatus } from "@/redux/menuSlice";
+import { setDashboardStatus } from "@/redux/dashboardSlice";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
   const pathname = usePathname(); // Get the current path
@@ -16,7 +18,7 @@ export default function Sidebar() {
    const handleLogout = async () => {
     try {
       const response = await logOutApi();
-      if (response) {
+      if (response.success) {
         dispatch(setVendor({
           _id: "",
           vendorEmail: "",
@@ -35,9 +37,10 @@ export default function Sidebar() {
           longitude: ""
         }));
         dispatch(setStatus("idle"));
+        dispatch(setDashboardStatus("idle"));
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(error);
     }
   };
 

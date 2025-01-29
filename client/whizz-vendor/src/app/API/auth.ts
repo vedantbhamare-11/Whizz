@@ -8,13 +8,9 @@ const signinApi = async (email: string, password: string) => {
       email,
       password,
     });
-    if (response.data.success) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message);
-    }
-  } catch (error) {
-    console.log(error);
+    return response.data.data;
+  } catch (error: any) {
+    throw error.response.data.message;
   }
 };
 
@@ -26,13 +22,9 @@ const signupApi = async (vendorEmail: string, vendorPassword: string) => {
       vendorEmail,
       vendorPassword,
     });
-    if (response.data.success) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message);
-    }
-  } catch (error) {
-    console.log(error);
+   return response.data;
+  } catch (error: any) {
+    throw error.response.data.message;
   }
 };
 
@@ -40,13 +32,9 @@ const logOutApi = async () => {
   try {
     // Make API request
     const response = await axiosInstance.post("/auth/signout");
-    if (response.data.success) {
-      return response.data;
-    } else {
-      throw new Error(response.data.message);
-    }
-  } catch (error) {
-    console.log(error);
+    return response.data;
+  } catch (error: any) {
+    throw error.response.data.message;
   }
 };
 

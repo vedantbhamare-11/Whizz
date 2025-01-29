@@ -83,7 +83,7 @@ const signIn = async (req, res, next) => {
         // Send success response with user data (without password)
         return successResponse(res, 200, rest, "User signed in successfully");
     } catch (error) {
-        next(error);
+       return next(error);
     };
 };
 
