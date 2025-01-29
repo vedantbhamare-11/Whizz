@@ -179,7 +179,7 @@ const editProfile = async (req, res, next) => {
 
     // remove password
 
-    return successResponse(res, 200, vendor, "Profile completed successfully");
+    return successResponse(res, 200, vendor, "Profile updated successfully");
   } catch (error) {
     if (error.name === "CastError") {
       return errorResponse(res, 400, null, "Invalid vendor ID");

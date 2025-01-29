@@ -109,6 +109,9 @@ const ordersSlice = createSlice({
     setOrders: (state, action: PayloadAction<OrdersState["orders"]>) => {
       state.orders = action.payload;
     },
+    addNewOrder: (state, action: PayloadAction<Order>) => {
+      state.orders.orderQueue.push(action.payload);
+    },
     updateOrderStatus: (
       state,
       action: PayloadAction<{ orderId: string; newStatus: Order["status"] }>
@@ -138,5 +141,5 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { setOrders, updateOrderStatus } = ordersSlice.actions;
+export const { setOrders, updateOrderStatus, addNewOrder } = ordersSlice.actions;
 export default ordersSlice.reducer;

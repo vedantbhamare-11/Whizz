@@ -41,7 +41,7 @@ export default function Profile() {
             />
             <div className="flex justify-center items-center gap-4">
             <h1 className="text-3xl font-bold mt-4">{vendor.vendorName}</h1>
-            <Badge className="flex items-center justify-center bg-[#3CAE06] text-white text-sm rounded-full mt-4">
+            <Badge className={`flex items-center justify-center ${vendor.restaurantType === "VEG" ? "bg-[#3CAE06] hover:bg-[#3CAE06]" : "bg-[#e93131] hover:bg-[#e93131]"} text-white text-sm rounded-full mt-4`}>
               {vendor.restaurantType}
             </Badge>
             </div>
@@ -57,6 +57,9 @@ export default function Profile() {
               <div className="ml-12">
               <p className="text-gray-600 mt-2">
                 <span className="font-bold">Address:</span> {vendor.address}
+              </p>
+              <p className="text-gray-600 mt-2">
+                <span className="font-bold">Area:</span> {vendor.area}
               </p>
               <p className="text-gray-600 mt-2">
                 <span className="font-bold">Phone:</span> {vendor.vendorPhone}

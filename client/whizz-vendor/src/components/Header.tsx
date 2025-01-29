@@ -20,6 +20,8 @@ const handleOpening = async (isOpen: boolean) => {
     const response = await toggleOpeningApi(isOpen);
     if (response.success) {
       dispatch(toggleOpening(isOpen));
+      const buzzer = new Audio("/notify.wav");
+      buzzer.play();
       toast.success(`Your restaurant is ${isOpen ? "opened" : "closed"}`);
     }
   } catch (error: any) {

@@ -2,6 +2,7 @@
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import  RestaurantStatusModal  from "@/components/RestaurantStatusModal";
 import { Card } from "@/components/ui/card";
 import { NotepadText, ChartNoAxesCombined, LayoutList } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,11 +10,13 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { fetchDashboardData } from "@/redux/dashboardSlice";
 import { useEffect } from "react";
 
+
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
   const { todayOrders, revenue, activeMenuItems, status, error } = useSelector(
     (state: RootState) => state.dashboard
   );
+  const vendor = useSelector((state: RootState) => state.vendor.vendor);
 
   useEffect(() => {
     if (status === "idle") {
@@ -60,6 +63,7 @@ export default function Dashboard() {
           {status === "failed" && (
             <p className="text-red-500 mt-4">{error}</p>
           )}
+          <RestaurantStatusModal isOpen={vendor.isOpen} />
         </div>
       </main>
     </div>
