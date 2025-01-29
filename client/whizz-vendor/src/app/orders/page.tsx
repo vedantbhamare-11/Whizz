@@ -108,16 +108,16 @@ export default function Orders() {
   }, []);
 
   // Handle accepting order logic here
-  const handleOrderStatus = async (orderId: string, newStatus: any) => {
+  const handleOrderStatus = async (orderId: string, newStatus: any, rejectionReason?: string) => {
 
     try {
-      const response = await updateOrder(orderId, newStatus);
+      const response = await updateOrder(orderId, newStatus, rejectionReason);
 
       dispatch(updateOrderStatus({ orderId, newStatus }));
       if (newStatus === "rejected") {
         setRejected([...rejected, response.data]);
       }
-      toast.success(`Order now in ${newStatus}`);
+      toast.success(`Order: ${orderId} ${newStatus}`);
     } catch (error: any) {
       toast.error(error);
     }
@@ -229,7 +229,7 @@ export default function Orders() {
                       <TableCell>
                         <RejectedOrderDetailsDialog order={order} />
                       </TableCell>
-                      <TableCell>{order.rejectedReason}</TableCell>
+                      <TableCell>{order.rejectionReason}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

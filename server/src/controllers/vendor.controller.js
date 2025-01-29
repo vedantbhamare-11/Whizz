@@ -589,7 +589,7 @@ const getOrders = async (req, res, next) => {
 
   try {
     // Fetch orders for the vendor
-    const orders = await Order.find({ vendorId }).sort({ createdAt: -1 });
+    const orders = await Order.find({ vendorId });
 
     // Check if there are no orders
     if (orders.length === 0) {
@@ -609,7 +609,7 @@ const getOrders = async (req, res, next) => {
 // Update order status
 const updateOrderStatus = async (req, res, next) => {
   // Extract orderId and status
-  const { whizzOrderId, status } = req.body;
+  const { whizzOrderId, status, rejectionReason } = req.body;
 
   // Check if orderId and status are provided
   if (!whizzOrderId || !status) {
@@ -623,7 +623,7 @@ const updateOrderStatus = async (req, res, next) => {
       {
         status,
         ...(status === "inProgress" || status === "rejected"
-          ? { acceptOrRejectTime: new Date() }
+          ? { acceptOrRejectTime: new Date(), rejectionReason }
           : {}),
         ...(status === "readyForPickup"
           ? { readyForPickupTime: new Date() }

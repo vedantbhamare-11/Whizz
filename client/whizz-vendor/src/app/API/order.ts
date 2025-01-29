@@ -11,9 +11,9 @@ const fetchOrdersApi = async () => {
 }
 
 // Update order status
-const updateOrder = async (whizzOrderId: string, status: string) => {
+const updateOrder = async (whizzOrderId: string, status: string, rejectionReason?: string ) => {
     try {
-        const response = await axiosInstance.put('/vendor/updateOrder', { whizzOrderId, status });
+        const response = await axiosInstance.put('/vendor/updateOrder', { whizzOrderId, status, rejectionReason });
         return response.data
     } catch (error: any) {
         throw error.response.data.message

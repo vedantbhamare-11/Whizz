@@ -34,7 +34,7 @@ interface OrderCardProps {
   dishes: Dish[];
   status: "orderQueue" | "inProgress" | "readyForPickup" | "outForDelivery" | "delivered" | "rejected";
   agentInfo?: DeliveryAgent; // Optional for 'outForDelivery',
-  onStatusChange: (orderId: string, newStatus: string) => void;
+  onStatusChange: (orderId: string, newStatus: string, rejectionReason?: string) => void;
 }
 
 export default function OrderCard({
@@ -47,7 +47,7 @@ export default function OrderCard({
 }: OrderCardProps) {
   // State for dialog visibility and rejection reason
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("Rejected by vendor");
 
   // Calculate total price
   const totalPrice = dishes.reduce(
@@ -56,7 +56,7 @@ export default function OrderCard({
   );
 
   const handleReject = () => {
-    onStatusChange(orderId, "rejected")
+    onStatusChange(orderId, "rejected", rejectionReason);
     setIsDialogOpen(false); // Close the dialog
   };
 

@@ -49,7 +49,7 @@ export default function RejectedOrderDetailsDialog({
           </div>
           <div className="mt-4 space-y-2">
             <p className="text-md text-black font-semibold">Rejection Reason</p>
-            <p className="text-sm text-gray-500">{order.rejectedReason}</p>
+            <p className="text-sm text-gray-500">{order.rejectionReason}</p>
           </div>
         </div>
       </DialogContent>

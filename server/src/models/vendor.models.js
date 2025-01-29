@@ -175,6 +175,9 @@ const orderSchema = new mongoose.Schema({
         default: "orderQueue",
         enum: ["orderQueue", "inProgress", "rejected", "readyForPickup", "outForDelivery", "delivered"],
     },
+    rejectionReason: {
+        type: String,
+    }
 }, {timestamps: true});
 
 const subcategorySchema = new mongoose.Schema({

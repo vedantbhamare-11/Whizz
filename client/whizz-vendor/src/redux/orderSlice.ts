@@ -23,7 +23,7 @@ export interface Order {
     phone: string;
     profilePic: string;
   };
-  rejectedReason?: string;
+  rejectionReason?: string;
 }
 
 interface OrdersState {
