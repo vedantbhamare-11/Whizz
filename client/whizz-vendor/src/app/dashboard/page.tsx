@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchDashboardData } from "@/redux/dashboardSlice";
 import { useEffect } from "react";
+import { PulseLoader } from "react-spinners";
 
 
 export default function Dashboard() {
@@ -38,7 +39,7 @@ export default function Dashboard() {
               </div>
               <h2 className="text-lg font-semibold">Today&#39;s Orders</h2>
               <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
-                {status === "loading" ? "Loading..." : todayOrders}
+                {status === "loading" ? <PulseLoader color="#3CAE06" size={8} /> : todayOrders}
               </p>
             </Card>
             <Card className="relative p-6">
@@ -47,7 +48,7 @@ export default function Dashboard() {
               </div>
               <h2 className="text-lg font-semibold">Revenue</h2>
               <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
-                {status === "loading" ? "Loading..." : `₹${revenue}`}
+                {status === "loading" ? <PulseLoader color="#3CAE06" size={8} /> : `₹${revenue}`}
               </p>
             </Card>
             <Card className="relative p-6">
@@ -56,7 +57,7 @@ export default function Dashboard() {
               </div>
               <h2 className="text-lg font-semibold">Active Menu Items</h2>
               <p className="text-4xl font-bold mt-4 text-[#3CAE06]">
-                {status === "loading" ? "Loading..." : activeMenuItems}
+                {status === "loading" ? <PulseLoader color="#3CAE06" size={8} /> : activeMenuItems }
               </p>
             </Card>
           </div>

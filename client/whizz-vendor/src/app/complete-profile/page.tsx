@@ -193,9 +193,7 @@ export default function ProfileSetup() {
                     }
                   }}
                 />
-                {errors.latitude && (
-                  <p className="text-red-500 text-sm">{errors.latitude}</p>
-                )}
+                
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="longitude">Longitude</Label>
@@ -220,10 +218,12 @@ export default function ProfileSetup() {
                     }
                   }}
                 />
-                {errors.longitude && (
-                  <p className="text-red-500 text-sm">{errors.longitude}</p>
-                )}
+                
               </div>
+              {errors.longitude ? (
+                  <p className="text-red-500 text-sm flex-1">{errors.longitude}</p>
+                ) : errors.latitude && ( <p className="text-red-500 text-sm">{errors.latitude}</p>
+              )}
             </div>
 
             <div className="grid gap-1.5">
@@ -231,11 +231,17 @@ export default function ProfileSetup() {
               <Input
                 id="vendorPhone"
                 name="vendorPhone"
-                type="number"
+                type="string"
                 placeholder="Enter phone number"
                 value={formValues.vendorPhone}
                 maxLength={10}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow only numeric input
+                  if (/^\d*$/.test(value)) {
+                    setFormValues({ ...formValues, vendorPhone: value });
+                  }
+                }}
                 required
               />
               {errors.vendorPhone && <p className="text-red-500 text-sm">{errors.vendorPhone}</p>}

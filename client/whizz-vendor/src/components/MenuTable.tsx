@@ -126,7 +126,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Veg">
+                  <SelectItem value="VEG">
                     <span className="flex items-center gap-2">
                       <Image
                         src="/veg.png"
@@ -137,7 +137,7 @@ export default function MenuTable({ menuItems, onToggleAvailability, onChangeCat
                       Veg
                     </span>
                   </SelectItem>
-                  <SelectItem value="Non-Veg">
+                  <SelectItem value="NON-VEG">
                     <span className="flex items-center gap-2">
                       <Image
                         src="/non-veg.png"

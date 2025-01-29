@@ -24,7 +24,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { updateVendor } from "@/redux/vendorSlice";
 import { editProfileApi } from "@/app/API/restaurant";
-import { convertTo24Hour }  from "@/lib/convertTime";
+import { convertTo24Hour } from "@/lib/convertTime";
 import { toast } from "react-toastify";
 
 export default function EditProfileModal({
@@ -36,14 +36,14 @@ export default function EditProfileModal({
 }) {
   const dispatch = useDispatch();
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
-  
+
   const [formValues, setFormValues] = useState(vendor);
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const [newImage, setNewImage] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setFormValues({...vendor, startTime: convertTo24Hour(vendor.startTime), endTime: convertTo24Hour(vendor.endTime) }); // Sync the form with user data whenever the modal opens
+    setFormValues({ ...vendor, startTime: convertTo24Hour(vendor.startTime), endTime: convertTo24Hour(vendor.endTime) }); // Sync the form with user data whenever the modal opens
     setUploadedImage(vendor.vendorLogo !== "null" || vendor.vendorLogo !== null ? vendor.vendorLogo : "");
   }, [vendor]);
 
@@ -68,7 +68,7 @@ export default function EditProfileModal({
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
-        const response = await editProfileApi({...formValues, vendorLogo: newImage !== null ? newImage : vendor.vendorLogo});
+        const response = await editProfileApi({ ...formValues, vendorLogo: newImage !== null ? newImage : vendor.vendorLogo });
         if (response.success) {
           dispatch(updateVendor(response.data));
           toast.success(response.message);
@@ -263,10 +263,50 @@ export default function EditProfileModal({
                   <SelectValue placeholder="Select restaurant type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="VEG">Veg</SelectItem>
-                  <SelectItem value="NON-VEG">Non-Veg</SelectItem>
-                  <SelectItem value="CAFE">Cafe</SelectItem>
-                  <SelectItem value="MC">Multicuisine</SelectItem>
+                  <SelectItem value="VEG">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/veg.png"
+                        alt="Veg"
+                        width={20}
+                        height={20}
+                      />
+                      Veg
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="NON-VEG">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/non-veg.png"
+                        alt="Non-Veg"
+                        width={20}
+                        height={20}
+                      />
+                      Non-Veg
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="CAFE">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/cafe.png"
+                        alt="Veg"
+                        width={20}
+                        height={20}
+                      />
+                      Cafe
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="MC">
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src="/mc.png"
+                        alt="Non-Veg"
+                        width={20}
+                        height={20}
+                      />
+                      Multicuisine
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
