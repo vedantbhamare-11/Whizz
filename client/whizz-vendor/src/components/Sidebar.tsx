@@ -17,26 +17,7 @@ export default function Sidebar() {
 
    const handleLogout = async () => {
     try {
-      const response = await logOutApi();
-      if (response.success) {
-        dispatch(setVendor({
-          _id: "",
-          vendorEmail: "",
-          vendorName: "",
-          address: "",
-          vendorPhone: "",
-          area: "",
-          restaurantType: "",
-          availableDays: [],
-          vendorLogo: "",
-          startTime: "",
-          endTime: "",
-          gst: "",
-          isOpen: false,
-          latitude: "",
-          longitude: ""
-        }));
-      }
+        await logOutApi();
     } catch (error: any) {
       toast.error(error);
     }

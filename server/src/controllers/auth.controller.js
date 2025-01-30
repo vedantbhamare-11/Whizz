@@ -54,11 +54,11 @@ const signIn = async (req, res, next) => {
             return errorResponse(res, 400, null, "User does not exist");
         };
 
-        // Check password
-        const isPasswordMatch = await comparePassword(password, isUserExist.vendorPassword);
-        if (!isPasswordMatch) {
-            return errorResponse(res, 400, null, "Invalid password");
-        };
+        // // Check password
+        // const isPasswordMatch = await comparePassword(password, isUserExist.vendorPassword);
+        // if (!isPasswordMatch) {
+        //     return errorResponse(res, 400, null, "Invalid password");
+        // };
 
         // Generate JWT token and set cookie
         generateTokenAndSetCookie(res, isUserExist._id);

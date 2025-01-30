@@ -37,8 +37,8 @@ export default function SignIn() {
         dispatch(setVendor(response));
         dispatch(setDashboardStatus("idle"));
         dispatch(setStatus("idle"));
-        toast.success("Sign-in successful");
         router.push("/dashboard");
+        toast.success("Sign-in successful");
       } else {
         router.push("/complete-profile");
       };

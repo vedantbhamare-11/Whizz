@@ -44,8 +44,9 @@ export default function EditProfileModal({
 
   useEffect(() => {
     setFormValues({ ...vendor, startTime: convertTo24Hour(vendor.startTime), endTime: convertTo24Hour(vendor.endTime) }); // Sync the form with user data whenever the modal opens
-    setUploadedImage(vendor.vendorLogo !== "null" || vendor.vendorLogo !== null ? vendor.vendorLogo : "");
-  }, [vendor]);
+    setUploadedImage(vendor.vendorLogo);
+    // setUploadedImage(vendor.vendorLogo !== "null" || vendor.vendorLogo !== null ? vendor.vendorLogo : "");
+  }, [vendor, isOpen]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -83,6 +84,11 @@ export default function EditProfileModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only JPEG, PNG, and GIF files are allowed.");
+        return;
+      }
       const imageUrl = URL.createObjectURL(file);
       setUploadedImage(imageUrl);
       setNewImage(file);

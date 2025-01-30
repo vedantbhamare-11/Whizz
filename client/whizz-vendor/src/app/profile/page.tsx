@@ -15,6 +15,7 @@ export default function Profile() {
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  
 
   return (
     <div className="flex">

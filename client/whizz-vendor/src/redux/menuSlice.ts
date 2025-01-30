@@ -24,6 +24,7 @@ interface MenuState {
   items: MenuItem[];
   status: "idle" | "loading" | "succeeded" | "failed";
   subcategories: subcategory[]
+  
 }
 
 const initialState: MenuState = {
@@ -34,7 +35,9 @@ const initialState: MenuState = {
 
 // Async thunk to fetch menu items
 export const fetchMenuItems = createAsyncThunk("menu/fetchMenuItems", async () => {
+  console.log("Fetching menu items...");
   const response = await fetchMenuApi();
+  console.log(response);
   return response.dishes;
 });
 

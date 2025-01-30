@@ -192,6 +192,7 @@ const subcategorySchema = new mongoose.Schema({
     }
 });
 
+dishSchema.index({ vendorId: 1 });
 
 // Creating models
 const Vendor = mongoose.model("Vendor", vendorSchema);

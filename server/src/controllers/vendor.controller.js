@@ -184,6 +184,7 @@ const editProfile = async (req, res, next) => {
     if (error.name === "CastError") {
       return errorResponse(res, 400, null, "Invalid vendor ID");
     }
+    console.log(error.code);
     next(error);
   }
 };
@@ -537,22 +538,16 @@ const deleteDish = async (req, res, next) => {
 const getDishes = async (req, res, next) => {
   const vendorId = req.userId;
 
-  // Extract query parameters for offset-based fetching and sorting
-  const { offset = 0, limit = 30, sort = "-createdAt" } = req.query;
-
   try {
     // Build query object
     const query = { vendorId };
 
     // Fetch dishes with offset and limit
-    const dishes = await Dish.find(query)
-      .sort(sort)
-      .skip(Number(offset))
-      .limit(Number(limit));
+    const dishes = await Dish.find(query).lean();
 
     const updatedDishes = dishes.map((dish) => {
       return {
-        ...dish._doc,
+        ...dish,
         startTime: isValid24HourTime(dish.startTime) ? convertToAmPm(dish.startTime) : dish.startTime,
         endTime: isValid24HourTime(dish.endTime) ? convertToAmPm(dish.endTime) : dish.endTime, 
         image: dish.image
@@ -560,9 +555,10 @@ const getDishes = async (req, res, next) => {
           : null,
       };    
     });
+
     // Count total dishes for client-side scroll optimization
-    const totalDishes = await Dish.countDocuments(query);
-    
+    const totalDishes = await Dish.countDocuments(query).exec();
+
     return successResponse(
       res,
       200,

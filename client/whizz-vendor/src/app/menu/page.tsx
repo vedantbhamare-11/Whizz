@@ -12,12 +12,14 @@ import { useEffect, useState } from "react";
 import { addDishApi, deleteDishApi, getSubcategories, manageCategory, manageSubcategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 import { toast } from "react-toastify";
-import { BarLoader, BeatLoader, GridLoader, HashLoader, PuffLoader, PulseLoader, ScaleLoader } from "react-spinners";
+import { ScaleLoader } from "react-spinners";
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
   const menuItems = useSelector((state: RootState) => state.menu.items);
   const menuStatus = useSelector((state: RootState) => state.menu.status);
+
+  console.log(menuItems);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -126,8 +128,8 @@ export default function Menu() {
 
 
   // Filter menu items based on search term
-  const filteredMenuItems = menuItems.filter((item: any) =>
-    item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMenuItems = menuItems?.filter((item: any) =>
+    item.dishName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const status = "loading";
@@ -158,7 +160,7 @@ export default function Menu() {
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
             {menuStatus === "loading" && 
               <p className="absolute top-1/2 left-1/2 flex items-center justify-center flex-col text-xs font-semibold text-[#3CAE06] gap-4 ">
-                <ScaleLoader color="#3CAE06" width={3} height={20} />Loading your dishes...
+                <ScaleLoader color="#3CAE06" width={3} height={20} />Please wait a moment, Loading your dishes...
               </p>
             }
             {menuStatus === "succeeded" && (

@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSubcategory } from "@/app/API/menu";
 import { addNewSubcategory } from "@/redux/menuSlice";
 import { convertTo24Hour } from "@/lib/convertTime";
+import { toast } from "react-toastify";
 
 interface AddItemModalProps {
   onAddItem: (newItem: {
@@ -126,6 +127,11 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only JPEG, PNG, and GIF files are allowed.");
+        return;
+      }
       const imageUrl = URL.createObjectURL(file);
       setFormValues({ ...formValues, image: imageUrl });
       setSelectedImage(file);
