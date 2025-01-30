@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { addDishApi, deleteDishApi, getSubcategories, manageCategory, manageSubcategory, toggleDishAvailabilityApi, updateDishApi } from "../API/menu";
 import { decrementMenuCount, incrementMenuCount } from "@/redux/dashboardSlice";
 import { toast } from "react-toastify";
+import { BarLoader, BeatLoader, GridLoader, HashLoader, PuffLoader, PulseLoader, ScaleLoader } from "react-spinners";
 
 export default function Menu() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,12 +28,12 @@ export default function Menu() {
     const fetchSubcategories = async () => {
       try {
         const response = await getSubcategories();
-      if (response.success) {
-        dispatch(setSubcategories(response.data));
-      }
+        if (response.success) {
+          dispatch(setSubcategories(response.data));
+        }
       } catch (error: any) {
         toast.error(error);
-      } 
+      }
     };
     fetchSubcategories();
   }, [dispatch, menuStatus]);
@@ -56,12 +57,12 @@ export default function Menu() {
     try {
       // Make API request for toggling availability
       const response = await toggleDishAvailabilityApi(id, isAvailable);
-      if (response.success){
+      if (response.success) {
         // Update menu state
-        dispatch(toggleAvailability({id, isAvailable}));
+        dispatch(toggleAvailability({ id, isAvailable }));
         // Update active menu count on dashboard
         isAvailable ? dispatch(incrementMenuCount()) : dispatch(decrementMenuCount());
-        toast.success(`${response.data.dishName} is now ${isAvailable ? "available" : "unavailable"}`);  
+        toast.success(`${response.data.dishName} is now ${isAvailable ? "available" : "unavailable"}`);
       }
     } catch (error) {
       toast.error(`Failed to ${isAvailable ? "enable" : "disable"} the dish`);
@@ -72,8 +73,8 @@ export default function Menu() {
   const handleManageCategory = async (id: string, category: string) => {
     try {
       const response = await manageCategory(id, category);
-      if (response.success){
-        dispatch(changeCategory({id, category}));
+      if (response.success) {
+        dispatch(changeCategory({ id, category }));
         toast.success(`${response.data.dishName} is now in ${category}`);
       }
     } catch (error: any) {
@@ -85,8 +86,8 @@ export default function Menu() {
   const handleManageSubCategory = async (id: string, subcategory: string) => {
     try {
       const response = await manageSubcategory(id, subcategory);
-      if (response.success){
-        dispatch(changeSubcategory({id, subcategory}));
+      if (response.success) {
+        dispatch(changeSubcategory({ id, subcategory }));
         toast.success(`${response.data.dishName} is now in ${subcategory}`);
       }
     } catch (error: any) {
@@ -95,7 +96,7 @@ export default function Menu() {
   }
 
   // Handle editing a menu item
-  const handleEdit = async (menuItems: MenuItem) => {    
+  const handleEdit = async (menuItems: MenuItem) => {
     // Add edit functionality here
     try {
       // Make API request
@@ -129,6 +130,8 @@ export default function Menu() {
     item.dishName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const status = "loading";
+
   return (
     <div className="flex">
       <Sidebar />
@@ -151,12 +154,17 @@ export default function Menu() {
               />
             </div>
           </div>
+
           <div className="mt-6 border border-[#e5e7eb] rounded-md">
-            {menuStatus === "loading" && <p>Loading menu items...</p>}
+            {menuStatus === "loading" && 
+              <p className="absolute top-1/2 left-1/2 flex items-center justify-center flex-col text-xs font-semibold text-[#3CAE06] gap-4 ">
+                <ScaleLoader color="#3CAE06" width={3} height={20} />Loading your dishes...
+              </p>
+            }
             {menuStatus === "succeeded" && (
-              <MenuTable 
-                menuItems={filteredMenuItems as any} 
-                onToggleAvailability={handleToggleAvailability} 
+              <MenuTable
+                menuItems={filteredMenuItems as any}
+                onToggleAvailability={handleToggleAvailability}
                 onChangeCategory={handleManageCategory}
                 onChangeSubcategory={handleManageSubCategory}
                 onEdit={handleEdit}

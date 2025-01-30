@@ -70,8 +70,8 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
     price: "",
     category: "Veg",
     subcategory: "Main Course",
-    startTime: convertTo24Hour(vendor?.startTime),
-    endTime: convertTo24Hour(vendor?.endTime),
+    startTime: vendor?.startTime ? convertTo24Hour(vendor?.startTime) : "",
+    endTime: vendor?.endTime ? convertTo24Hour(vendor?.endTime) : "",
     availableDays: [...allDays] as string[],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});

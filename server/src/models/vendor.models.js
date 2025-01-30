@@ -90,7 +90,7 @@ const dishSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ["Veg", "Non-Veg"],
+        enum: ["VEG", "NON-VEG"],
     },
     subcategory: {
         type: String,
