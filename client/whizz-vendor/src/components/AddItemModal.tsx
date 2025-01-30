@@ -282,7 +282,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Veg">
+                  <SelectItem value="VEG">
                     <span className="flex items-center gap-2">
                       <Image
                         src="/veg.png"
@@ -293,7 +293,7 @@ export default function AddItemModal({ onAddItem }: AddItemModalProps) {
                       Veg
                     </span>
                   </SelectItem>
-                  <SelectItem value="Non-Veg">
+                  <SelectItem value="NON-VEG">
                     <span className="flex items-center gap-2">
                       <Image
                         src="/non-veg.png"

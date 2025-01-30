@@ -1,10 +1,10 @@
 import axiosInstance from "../../lib/axiosInstance";
 
 // Function to fetch menu items
-const fetchMenuApi = async () => {
+const fetchMenuApi = async (searchTerm: string, currentPage: number, itemsPerPage: number) => {
     try {
         // Make API request
-        const response = await axiosInstance.get('/vendor/dishes');
+        const response = await axiosInstance.get(`/vendor/dishes?searchTerm=${searchTerm}&currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`);
         
         // Handle response
         if (response.data.success){

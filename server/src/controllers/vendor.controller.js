@@ -537,32 +537,46 @@ const deleteDish = async (req, res, next) => {
 // Get all dishes
 const getDishes = async (req, res, next) => {
   const vendorId = req.userId;
+  const { currentPage = 1, itemsPerPage = 10, searchTerm = "" } = req.query; // Default page 1, limit 10
 
   try {
+    // Convert page and limit to integers
+    const pageNumber = parseInt(currentPage, 10);
+    const limitNumber = parseInt(itemsPerPage, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
     // Build query object
     const query = { vendorId };
 
-    // Fetch dishes with offset and limit
-    const dishes = await Dish.find(query).lean();
+    if (searchTerm) {
+      query.dishName = { $regex: searchTerm, $options: "i" }; // Case-insensitive search
+    }
+
+    // Fetch dishes with pagination
+    const dishes = await Dish.find(query)
+      .skip(skip)
+      .limit(limitNumber)
+      .lean();
 
     const updatedDishes = dishes.map((dish) => {
       return {
         ...dish,
         startTime: isValid24HourTime(dish.startTime) ? convertToAmPm(dish.startTime) : dish.startTime,
-        endTime: isValid24HourTime(dish.endTime) ? convertToAmPm(dish.endTime) : dish.endTime, 
+        endTime: isValid24HourTime(dish.endTime) ? convertToAmPm(dish.endTime) : dish.endTime,
         image: dish.image
           ? `${req.protocol}://${req.get("host")}/${dish.image}`
           : null,
-      };    
+      };
     });
 
-    // Count total dishes for client-side scroll optimization
+    // Count total dishes for pagination
     const totalDishes = await Dish.countDocuments(query).exec();
+    const totalPages = Math.ceil(totalDishes / limitNumber);
 
     return successResponse(
       res,
       200,
-      { dishes: updatedDishes, totalDishes },
+      { dishes: updatedDishes, totalDishes, totalPages, currentPage: pageNumber },
       "Dishes fetched successfully"
     );
   } catch (error) {
@@ -572,6 +586,7 @@ const getDishes = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // Get all orders
 const getOrders = async (req, res, next) => {

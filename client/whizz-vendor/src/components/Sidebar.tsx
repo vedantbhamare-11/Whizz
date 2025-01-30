@@ -7,7 +7,7 @@ import { ChartLine, NotepadText, LayoutList, User, LogOut } from "lucide-react";
 import { logOutApi } from "@/app/API/auth";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
-import { setStatus } from "@/redux/menuSlice";
+import { setMenuItems, setStatus } from "@/redux/menuSlice";
 import { setDashboardStatus } from "@/redux/dashboardSlice";
 import { toast } from "react-toastify";
 
@@ -18,6 +18,7 @@ export default function Sidebar() {
    const handleLogout = async () => {
     try {
         await logOutApi();
+        dispatch(setMenuItems([]));
     } catch (error: any) {
       toast.error(error);
     }

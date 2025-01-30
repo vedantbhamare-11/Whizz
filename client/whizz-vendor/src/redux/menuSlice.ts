@@ -23,28 +23,40 @@ interface subcategory {
 interface MenuState {
   items: MenuItem[];
   status: "idle" | "loading" | "succeeded" | "failed";
-  subcategories: subcategory[]
-  
+  subcategories: subcategory[];
+  totalDishes: number;
+  currentPage: number;
+  totalPages: number;
 }
 
 const initialState: MenuState = {
   items: [],
   status: "idle",
-  subcategories: []
+  subcategories: [],
+  totalDishes: 0,
+  currentPage: 1,
+  totalPages: 0
 };
 
 // Async thunk to fetch menu items
-export const fetchMenuItems = createAsyncThunk("menu/fetchMenuItems", async () => {
-  console.log("Fetching menu items...");
-  const response = await fetchMenuApi();
-  console.log(response);
-  return response.dishes;
+export const fetchMenuItems = createAsyncThunk("menu/fetchMenuItems", async ({ searchTerm, currentPage, itemsPerPage } : { searchTerm: string; currentPage: number; itemsPerPage: number }) => {
+  const response = await fetchMenuApi(searchTerm, currentPage, itemsPerPage);
+  return {
+    items: response.dishes,
+    totalDishes: response.totalDishes,
+    totalPages: response.totalPages,
+    currentPage: response.currentPage
+  };
 });
+
 
 const menuSlice = createSlice({
   name: "menu",
   initialState,
   reducers: {
+    setMenuItems(state, action: PayloadAction<MenuItem[]>) {
+      state.items = action.payload;
+    },
     addMenuItem(state, action: PayloadAction<MenuItem>) {
       state.items.unshift(action.payload);
     },
@@ -103,9 +115,13 @@ const menuSlice = createSlice({
       .addCase(fetchMenuItems.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchMenuItems.fulfilled, (state, action: PayloadAction<MenuItem[]>) => {
+      .addCase(fetchMenuItems.fulfilled, (state, action) => {
+        const { items, totalDishes, totalPages, currentPage } = action.payload;
         state.status = "succeeded";
-        state.items = action.payload;
+        state.items = items;
+        state.totalDishes = totalDishes;
+        state.totalPages = totalPages;
+        state.currentPage = currentPage;
       })
       .addCase(fetchMenuItems.rejected, (state) => {
         state.status = "failed";
@@ -113,5 +129,5 @@ const menuSlice = createSlice({
   },
 });
 
-export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, changeSubcategory, setSubcategories, addNewSubcategory, deleteMenuItem, setStatus } = menuSlice.actions;
+export const { addMenuItem, updateMenuItem, toggleAvailability, changeCategory, changeSubcategory, setSubcategories, addNewSubcategory, deleteMenuItem, setStatus, setMenuItems } = menuSlice.actions;
 export default menuSlice.reducer;

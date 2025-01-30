@@ -20,8 +20,6 @@ export default function Dashboard() {
   const vendor = useSelector((state: RootState) => state.vendor.vendor);
   const menuItems = useSelector((state: RootState) => state.menu.items);
 
-  console.log(menuItems);
-
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchDashboardData());
