@@ -36,8 +36,6 @@ export default function Sidebar() {
           latitude: "",
           longitude: ""
         }));
-        dispatch(setStatus("idle"));
-        // dispatch(setDashboardStatus("idle"));
       }
     } catch (error: any) {
       toast.error(error);

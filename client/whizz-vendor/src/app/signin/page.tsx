@@ -12,6 +12,8 @@ import {signinApi} from "@/app/API/auth";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
 import { toast } from "react-toastify";
+import { setDashboardStatus } from "@/redux/dashboardSlice";
+import { setStatus } from "@/redux/menuSlice";
 
 export default function SignIn() {
   const router = useRouter();
@@ -33,6 +35,8 @@ export default function SignIn() {
       const response = await signinApi(formValues.email, formValues.password);
       if (response.isProfileCompleted){
         dispatch(setVendor(response));
+        dispatch(setDashboardStatus("idle"));
+        dispatch(setStatus("idle"));
         toast.success("Sign-in successful");
         router.push("/dashboard");
       } else {

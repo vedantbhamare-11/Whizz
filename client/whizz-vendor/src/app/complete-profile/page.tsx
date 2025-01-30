@@ -18,6 +18,8 @@ import { completeProfileApi } from "../API/restaurant";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setVendor } from "@/redux/vendorSlice";
+import { setDashboardStatus } from "@/redux/dashboardSlice";
+import { setStatus } from "@/redux/menuSlice";
 import { toast } from "react-toastify";
 
 export default function ProfileSetup() {
@@ -120,6 +122,8 @@ export default function ProfileSetup() {
 
         if (response.success) {
           dispatch(setVendor(response.data));
+          dispatch(setDashboardStatus("idle"));
+          dispatch(setStatus("idle"));
           router.push("/dashboard");
           toast.success(response.message);
         };
@@ -193,7 +197,7 @@ export default function ProfileSetup() {
                     }
                   }}
                 />
-                
+
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="longitude">Longitude</Label>
@@ -218,11 +222,11 @@ export default function ProfileSetup() {
                     }
                   }}
                 />
-                
+
               </div>
               {errors.longitude ? (
-                  <p className="text-red-500 text-sm flex-1">{errors.longitude}</p>
-                ) : errors.latitude && ( <p className="text-red-500 text-sm">{errors.latitude}</p>
+                <p className="text-red-500 text-sm flex-1">{errors.longitude}</p>
+              ) : errors.latitude && (<p className="text-red-500 text-sm">{errors.latitude}</p>
               )}
             </div>
 
