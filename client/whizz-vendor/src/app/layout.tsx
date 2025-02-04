@@ -1,9 +1,10 @@
-'use client';
 import "./globals.css";
-import { Provider } from "react-redux";
-import { store } from "@/redux/store";
+import { Providers } from "./providers";
 
-
+export const metadata = {
+  title: "Vendor Dashboard",
+  description: "Manage your orders and menu items efficiently",
+};
 
 export default function RootLayout({
   children,
@@ -13,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Provider store={store}>{children}</Provider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
