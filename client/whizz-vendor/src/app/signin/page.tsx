@@ -22,14 +22,12 @@ export default function SignIn() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Email validation
     if (!formValues.email) {
       newErrors.email = "Email is required.";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
       newErrors.email = "Enter a valid email address.";
     }
 
-    // Password validation
     if (!formValues.password) {
       newErrors.password = "Password is required.";
     } else if (formValues.password.length < 8) {
@@ -43,7 +41,6 @@ export default function SignIn() {
   const handleSubmit = () => {
     if (validateForm()) {
       console.log("Form submitted successfully:", formValues);
-      // On successful authentication, redirect to the dashboard
       router.push("/dashboard");
     } else {
       console.log("Validation failed:", errors);
@@ -51,8 +48,20 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50 px-4 sm:px-0">
+      {/* Mobile Logo (Visible only on small screens) */}
+      <div className="mb-6 sm:hidden">
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          width={100}
+          height={100}
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Sign-in Card */}
+      <div className="w-full max-w-sm sm:max-w-md bg-white p-6 sm:p-8 rounded-lg shadow-md">
         <h1 className="text-xl font-bold text-center text-gray-800">Welcome Back</h1>
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Email Field */}
@@ -65,11 +74,13 @@ export default function SignIn() {
               id="email"
               placeholder="Enter your email"
               value={formValues.email}
+              className="placeholder:text-sm text-sm lg:placeholder:text-md text-md"
               onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
               required
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
+
           {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
@@ -85,11 +96,13 @@ export default function SignIn() {
               id="password"
               placeholder="Enter your password"
               value={formValues.password}
+              className="placeholder:text-sm text-sm lg:placeholder:text-md text-md"
               onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
               required
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
+
           {/* Submit Button */}
           <Button
             type="submit"
@@ -99,6 +112,7 @@ export default function SignIn() {
             Login
           </Button>
         </form>
+
         {/* Sign-up Link */}
         <div className="text-center mt-4">
           <p className="text-sm text-gray-500">
@@ -109,8 +123,9 @@ export default function SignIn() {
           </p>
         </div>
       </div>
-      {/* Logo and Agreement Text */}
-      <div className="mt-8 text-center">
+
+      {/* Desktop/Tablet Logo (Visible only on larger screens) */}
+      <div className="mt-8 hidden sm:block">
         <Image
           src="/logo.png"
           alt="Logo"
@@ -118,17 +133,19 @@ export default function SignIn() {
           height={100}
           className="mx-auto"
         />
-        <p className="text-sm text-gray-500 mt-6">
-          By clicking continue, you agree to our{" "}
-          <Link href="/terms" className="hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="hover:underline">
-            Privacy Policy
-          </Link>
-          .
-        </p>
+      </div>
+
+      {/* Agreement Text */}
+      <div className="mt-6 text-center max-w-xs text-sm text-gray-500">
+        By clicking continue, you agree to our{" "}
+        <Link href="/terms" className="hover:underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="hover:underline">
+          Privacy Policy
+        </Link>
+        .
       </div>
     </div>
   );
