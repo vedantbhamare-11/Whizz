@@ -24,14 +24,12 @@ export default function SignUp() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Email validation
     if (!formValues.email) {
       newErrors.email = "Email is required.";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
       newErrors.email = "Enter a valid email address.";
     }
 
-    // Password validation
     if (!formValues.password) {
       newErrors.password = "Password is required.";
     } else if (formValues.password.length < 8) {
@@ -40,7 +38,6 @@ export default function SignUp() {
       newErrors.password = "Password must include letters and numbers.";
     }
 
-    // Confirm password validation
     if (!formValues.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password.";
     } else if (formValues.confirmPassword !== formValues.password) {
@@ -55,7 +52,7 @@ export default function SignUp() {
     event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-  
+
     if (validateForm()) {
       console.log("Form submitted successfully:", formValues);
       router.push("/complete-profile");
@@ -63,10 +60,22 @@ export default function SignUp() {
       console.log("Validation failed:", errors);
     }
   };
-  
+
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50 px-4 sm:px-0">
+      {/* Mobile Logo (Visible only on small screens) */}
+      <div className="mb-6 sm:hidden">
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          width={100}
+          height={100}
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Sign-up Card */}
+      <div className="w-full max-w-sm sm:max-w-md bg-white p-6 sm:p-8 rounded-lg shadow-md">
         <h1 className="text-xl font-bold text-center text-gray-800">Create Your Account</h1>
         <p className="text-sm text-center text-gray-600 mt-2">Sign Up with your Email</p>
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
@@ -80,6 +89,7 @@ export default function SignUp() {
               id="email"
               placeholder="Enter your email"
               value={formValues.email}
+              className="placeholder:text-sm text-sm lg:placeholder:text-md text-md"
               onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
               required
             />
@@ -87,16 +97,15 @@ export default function SignUp() {
           </div>
           {/* Password Field */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="password" className="font-semibold">
-                Password
-              </Label>
-            </div>
+            <Label htmlFor="password" className="font-semibold">
+              Password
+            </Label>
             <Input
               type="password"
               id="password"
               placeholder="Enter your password"
               value={formValues.password}
+              className="placeholder:text-sm text-sm lg:placeholder:text-md text-md"
               onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
               required
             />
@@ -104,17 +113,18 @@ export default function SignUp() {
           </div>
           {/* Confirm Password Field */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="confirmPassword" className="font-semibold">
-                Confirm Password
-              </Label>
-            </div>
+            <Label htmlFor="confirmPassword" className="font-semibold">
+              Confirm Password
+            </Label>
             <Input
               type="password"
               id="confirmPassword"
               placeholder="Re-Enter your password"
               value={formValues.confirmPassword}
-              onChange={(e) => setFormValues({ ...formValues, confirmPassword: e.target.value })}
+              className="placeholder:text-sm text-sm lg:placeholder:text-md text-md"
+              onChange={(e) =>
+                setFormValues({ ...formValues, confirmPassword: e.target.value })
+              }
               required
             />
             {errors.confirmPassword && (
@@ -129,7 +139,7 @@ export default function SignUp() {
             Sign Up
           </Button>
         </form>
-        {/* Sign-up Link */}
+        {/* Sign-in Link */}
         <div className="text-center mt-4">
           <p className="text-sm text-gray-500">
             Already have an account?{" "}
@@ -139,8 +149,9 @@ export default function SignUp() {
           </p>
         </div>
       </div>
-      {/* Logo and Agreement Text */}
-      <div className="mt-8 text-center">
+
+      {/* Desktop/Tablet Logo (Visible only on larger screens) */}
+      <div className="mt-8 hidden sm:block">
         <Image
           src="/logo.png"
           alt="Logo"
@@ -148,17 +159,19 @@ export default function SignUp() {
           height={100}
           className="mx-auto"
         />
-        <p className="text-sm text-gray-500 mt-6">
-          By clicking continue, you agree to our{" "}
-          <Link href="/terms" className="hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="hover:underline">
-            Privacy Policy
-          </Link>
-          .
-        </p>
+      </div>
+
+      {/* Agreement Text */}
+      <div className="mt-6 text-center max-w-xs text-sm text-gray-500">
+        By clicking continue, you agree to our{" "}
+        <Link href="/terms" className="hover:underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="hover:underline">
+          Privacy Policy
+        </Link>
+        .
       </div>
     </div>
   );
